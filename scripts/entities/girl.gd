@@ -1,0 +1,136 @@
+class_name Girl
+extends Node2D
+## Ana ekrandaki kız karakter: ara ara el sallar, göz kırpar, dokununca kıkırdayıp zıplar.
+## Sürekli nefes, gövde/baş sallanması ve şapka/örgü salınımı sahnedeki bileşenlerle yapılır
+## (PulseComponent, SwayComponent, SpringFollowComponent).
+
+const BLINK_CLOSED_TIME: float = 0.12
+const WAVE_RAISE_TIME: float = 0.45
+const WAVE_SWING_TIME: float = 0.22
+const WAVE_LOWER_TIME: float = 0.8
+const JUMP_UP_TIME: float = 0.16
+const JUMP_DOWN_TIME: float = 0.2
+const REACTION_TIME: float = 0.7
+## Sol kol (aynalanmamış) pozitif, sağ kol (scale.x = -1) negatif açıyla yukarı kalkar.
+const ARM_RAISE_SIGN: Array[float] = [1.0, -1.0]
+const SCREEN_WIDTH: float = 1920.0
+const MAX_SOUND_PAN: float = 0.6
+
+@export_group("El sallama")
+@export_range(1.0, 60.0, 0.5, "suffix:s") var wave_interval_min: float = 8.0
+@export_range(1.0, 60.0, 0.5, "suffix:s") var wave_interval_max: float = 15.0
+## Kolun omuzdan kalkma açısı; daha büyüğünde el başın arkasına geçer.
+@export_range(0.0, 180.0, 1.0, "suffix:°") var wave_raise_degrees: float = 100.0
+@export_range(0.0, 45.0, 1.0, "suffix:°") var wave_swing_degrees: float = 12.0
+@export_range(1, 5) var wave_count_min: int = 2
+@export_range(1, 5) var wave_count_max: int = 3
+
+@export_group("Göz kırpma")
+@export_range(0.5, 20.0, 0.1, "suffix:s") var blink_interval_min: float = 3.0
+@export_range(0.5, 20.0, 0.1, "suffix:s") var blink_interval_max: float = 6.0
+
+@export_group("Dokunma")
+@export_range(0.0, 80.0, 1.0, "suffix:px") var jump_height: float = 22.0
+@export_file("*.ogg", "*.wav") var giggle_sound_path: String = "res://assets/audio/sfx/giggle.ogg"
+@export_range(0.0, 0.3, 0.01) var giggle_pitch_variation: float = 0.05
+
+var _waving: bool = false
+var _reacting: bool = false
+var _giggle: AudioStream
+var _blink_timer: Timer
+var _wave_timer: Timer
+
+@onready var _body: Node2D = $Body
+@onready var _arms: Array[Node2D] = [$Body/Torso/ArmL, $Body/Torso/ArmR]
+@onready var _eyes_open: CanvasItem = $Body/Torso/Head/Eyes/Open
+@onready var _eyes_closed: CanvasItem = $Body/Torso/Head/Eyes/Closed
+@onready var _mouth_smile: CanvasItem = $Body/Torso/Head/Mouth/Smile
+@onready var _mouth_open: CanvasItem = $Body/Torso/Head/Mouth/Open
+@onready var _tap_area: Tappable = $TapArea
+@onready var _hearts: CPUParticles2D = $Hearts
+@onready var _stars: CPUParticles2D = $Stars
+
+
+func _ready() -> void:
+	if ResourceLoader.exists(giggle_sound_path):
+		_giggle = load(giggle_sound_path) as AudioStream
+	_tap_area.tapped.connect(_on_tapped)
+	_blink_timer = _make_timer(_blink)
+	_wave_timer = _make_timer(_wave)
+	_restart(_blink_timer, blink_interval_min, blink_interval_max)
+	_restart(_wave_timer, wave_interval_min, wave_interval_max)
+
+
+func _blink() -> void:
+	if not _reacting:
+		_set_eyes_closed(true)
+		var tween: Tween = create_tween()
+		tween.tween_interval(BLINK_CLOSED_TIME)
+		tween.tween_callback(func() -> void:
+			if not _reacting:
+				_set_eyes_closed(false))
+	_restart(_blink_timer, blink_interval_min, blink_interval_max)
+
+
+func _wave() -> void:
+	if _waving:
+		return
+	_waving = true
+	var side: int = randi_range(0, 1)
+	var arm: Node2D = _arms[side]
+	var raised: float = deg_to_rad(wave_raise_degrees) * ARM_RAISE_SIGN[side]
+	var swing: float = deg_to_rad(wave_swing_degrees) * ARM_RAISE_SIGN[side]
+	var tween: Tween = create_tween().set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	tween.tween_property(arm, ^"rotation", raised, WAVE_RAISE_TIME).set_ease(Tween.EASE_OUT)
+	for i: int in randi_range(wave_count_min, maxi(wave_count_min, wave_count_max)):
+		tween.tween_property(arm, ^"rotation", raised + swing, WAVE_SWING_TIME)
+		tween.tween_property(arm, ^"rotation", raised - swing, WAVE_SWING_TIME)
+	tween.tween_property(arm, ^"rotation", 0.0, WAVE_LOWER_TIME)
+	tween.tween_callback(func() -> void:
+		_waving = false
+		_restart(_wave_timer, wave_interval_min, wave_interval_max))
+
+
+## Tepki sürerken gelen dokunuşlar yok sayılır; animasyonlar üst üste binmez.
+func _on_tapped(_global_tap_position: Vector2) -> void:
+	if _reacting:
+		return
+	_reacting = true
+	var pan: float = clampf((global_position.x / SCREEN_WIDTH) * 2.0 - 1.0, -1.0, 1.0) * MAX_SOUND_PAN
+	AudioManager.play_sfx(_giggle, AudioManager.BUS_SFX, 0.0,
+			1.0 + randf_range(-giggle_pitch_variation, giggle_pitch_variation), pan)
+	_hearts.restart()
+	_stars.restart()
+	_set_eyes_closed(true)
+	_set_mouth_open(true)
+	var jump: Tween = create_tween()
+	jump.tween_property(_body, ^"position:y", -jump_height, JUMP_UP_TIME).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	jump.tween_property(_body, ^"position:y", 0.0, JUMP_DOWN_TIME).set_trans(Tween.TRANS_BOUNCE).set_ease(Tween.EASE_OUT)
+	var face: Tween = create_tween()
+	face.tween_interval(REACTION_TIME)
+	face.tween_callback(func() -> void:
+		_set_eyes_closed(false)
+		_set_mouth_open(false)
+		_reacting = false)
+
+
+func _set_eyes_closed(closed: bool) -> void:
+	_eyes_open.visible = not closed
+	_eyes_closed.visible = closed
+
+
+func _set_mouth_open(open: bool) -> void:
+	_mouth_smile.visible = not open
+	_mouth_open.visible = open
+
+
+func _make_timer(on_timeout: Callable) -> Timer:
+	var timer: Timer = Timer.new()
+	timer.one_shot = true
+	timer.timeout.connect(on_timeout)
+	add_child(timer)
+	return timer
+
+
+func _restart(timer: Timer, min_seconds: float, max_seconds: float) -> void:
+	timer.start(randf_range(min_seconds, maxf(min_seconds, max_seconds)))

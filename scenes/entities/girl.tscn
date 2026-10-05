@@ -16,8 +16,24 @@
 [ext_resource type="Texture2D" path="res://assets/art/character/girl/mouth_open.svg" id="14_mouth_open"]
 [ext_resource type="Texture2D" path="res://assets/art/character/girl/hair_front.svg" id="15_hair_front"]
 [ext_resource type="Texture2D" path="res://assets/art/character/girl/hat.svg" id="16_hat"]
+[ext_resource type="Script" path="res://scripts/entities/girl.gd" id="20_girl"]
+[ext_resource type="Script" path="res://scripts/components/pulse_component.gd" id="21_pulse"]
+[ext_resource type="Script" path="res://scripts/components/sway_component.gd" id="22_sway"]
+[ext_resource type="Script" path="res://scripts/components/spring_follow_component.gd" id="23_spring"]
+[ext_resource type="Script" path="res://scripts/input/tappable.gd" id="24_tappable"]
+[ext_resource type="Texture2D" path="res://assets/art/environment/heart.svg" id="25_heart"]
+[ext_resource type="Texture2D" path="res://assets/art/environment/star.svg" id="26_star"]
+
+[sub_resource type="Curve" id="Curve_pop"]
+_data = [Vector2(0, 0.3), 0.0, 0.0, 0, 0, Vector2(0.15, 1), 0.0, 0.0, 0, 0, Vector2(1, 0.85), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="Gradient" id="Gradient_fade"]
+offsets = PackedFloat32Array(0, 0.65, 1)
+colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0)
 
 [node name="Girl" type="Node2D"]
+script = ExtResource("20_girl")
 
 [node name="Shadow" type="Sprite2D" parent="."]
 texture = ExtResource("1_shadow")
@@ -143,3 +159,97 @@ position = Vector2(0, -100)
 texture = ExtResource("16_hat")
 centered = false
 offset = Vector2(-118, -76)
+
+[node name="Breathe" type="Node" parent="Body"]
+script = ExtResource("21_pulse")
+scale_amount = Vector2(0, 0.02)
+period = 2.4
+
+[node name="Sway" type="Node" parent="Body/Torso"]
+script = ExtResource("22_sway")
+amplitude_degrees = 1.5
+period = 3.0
+
+[node name="Sway" type="Node" parent="Body/Torso/Head"]
+script = ExtResource("22_sway")
+amplitude_degrees = 1.0
+period = 4.2
+
+[node name="Spring" type="Node" parent="Body/Torso/Head/Hat"]
+script = ExtResource("23_spring")
+stiffness = 50.0
+damping = 5.0
+rotation_inertia = 4.0
+acceleration_influence = Vector2(4e-05, 2e-05)
+max_angle_degrees = 10.0
+
+[node name="Spring" type="Node" parent="Body/Torso/HeadBack/PigtailL"]
+script = ExtResource("23_spring")
+stiffness = 45.0
+damping = 4.5
+rotation_inertia = 4.0
+acceleration_influence = Vector2(5e-05, -8e-05)
+max_angle_degrees = 14.0
+
+[node name="Spring" type="Node" parent="Body/Torso/HeadBack/PigtailR"]
+script = ExtResource("23_spring")
+stiffness = 45.0
+damping = 4.5
+rotation_inertia = 4.0
+acceleration_influence = Vector2(5e-05, 8e-05)
+max_angle_degrees = 14.0
+
+[node name="TapArea" type="Node2D" parent="."]
+script = ExtResource("24_tappable")
+area = Rect2(-100, -345, 200, 360)
+priority = 10
+
+[node name="Hearts" type="CPUParticles2D" parent="."]
+position = Vector2(0, -320)
+emitting = false
+amount = 4
+lifetime = 1.1
+one_shot = true
+explosiveness = 0.85
+local_coords = false
+texture = ExtResource("25_heart")
+emission_shape = 1
+emission_sphere_radius = 50.0
+direction = Vector2(0, -1)
+spread = 70.0
+gravity = Vector2(0, 120)
+initial_velocity_min = 160.0
+initial_velocity_max = 240.0
+damping_min = 40.0
+damping_max = 60.0
+angle_min = -20.0
+angle_max = 20.0
+scale_amount_min = 0.6
+scale_amount_max = 0.9
+scale_amount_curve = SubResource("Curve_pop")
+color_ramp = SubResource("Gradient_fade")
+
+[node name="Stars" type="CPUParticles2D" parent="."]
+position = Vector2(0, -320)
+emitting = false
+amount = 3
+lifetime = 1.1
+one_shot = true
+explosiveness = 0.85
+local_coords = false
+texture = ExtResource("26_star")
+emission_shape = 1
+emission_sphere_radius = 50.0
+direction = Vector2(0, -1)
+spread = 70.0
+gravity = Vector2(0, 120)
+initial_velocity_min = 160.0
+initial_velocity_max = 240.0
+damping_min = 40.0
+damping_max = 60.0
+angle_min = -20.0
+angle_max = 20.0
+scale_amount_min = 0.6
+scale_amount_max = 0.9
+scale_amount_curve = SubResource("Curve_pop")
+color_ramp = SubResource("Gradient_fade")
