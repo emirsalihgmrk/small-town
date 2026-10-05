@@ -15,6 +15,10 @@ config/description="5-7 yaş için sakin, ödüllendirici bir kasaba/çiftlik oy
 run/main_scene="res://scenes/main/home.tscn"
 config/features=PackedStringArray("4.7", "GL Compatibility")
 
+[autoload]
+
+AudioManager="*res://autoload/audio_manager.gd"
+
 [display]
 
 window/size/viewport_width=1920
