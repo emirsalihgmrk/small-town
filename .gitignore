@@ -1,0 +1,15 @@
+# Godot 4
+.godot/
+/android/
+
+# Export çıktıları
+/build/
+/export/
+
+# Geçici dosyalar
+*.tmp
+*.translation
+
+# İşletim sistemi
+.DS_Store
+Thumbs.db
