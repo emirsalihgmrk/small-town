@@ -1,0 +1,145 @@
+[gd_scene format=3]
+
+[ext_resource type="Texture2D" path="res://assets/art/character/girl/shadow.svg" id="1_shadow"]
+[ext_resource type="Texture2D" path="res://assets/art/character/girl/leg.svg" id="2_leg"]
+[ext_resource type="Texture2D" path="res://assets/art/character/girl/pigtail.svg" id="3_pigtail"]
+[ext_resource type="Texture2D" path="res://assets/art/character/girl/hair_back.svg" id="4_hair_back"]
+[ext_resource type="Texture2D" path="res://assets/art/character/girl/neck.svg" id="5_neck"]
+[ext_resource type="Texture2D" path="res://assets/art/character/girl/dress.svg" id="6_dress"]
+[ext_resource type="Texture2D" path="res://assets/art/character/girl/arm.svg" id="7_arm"]
+[ext_resource type="Texture2D" path="res://assets/art/character/girl/collar.svg" id="8_collar"]
+[ext_resource type="Texture2D" path="res://assets/art/character/girl/head.svg" id="9_head"]
+[ext_resource type="Texture2D" path="res://assets/art/character/girl/blush.svg" id="10_blush"]
+[ext_resource type="Texture2D" path="res://assets/art/character/girl/eyes_open.svg" id="11_eyes_open"]
+[ext_resource type="Texture2D" path="res://assets/art/character/girl/eyes_closed.svg" id="12_eyes_closed"]
+[ext_resource type="Texture2D" path="res://assets/art/character/girl/mouth.svg" id="13_mouth"]
+[ext_resource type="Texture2D" path="res://assets/art/character/girl/mouth_open.svg" id="14_mouth_open"]
+[ext_resource type="Texture2D" path="res://assets/art/character/girl/hair_front.svg" id="15_hair_front"]
+[ext_resource type="Texture2D" path="res://assets/art/character/girl/hat.svg" id="16_hat"]
+
+[node name="Girl" type="Node2D"]
+
+[node name="Shadow" type="Sprite2D" parent="."]
+texture = ExtResource("1_shadow")
+centered = false
+offset = Vector2(-82, -7)
+
+[node name="Body" type="Node2D" parent="."]
+
+[node name="LegL" type="Sprite2D" parent="Body"]
+position = Vector2(-16, -60)
+texture = ExtResource("2_leg")
+centered = false
+offset = Vector2(-26, -6)
+
+[node name="LegR" type="Sprite2D" parent="Body"]
+position = Vector2(16, -60)
+scale = Vector2(-1, 1)
+texture = ExtResource("2_leg")
+centered = false
+offset = Vector2(-26, -6)
+
+[node name="Torso" type="Node2D" parent="Body"]
+position = Vector2(0, -60)
+
+[node name="HeadBack" type="Node2D" parent="Body/Torso"]
+position = Vector2(0, -100)
+
+[node name="PigtailL" type="Sprite2D" parent="Body/Torso/HeadBack"]
+position = Vector2(-58, -35)
+texture = ExtResource("3_pigtail")
+centered = false
+offset = Vector2(-48, -29)
+
+[node name="PigtailR" type="Sprite2D" parent="Body/Torso/HeadBack"]
+position = Vector2(58, -35)
+scale = Vector2(-1, 1)
+texture = ExtResource("3_pigtail")
+centered = false
+offset = Vector2(-48, -29)
+
+[node name="HairBack" type="Sprite2D" parent="Body/Torso/HeadBack"]
+texture = ExtResource("4_hair_back")
+centered = false
+offset = Vector2(-72, -132)
+
+[node name="Neck" type="Sprite2D" parent="Body/Torso"]
+texture = ExtResource("5_neck")
+centered = false
+offset = Vector2(-12, -120)
+
+[node name="Dress" type="Sprite2D" parent="Body/Torso"]
+texture = ExtResource("6_dress")
+centered = false
+offset = Vector2(-78, -108)
+
+[node name="ArmL" type="Sprite2D" parent="Body/Torso"]
+position = Vector2(-30, -78)
+texture = ExtResource("7_arm")
+centered = false
+offset = Vector2(-56, -26)
+
+[node name="ArmR" type="Sprite2D" parent="Body/Torso"]
+position = Vector2(30, -78)
+scale = Vector2(-1, 1)
+texture = ExtResource("7_arm")
+centered = false
+offset = Vector2(-56, -26)
+
+[node name="Collar" type="Sprite2D" parent="Body/Torso"]
+texture = ExtResource("8_collar")
+centered = false
+offset = Vector2(-32, -107)
+
+[node name="Head" type="Node2D" parent="Body/Torso"]
+position = Vector2(0, -100)
+
+[node name="HeadBackSync" type="RemoteTransform2D" parent="Body/Torso/Head"]
+remote_path = NodePath("../../HeadBack")
+
+[node name="Face" type="Sprite2D" parent="Body/Torso/Head"]
+texture = ExtResource("9_head")
+centered = false
+offset = Vector2(-78, -130)
+
+[node name="Blush" type="Sprite2D" parent="Body/Torso/Head"]
+texture = ExtResource("10_blush")
+centered = false
+offset = Vector2(-54, -45)
+
+[node name="Eyes" type="Node2D" parent="Body/Torso/Head"]
+
+[node name="Open" type="Sprite2D" parent="Body/Torso/Head/Eyes"]
+texture = ExtResource("11_eyes_open")
+centered = false
+offset = Vector2(-32, -71)
+
+[node name="Closed" type="Sprite2D" parent="Body/Torso/Head/Eyes"]
+visible = false
+texture = ExtResource("12_eyes_closed")
+centered = false
+offset = Vector2(-32, -71)
+
+[node name="Mouth" type="Node2D" parent="Body/Torso/Head"]
+
+[node name="Smile" type="Sprite2D" parent="Body/Torso/Head/Mouth"]
+texture = ExtResource("13_mouth")
+centered = false
+offset = Vector2(-16, -39)
+
+[node name="Open" type="Sprite2D" parent="Body/Torso/Head/Mouth"]
+visible = false
+texture = ExtResource("14_mouth_open")
+centered = false
+offset = Vector2(-16, -39)
+
+[node name="HairFront" type="Sprite2D" parent="Body/Torso/Head"]
+texture = ExtResource("15_hair_front")
+centered = false
+offset = Vector2(-62, -110)
+
+[node name="Hat" type="Sprite2D" parent="Body/Torso/Head"]
+position = Vector2(0, -100)
+texture = ExtResource("16_hat")
+centered = false
+offset = Vector2(-118, -76)

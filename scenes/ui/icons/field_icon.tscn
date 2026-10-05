@@ -1,0 +1,31 @@
+[gd_scene format=3]
+
+[ext_resource type="Texture2D" path="res://assets/art/ui/icons/field/soil.svg" id="1_soil"]
+[ext_resource type="Texture2D" path="res://assets/art/ui/icons/field/wheat.svg" id="2_wheat"]
+[ext_resource type="Texture2D" path="res://assets/art/ui/icons/field/carrot.svg" id="3_carrot"]
+[ext_resource type="Texture2D" path="res://assets/art/ui/icons/field/sprout.svg" id="4_sprout"]
+
+[node name="FieldIcon" type="Node2D"]
+
+[node name="Soil" type="Sprite2D" parent="."]
+texture = ExtResource("1_soil")
+centered = false
+offset = Vector2(-96, 12)
+
+[node name="Wheat" type="Sprite2D" parent="."]
+position = Vector2(50, 40)
+texture = ExtResource("2_wheat")
+centered = false
+offset = Vector2(-20, -98)
+
+[node name="Carrot" type="Sprite2D" parent="."]
+position = Vector2(-2, 28)
+texture = ExtResource("3_carrot")
+centered = false
+offset = Vector2(-32, -110)
+
+[node name="Sprout" type="Sprite2D" parent="."]
+position = Vector2(-50, 46)
+texture = ExtResource("4_sprout")
+centered = false
+offset = Vector2(-24, -46)

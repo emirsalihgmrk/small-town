@@ -1,0 +1,17 @@
+[gd_scene format=3]
+
+[ext_resource type="Texture2D" path="res://assets/art/ui/icons/barn/barn.svg" id="1_barn"]
+[ext_resource type="Texture2D" path="res://assets/art/ui/icons/barn/hay.svg" id="2_hay"]
+
+[node name="BarnIcon" type="Node2D"]
+
+[node name="Barn" type="Sprite2D" parent="."]
+texture = ExtResource("1_barn")
+centered = false
+offset = Vector2(-84, -76)
+
+[node name="Hay" type="Sprite2D" parent="."]
+position = Vector2(65, 82)
+texture = ExtResource("2_hay")
+centered = false
+offset = Vector2(-29, -24)

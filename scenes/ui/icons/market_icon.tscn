@@ -1,0 +1,17 @@
+[gd_scene format=3]
+
+[ext_resource type="Texture2D" path="res://assets/art/ui/icons/market/stall.svg" id="1_stall"]
+[ext_resource type="Texture2D" path="res://assets/art/ui/icons/market/awning.svg" id="2_awning"]
+
+[node name="MarketIcon" type="Node2D"]
+
+[node name="Stall" type="Sprite2D" parent="."]
+texture = ExtResource("1_stall")
+centered = false
+offset = Vector2(-86, -86)
+
+[node name="Awning" type="Sprite2D" parent="."]
+position = Vector2(0, -58)
+texture = ExtResource("2_awning")
+centered = false
+offset = Vector2(-78, -2)
