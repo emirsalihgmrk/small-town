@@ -1,13 +1,11 @@
 class_name HeldTool
 extends Node2D
-## Parmakla taşınan araç. Kök noktası aracın çalışan ucudur (çapanın ağzı); görsel Visual altındadır,
-## böylece kullanma animasyonu taşınan konumu bozmaz.
+## Parmakla taşınan araç. Kök noktası aracın çalışan ucudur (çapanın ağzı, torbanın ağzı); görsel
+## Visual altındadır, böylece kullanma animasyonu taşınan konumu bozmaz. Varsa Pour parçacıkları
+## aracın döktüğü şeydir (serpilen tohum gibi).
 
 const POP_START_SCALE: float = 0.5
 const POP_TIME: float = 0.18
-## Kullanırken araç bu kadar kalkıp geriye yatar, sonra hızla yerine iner.
-const USE_LIFT: Vector2 = Vector2(14.0, -34.0)
-const USE_TILT_DEGREES: float = 12.0
 const USE_LIFT_TIME: float = 0.07
 const USE_STRIKE_TIME: float = 0.09
 const RETURN_TIME: float = 0.28
@@ -15,11 +13,15 @@ const RETURN_END_SCALE: float = 0.45
 
 ## Görselin kök noktasına göre ortası; rafa dönerken aracın ortası rafın ortasına otursun diye.
 @export var visual_center: Vector2 = Vector2.ZERO
+## Kullanırken araç bu kadar kalkıp yatar, sonra hızla yerine iner (çapa vurur, torba silkelenir).
+@export var use_lift: Vector2 = Vector2(14.0, -34.0)
+@export_range(-45.0, 45.0, 1.0, "suffix:°") var use_tilt_degrees: float = 12.0
 
 var _use_tween: Tween
 var _move_tween: Tween
 
 @onready var _visual: Node2D = $Visual
+@onready var _pour: CPUParticles2D = get_node_or_null(^"Pour") as CPUParticles2D
 
 
 func pop_in() -> void:
@@ -35,16 +37,23 @@ func play_use() -> void:
 	_visual.position = Vector2.ZERO
 	_visual.rotation = 0.0
 	_use_tween = create_tween()
-	_use_tween.tween_property(_visual, ^"position", USE_LIFT, USE_LIFT_TIME).set_ease(Tween.EASE_OUT)
-	_use_tween.parallel().tween_property(_visual, ^"rotation", deg_to_rad(USE_TILT_DEGREES), USE_LIFT_TIME)
+	_use_tween.tween_property(_visual, ^"position", use_lift, USE_LIFT_TIME).set_ease(Tween.EASE_OUT)
+	_use_tween.parallel().tween_property(_visual, ^"rotation", deg_to_rad(use_tilt_degrees), USE_LIFT_TIME)
 	_use_tween.tween_property(_visual, ^"position", Vector2.ZERO, USE_STRIKE_TIME) \
 			.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
 	_use_tween.parallel().tween_property(_visual, ^"rotation", 0.0, USE_STRIKE_TIME)
 
 
+## Pour parçacığı olmayan araçlarda bir şey yapmaz.
+func set_pouring(pouring: bool) -> void:
+	if _pour != null and _pour.emitting != pouring:
+		_pour.emitting = pouring
+
+
 ## Görsel ortası target'a gelecek şekilde rafa geri uçar, küçülüp kaybolur;
 ## varınca on_arrived çağrılır ve araç kendini siler.
 func return_to(target: Vector2, on_arrived: Callable) -> void:
+	set_pouring(false)
 	if _move_tween != null:
 		_move_tween.kill()
 	_move_tween = create_tween().set_parallel().set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)

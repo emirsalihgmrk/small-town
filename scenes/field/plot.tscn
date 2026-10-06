@@ -6,11 +6,16 @@
 [ext_resource type="Script" path="res://scripts/field/plot.gd" id="4_plot"]
 [ext_resource type="PackedScene" path="res://scenes/field/effects/dirt_burst.tscn" id="5_dirt"]
 [ext_resource type="PackedScene" path="res://scenes/field/effects/sparkle_burst.tscn" id="6_sparkle"]
+[ext_resource type="Texture2D" path="res://assets/art/field/seed_hole.svg" id="7_hole"]
+[ext_resource type="Texture2D" path="res://assets/art/field/seed_mound.svg" id="8_mound"]
+[ext_resource type="Texture2D" path="res://assets/art/field/wheat_seeds.svg" id="9_wheat_seeds"]
+[ext_resource type="Texture2D" path="res://assets/art/field/carrot_seed.svg" id="10_carrot_seed"]
 
 [node name="Plot" type="Node2D"]
 script = ExtResource("4_plot")
 dirt_burst_scene = ExtResource("5_dirt")
 sparkle_scene = ExtResource("6_sparkle")
+carrot_seed_texture = ExtResource("10_carrot_seed")
 
 [node name="Soil" type="Sprite2D" parent="."]
 texture = ExtResource("1_soil")
@@ -22,6 +27,118 @@ modulate = Color(1, 1, 1, 0)
 texture = ExtResource("3_tilled")
 centered = false
 offset = Vector2(-170, -62)
+
+[node name="WheatSeeds" type="Node2D" parent="."]
+
+[node name="Seeds01" type="Sprite2D" parent="WheatSeeds"]
+position = Vector2(-113, -28)
+rotation = -0.397
+texture = ExtResource("9_wheat_seeds")
+
+[node name="Seeds02" type="Sprite2D" parent="WheatSeeds"]
+position = Vector2(-52, -25)
+rotation = -0.345
+texture = ExtResource("9_wheat_seeds")
+
+[node name="Seeds03" type="Sprite2D" parent="WheatSeeds"]
+position = Vector2(-6, -32)
+rotation = -0.098
+texture = ExtResource("9_wheat_seeds")
+
+[node name="Seeds04" type="Sprite2D" parent="WheatSeeds"]
+position = Vector2(57, -32)
+rotation = -0.278
+texture = ExtResource("9_wheat_seeds")
+
+[node name="Seeds05" type="Sprite2D" parent="WheatSeeds"]
+position = Vector2(115, -28)
+rotation = 0.280
+texture = ExtResource("9_wheat_seeds")
+
+[node name="Seeds06" type="Sprite2D" parent="WheatSeeds"]
+position = Vector2(-117, 0)
+rotation = -0.286
+texture = ExtResource("9_wheat_seeds")
+
+[node name="Seeds07" type="Sprite2D" parent="WheatSeeds"]
+position = Vector2(-64, 0)
+rotation = 0.300
+texture = ExtResource("9_wheat_seeds")
+
+[node name="Seeds08" type="Sprite2D" parent="WheatSeeds"]
+position = Vector2(-2, -2)
+rotation = -0.190
+texture = ExtResource("9_wheat_seeds")
+
+[node name="Seeds09" type="Sprite2D" parent="WheatSeeds"]
+position = Vector2(59, -3)
+rotation = 0.345
+texture = ExtResource("9_wheat_seeds")
+
+[node name="Seeds10" type="Sprite2D" parent="WheatSeeds"]
+position = Vector2(114, 2)
+rotation = 0.006
+texture = ExtResource("9_wheat_seeds")
+
+[node name="Seeds11" type="Sprite2D" parent="WheatSeeds"]
+position = Vector2(-115, 27)
+rotation = -0.026
+texture = ExtResource("9_wheat_seeds")
+
+[node name="Seeds12" type="Sprite2D" parent="WheatSeeds"]
+position = Vector2(-62, 32)
+rotation = 0.340
+texture = ExtResource("9_wheat_seeds")
+
+[node name="Seeds13" type="Sprite2D" parent="WheatSeeds"]
+position = Vector2(-8, 28)
+rotation = 0.072
+texture = ExtResource("9_wheat_seeds")
+
+[node name="Seeds14" type="Sprite2D" parent="WheatSeeds"]
+position = Vector2(57, 32)
+rotation = -0.305
+texture = ExtResource("9_wheat_seeds")
+
+[node name="Seeds15" type="Sprite2D" parent="WheatSeeds"]
+position = Vector2(117, 28)
+rotation = -0.069
+texture = ExtResource("9_wheat_seeds")
+
+[node name="CarrotSpots" type="Node2D" parent="."]
+
+[node name="Spot1" type="Node2D" parent="CarrotSpots"]
+position = Vector2(-100, 0)
+
+[node name="Hole" type="Sprite2D" parent="CarrotSpots/Spot1"]
+texture = ExtResource("7_hole")
+
+[node name="Mound" type="Sprite2D" parent="CarrotSpots/Spot1"]
+texture = ExtResource("8_mound")
+centered = false
+offset = Vector2(-26, -15)
+
+[node name="Spot2" type="Node2D" parent="CarrotSpots"]
+position = Vector2(0, 0)
+
+[node name="Hole" type="Sprite2D" parent="CarrotSpots/Spot2"]
+texture = ExtResource("7_hole")
+
+[node name="Mound" type="Sprite2D" parent="CarrotSpots/Spot2"]
+texture = ExtResource("8_mound")
+centered = false
+offset = Vector2(-26, -15)
+
+[node name="Spot3" type="Node2D" parent="CarrotSpots"]
+position = Vector2(100, 0)
+
+[node name="Hole" type="Sprite2D" parent="CarrotSpots/Spot3"]
+texture = ExtResource("7_hole")
+
+[node name="Mound" type="Sprite2D" parent="CarrotSpots/Spot3"]
+texture = ExtResource("8_mound")
+centered = false
+offset = Vector2(-26, -15)
 
 [node name="Weeds" type="Node2D" parent="."]
 

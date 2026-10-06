@@ -316,6 +316,28 @@ def make_plot_ready() -> np.ndarray:
     return fade_edges(linear_reverb(lowpass(buf, 6000), wet=0.2, seconds=0.6), fade_out=0.3)
 
 
+def make_seed_plop() -> np.ndarray:
+    """Tohum çukura düşer: perdesi hızla inen yumuşak bir "pıt" ve minik bir toprak tıkırtısı."""
+    t = times(0.16)
+    hz = np.interp(t, [0, 0.04], [900, 300])
+    tone = np.sin(2 * np.pi * np.cumsum(hz) / SR) * np.exp(-t / 0.03) * np.clip(t / 0.002, 0, 1)
+    tick = sosfilt(butter(2, [1500, 5000], "band", fs=SR, output="sos"), rng.standard_normal(len(t)))
+    tick *= 0.25 * np.exp(-t / 0.006) / np.max(np.abs(tick))
+    return fade_edges(tone + tick, fade_out=0.04)
+
+
+def make_seed_sprinkle() -> np.ndarray:
+    """Serpilen tohumlar toprağa düşer: art arda gelen, gittikçe kısılan ince tıkırtılar."""
+    t = times(0.18)
+    out = np.zeros(len(t))
+    for i, start in enumerate(np.sort(rng.uniform(0.0, 0.12, 6))):
+        n = int(0.004 * SR)
+        k = int(start * SR)
+        grain = sosfilt(butter(2, [2500, 7000], "band", fs=SR, output="sos"), rng.standard_normal(n)) * np.hanning(n)
+        out[k: k + n] += grain * (1 - i / 8)
+    return fade_edges(linear_reverb(out, wet=0.1, seconds=0.15), fade_out=0.03)
+
+
 def main() -> None:
     write("music/home_theme.ogg", make_music())
     write("ambience/wind_loop.ogg", make_wind())
@@ -326,6 +348,8 @@ def main() -> None:
     # Yeni sesler hep sona eklenir: rastgele sayı sırası değişmesin, eski sesler birebir aynı kalsın.
     write("sfx/hoe_chop.ogg", make_hoe_chop())
     write("sfx/plot_ready.ogg", make_plot_ready())
+    write("sfx/seed_plop.ogg", make_seed_plop())
+    write("sfx/seed_sprinkle.ogg", make_seed_sprinkle())
 
 
 if __name__ == "__main__":

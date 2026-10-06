@@ -17,6 +17,8 @@ Yeniden üretmek için proje kökünden: `python tools/audio/generate_audio.py`
 | `assets/audio/sfx/giggle.ogg` | Formant sentezli kısa bir çocuk kıkırdaması ("hi-hi-hi") |
 | `assets/audio/sfx/hoe_chop.ogg` | Çapa vuruşu: boğuk "tok", toprak hışırtısı ve dökülen kesekler |
 | `assets/audio/sfx/plot_ready.ogg` | Parsel hazır: yukarı çıkan üç notalı müzik kutusu arpeji |
+| `assets/audio/sfx/seed_plop.ogg` | Tohum çukura düşer: perdesi hızla inen yumuşak bir "pıt" |
+| `assets/audio/sfx/seed_sprinkle.ogg` | Serpilen tohumların toprağa düşerken çıkardığı ince tıkırtılar |
 
 ## Görseller
 
