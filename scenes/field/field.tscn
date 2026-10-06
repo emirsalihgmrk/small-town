@@ -27,6 +27,7 @@
 [ext_resource type="Texture2D" path="res://assets/art/field/windmill_blades.svg" id="25_windmill_blades"]
 [ext_resource type="Script" path="res://scripts/input/tap_router.gd" id="tap_router_script"]
 [ext_resource type="Script" path="res://scripts/components/pause_when_inactive.gd" id="pause_script"]
+[ext_resource type="Script" path="res://scripts/field/field.gd" id="field_script"]
 
 [sub_resource type="StyleBoxFlat" id="home_normal"]
 bg_color = Color(1, 0.945, 0.722, 1)
@@ -102,6 +103,7 @@ corner_radius_bottom_right = 28
 corner_radius_bottom_left = 28
 
 [node name="Field" type="Node2D"]
+script = ExtResource("field_script")
 
 [node name="World" type="Node2D" parent="."]
 

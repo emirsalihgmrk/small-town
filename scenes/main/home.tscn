@@ -29,8 +29,10 @@
 [ext_resource type="Script" path="res://scripts/home/home_ambience.gd" id="ambience_script"]
 [ext_resource type="Script" path="res://scripts/input/tap_router.gd" id="tap_router_script"]
 [ext_resource type="Script" path="res://scripts/components/pause_when_inactive.gd" id="pause_script"]
+[ext_resource type="Script" path="res://scripts/home/home.gd" id="home_script"]
 
 [node name="Home" type="Node2D"]
+script = ExtResource("home_script")
 
 [node name="World" type="Node2D" parent="."]
 
