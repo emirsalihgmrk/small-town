@@ -10,6 +10,20 @@
 [ext_resource type="Texture2D" path="res://assets/art/field/seed_mound.svg" id="8_mound"]
 [ext_resource type="Texture2D" path="res://assets/art/field/wheat_seeds.svg" id="9_wheat_seeds"]
 [ext_resource type="Texture2D" path="res://assets/art/field/carrot_seed.svg" id="10_carrot_seed"]
+[ext_resource type="Texture2D" path="res://assets/art/field/plot_soil_dry.svg" id="11_dry"]
+[ext_resource type="Texture2D" path="res://assets/art/ui/icons/field/sprout.svg" id="12_carrot_sprout"]
+[ext_resource type="Texture2D" path="res://assets/art/field/carrot_leafy.svg" id="13_carrot_leafy"]
+[ext_resource type="Texture2D" path="res://assets/art/field/carrot_ready.svg" id="14_carrot_ready"]
+[ext_resource type="Texture2D" path="res://assets/art/field/wheat_sprout.svg" id="15_wheat_sprout"]
+[ext_resource type="Texture2D" path="res://assets/art/field/wheat_young.svg" id="16_wheat_young"]
+[ext_resource type="Texture2D" path="res://assets/art/ui/icons/field/wheat.svg" id="17_wheat_ripe"]
+[ext_resource type="Texture2D" path="res://assets/art/field/water_bubble.svg" id="18_bubble"]
+[ext_resource type="Script" path="res://scripts/components/pulse_component.gd" id="19_pulse"]
+[ext_resource type="Texture2D" path="res://assets/art/environment/star.svg" id="20_star"]
+
+[sub_resource type="Curve" id="Curve_twinkle"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.3, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 3
 
 [node name="Plot" type="Node2D"]
 script = ExtResource("4_plot")
@@ -25,6 +39,11 @@ offset = Vector2(-170, -62)
 [node name="TilledSoil" type="Sprite2D" parent="."]
 modulate = Color(1, 1, 1, 0)
 texture = ExtResource("3_tilled")
+centered = false
+offset = Vector2(-170, -62)
+
+[node name="DrySoil" type="Sprite2D" parent="."]
+texture = ExtResource("11_dry")
 centered = false
 offset = Vector2(-170, -62)
 
@@ -105,6 +124,338 @@ position = Vector2(117, 28)
 rotation = -0.069
 texture = ExtResource("9_wheat_seeds")
 
+[node name="WheatPlants" type="Node2D" parent="."]
+
+[node name="Plant01" type="Node2D" parent="WheatPlants"]
+position = Vector2(-113, -28)
+
+[node name="Stage1" type="Sprite2D" parent="WheatPlants/Plant01"]
+visible = false
+texture = ExtResource("15_wheat_sprout")
+centered = false
+offset = Vector2(-13, -30)
+
+[node name="Stage2" type="Sprite2D" parent="WheatPlants/Plant01"]
+visible = false
+texture = ExtResource("16_wheat_young")
+centered = false
+offset = Vector2(-15, -78)
+
+[node name="Stage3" type="Sprite2D" parent="WheatPlants/Plant01"]
+visible = false
+scale = Vector2(0.8, 0.8)
+texture = ExtResource("17_wheat_ripe")
+centered = false
+offset = Vector2(-20, -98)
+
+[node name="Plant02" type="Node2D" parent="WheatPlants"]
+position = Vector2(-52, -25)
+
+[node name="Stage1" type="Sprite2D" parent="WheatPlants/Plant02"]
+visible = false
+texture = ExtResource("15_wheat_sprout")
+centered = false
+offset = Vector2(-13, -30)
+
+[node name="Stage2" type="Sprite2D" parent="WheatPlants/Plant02"]
+visible = false
+texture = ExtResource("16_wheat_young")
+centered = false
+offset = Vector2(-15, -78)
+
+[node name="Stage3" type="Sprite2D" parent="WheatPlants/Plant02"]
+visible = false
+scale = Vector2(0.8, 0.8)
+texture = ExtResource("17_wheat_ripe")
+centered = false
+offset = Vector2(-20, -98)
+
+[node name="Plant03" type="Node2D" parent="WheatPlants"]
+position = Vector2(-6, -32)
+
+[node name="Stage1" type="Sprite2D" parent="WheatPlants/Plant03"]
+visible = false
+texture = ExtResource("15_wheat_sprout")
+centered = false
+offset = Vector2(-13, -30)
+
+[node name="Stage2" type="Sprite2D" parent="WheatPlants/Plant03"]
+visible = false
+texture = ExtResource("16_wheat_young")
+centered = false
+offset = Vector2(-15, -78)
+
+[node name="Stage3" type="Sprite2D" parent="WheatPlants/Plant03"]
+visible = false
+scale = Vector2(0.8, 0.8)
+texture = ExtResource("17_wheat_ripe")
+centered = false
+offset = Vector2(-20, -98)
+
+[node name="Plant04" type="Node2D" parent="WheatPlants"]
+position = Vector2(57, -32)
+
+[node name="Stage1" type="Sprite2D" parent="WheatPlants/Plant04"]
+visible = false
+texture = ExtResource("15_wheat_sprout")
+centered = false
+offset = Vector2(-13, -30)
+
+[node name="Stage2" type="Sprite2D" parent="WheatPlants/Plant04"]
+visible = false
+texture = ExtResource("16_wheat_young")
+centered = false
+offset = Vector2(-15, -78)
+
+[node name="Stage3" type="Sprite2D" parent="WheatPlants/Plant04"]
+visible = false
+scale = Vector2(0.8, 0.8)
+texture = ExtResource("17_wheat_ripe")
+centered = false
+offset = Vector2(-20, -98)
+
+[node name="Plant05" type="Node2D" parent="WheatPlants"]
+position = Vector2(115, -28)
+
+[node name="Stage1" type="Sprite2D" parent="WheatPlants/Plant05"]
+visible = false
+texture = ExtResource("15_wheat_sprout")
+centered = false
+offset = Vector2(-13, -30)
+
+[node name="Stage2" type="Sprite2D" parent="WheatPlants/Plant05"]
+visible = false
+texture = ExtResource("16_wheat_young")
+centered = false
+offset = Vector2(-15, -78)
+
+[node name="Stage3" type="Sprite2D" parent="WheatPlants/Plant05"]
+visible = false
+scale = Vector2(0.8, 0.8)
+texture = ExtResource("17_wheat_ripe")
+centered = false
+offset = Vector2(-20, -98)
+
+[node name="Plant06" type="Node2D" parent="WheatPlants"]
+position = Vector2(-117, 0)
+
+[node name="Stage1" type="Sprite2D" parent="WheatPlants/Plant06"]
+visible = false
+texture = ExtResource("15_wheat_sprout")
+centered = false
+offset = Vector2(-13, -30)
+
+[node name="Stage2" type="Sprite2D" parent="WheatPlants/Plant06"]
+visible = false
+texture = ExtResource("16_wheat_young")
+centered = false
+offset = Vector2(-15, -78)
+
+[node name="Stage3" type="Sprite2D" parent="WheatPlants/Plant06"]
+visible = false
+scale = Vector2(0.8, 0.8)
+texture = ExtResource("17_wheat_ripe")
+centered = false
+offset = Vector2(-20, -98)
+
+[node name="Plant07" type="Node2D" parent="WheatPlants"]
+position = Vector2(-64, 0)
+
+[node name="Stage1" type="Sprite2D" parent="WheatPlants/Plant07"]
+visible = false
+texture = ExtResource("15_wheat_sprout")
+centered = false
+offset = Vector2(-13, -30)
+
+[node name="Stage2" type="Sprite2D" parent="WheatPlants/Plant07"]
+visible = false
+texture = ExtResource("16_wheat_young")
+centered = false
+offset = Vector2(-15, -78)
+
+[node name="Stage3" type="Sprite2D" parent="WheatPlants/Plant07"]
+visible = false
+scale = Vector2(0.8, 0.8)
+texture = ExtResource("17_wheat_ripe")
+centered = false
+offset = Vector2(-20, -98)
+
+[node name="Plant08" type="Node2D" parent="WheatPlants"]
+position = Vector2(-2, -2)
+
+[node name="Stage1" type="Sprite2D" parent="WheatPlants/Plant08"]
+visible = false
+texture = ExtResource("15_wheat_sprout")
+centered = false
+offset = Vector2(-13, -30)
+
+[node name="Stage2" type="Sprite2D" parent="WheatPlants/Plant08"]
+visible = false
+texture = ExtResource("16_wheat_young")
+centered = false
+offset = Vector2(-15, -78)
+
+[node name="Stage3" type="Sprite2D" parent="WheatPlants/Plant08"]
+visible = false
+scale = Vector2(0.8, 0.8)
+texture = ExtResource("17_wheat_ripe")
+centered = false
+offset = Vector2(-20, -98)
+
+[node name="Plant09" type="Node2D" parent="WheatPlants"]
+position = Vector2(59, -3)
+
+[node name="Stage1" type="Sprite2D" parent="WheatPlants/Plant09"]
+visible = false
+texture = ExtResource("15_wheat_sprout")
+centered = false
+offset = Vector2(-13, -30)
+
+[node name="Stage2" type="Sprite2D" parent="WheatPlants/Plant09"]
+visible = false
+texture = ExtResource("16_wheat_young")
+centered = false
+offset = Vector2(-15, -78)
+
+[node name="Stage3" type="Sprite2D" parent="WheatPlants/Plant09"]
+visible = false
+scale = Vector2(0.8, 0.8)
+texture = ExtResource("17_wheat_ripe")
+centered = false
+offset = Vector2(-20, -98)
+
+[node name="Plant10" type="Node2D" parent="WheatPlants"]
+position = Vector2(114, 2)
+
+[node name="Stage1" type="Sprite2D" parent="WheatPlants/Plant10"]
+visible = false
+texture = ExtResource("15_wheat_sprout")
+centered = false
+offset = Vector2(-13, -30)
+
+[node name="Stage2" type="Sprite2D" parent="WheatPlants/Plant10"]
+visible = false
+texture = ExtResource("16_wheat_young")
+centered = false
+offset = Vector2(-15, -78)
+
+[node name="Stage3" type="Sprite2D" parent="WheatPlants/Plant10"]
+visible = false
+scale = Vector2(0.8, 0.8)
+texture = ExtResource("17_wheat_ripe")
+centered = false
+offset = Vector2(-20, -98)
+
+[node name="Plant11" type="Node2D" parent="WheatPlants"]
+position = Vector2(-115, 27)
+
+[node name="Stage1" type="Sprite2D" parent="WheatPlants/Plant11"]
+visible = false
+texture = ExtResource("15_wheat_sprout")
+centered = false
+offset = Vector2(-13, -30)
+
+[node name="Stage2" type="Sprite2D" parent="WheatPlants/Plant11"]
+visible = false
+texture = ExtResource("16_wheat_young")
+centered = false
+offset = Vector2(-15, -78)
+
+[node name="Stage3" type="Sprite2D" parent="WheatPlants/Plant11"]
+visible = false
+scale = Vector2(0.8, 0.8)
+texture = ExtResource("17_wheat_ripe")
+centered = false
+offset = Vector2(-20, -98)
+
+[node name="Plant12" type="Node2D" parent="WheatPlants"]
+position = Vector2(-62, 32)
+
+[node name="Stage1" type="Sprite2D" parent="WheatPlants/Plant12"]
+visible = false
+texture = ExtResource("15_wheat_sprout")
+centered = false
+offset = Vector2(-13, -30)
+
+[node name="Stage2" type="Sprite2D" parent="WheatPlants/Plant12"]
+visible = false
+texture = ExtResource("16_wheat_young")
+centered = false
+offset = Vector2(-15, -78)
+
+[node name="Stage3" type="Sprite2D" parent="WheatPlants/Plant12"]
+visible = false
+scale = Vector2(0.8, 0.8)
+texture = ExtResource("17_wheat_ripe")
+centered = false
+offset = Vector2(-20, -98)
+
+[node name="Plant13" type="Node2D" parent="WheatPlants"]
+position = Vector2(-8, 28)
+
+[node name="Stage1" type="Sprite2D" parent="WheatPlants/Plant13"]
+visible = false
+texture = ExtResource("15_wheat_sprout")
+centered = false
+offset = Vector2(-13, -30)
+
+[node name="Stage2" type="Sprite2D" parent="WheatPlants/Plant13"]
+visible = false
+texture = ExtResource("16_wheat_young")
+centered = false
+offset = Vector2(-15, -78)
+
+[node name="Stage3" type="Sprite2D" parent="WheatPlants/Plant13"]
+visible = false
+scale = Vector2(0.8, 0.8)
+texture = ExtResource("17_wheat_ripe")
+centered = false
+offset = Vector2(-20, -98)
+
+[node name="Plant14" type="Node2D" parent="WheatPlants"]
+position = Vector2(57, 32)
+
+[node name="Stage1" type="Sprite2D" parent="WheatPlants/Plant14"]
+visible = false
+texture = ExtResource("15_wheat_sprout")
+centered = false
+offset = Vector2(-13, -30)
+
+[node name="Stage2" type="Sprite2D" parent="WheatPlants/Plant14"]
+visible = false
+texture = ExtResource("16_wheat_young")
+centered = false
+offset = Vector2(-15, -78)
+
+[node name="Stage3" type="Sprite2D" parent="WheatPlants/Plant14"]
+visible = false
+scale = Vector2(0.8, 0.8)
+texture = ExtResource("17_wheat_ripe")
+centered = false
+offset = Vector2(-20, -98)
+
+[node name="Plant15" type="Node2D" parent="WheatPlants"]
+position = Vector2(117, 28)
+
+[node name="Stage1" type="Sprite2D" parent="WheatPlants/Plant15"]
+visible = false
+texture = ExtResource("15_wheat_sprout")
+centered = false
+offset = Vector2(-13, -30)
+
+[node name="Stage2" type="Sprite2D" parent="WheatPlants/Plant15"]
+visible = false
+texture = ExtResource("16_wheat_young")
+centered = false
+offset = Vector2(-15, -78)
+
+[node name="Stage3" type="Sprite2D" parent="WheatPlants/Plant15"]
+visible = false
+scale = Vector2(0.8, 0.8)
+texture = ExtResource("17_wheat_ripe")
+centered = false
+offset = Vector2(-20, -98)
+
 [node name="CarrotSpots" type="Node2D" parent="."]
 
 [node name="Spot1" type="Node2D" parent="CarrotSpots"]
@@ -118,6 +469,27 @@ texture = ExtResource("8_mound")
 centered = false
 offset = Vector2(-26, -15)
 
+[node name="Plant" type="Node2D" parent="CarrotSpots/Spot1"]
+position = Vector2(0, -4)
+
+[node name="Stage1" type="Sprite2D" parent="CarrotSpots/Spot1/Plant"]
+visible = false
+texture = ExtResource("12_carrot_sprout")
+centered = false
+offset = Vector2(-24, -46)
+
+[node name="Stage2" type="Sprite2D" parent="CarrotSpots/Spot1/Plant"]
+visible = false
+texture = ExtResource("13_carrot_leafy")
+centered = false
+offset = Vector2(-36, -68)
+
+[node name="Stage3" type="Sprite2D" parent="CarrotSpots/Spot1/Plant"]
+visible = false
+texture = ExtResource("14_carrot_ready")
+centered = false
+offset = Vector2(-48, -96)
+
 [node name="Spot2" type="Node2D" parent="CarrotSpots"]
 position = Vector2(0, 0)
 
@@ -129,6 +501,27 @@ texture = ExtResource("8_mound")
 centered = false
 offset = Vector2(-26, -15)
 
+[node name="Plant" type="Node2D" parent="CarrotSpots/Spot2"]
+position = Vector2(0, -4)
+
+[node name="Stage1" type="Sprite2D" parent="CarrotSpots/Spot2/Plant"]
+visible = false
+texture = ExtResource("12_carrot_sprout")
+centered = false
+offset = Vector2(-24, -46)
+
+[node name="Stage2" type="Sprite2D" parent="CarrotSpots/Spot2/Plant"]
+visible = false
+texture = ExtResource("13_carrot_leafy")
+centered = false
+offset = Vector2(-36, -68)
+
+[node name="Stage3" type="Sprite2D" parent="CarrotSpots/Spot2/Plant"]
+visible = false
+texture = ExtResource("14_carrot_ready")
+centered = false
+offset = Vector2(-48, -96)
+
 [node name="Spot3" type="Node2D" parent="CarrotSpots"]
 position = Vector2(100, 0)
 
@@ -139,6 +532,27 @@ texture = ExtResource("7_hole")
 texture = ExtResource("8_mound")
 centered = false
 offset = Vector2(-26, -15)
+
+[node name="Plant" type="Node2D" parent="CarrotSpots/Spot3"]
+position = Vector2(0, -4)
+
+[node name="Stage1" type="Sprite2D" parent="CarrotSpots/Spot3/Plant"]
+visible = false
+texture = ExtResource("12_carrot_sprout")
+centered = false
+offset = Vector2(-24, -46)
+
+[node name="Stage2" type="Sprite2D" parent="CarrotSpots/Spot3/Plant"]
+visible = false
+texture = ExtResource("13_carrot_leafy")
+centered = false
+offset = Vector2(-36, -68)
+
+[node name="Stage3" type="Sprite2D" parent="CarrotSpots/Spot3/Plant"]
+visible = false
+texture = ExtResource("14_carrot_ready")
+centered = false
+offset = Vector2(-48, -96)
 
 [node name="Weeds" type="Node2D" parent="."]
 
@@ -168,3 +582,34 @@ scale = Vector2(0.95, 0.95)
 texture = ExtResource("2_weed")
 centered = false
 offset = Vector2(-48, -38)
+
+[node name="WaterBubble" type="Node2D" parent="."]
+visible = false
+position = Vector2(125, -28)
+
+[node name="Icon" type="Sprite2D" parent="WaterBubble"]
+texture = ExtResource("18_bubble")
+
+[node name="Pulse" type="Node" parent="WaterBubble/Icon"]
+script = ExtResource("19_pulse")
+scale_amount = Vector2(0.1, 0.1)
+period = 1.1
+
+[node name="ReadyGlint" type="CPUParticles2D" parent="."]
+position = Vector2(0, -50)
+emitting = false
+amount = 4
+lifetime = 1.4
+texture = ExtResource("20_star")
+emission_shape = 3
+emission_rect_extents = Vector2(140, 40)
+direction = Vector2(0, -1)
+spread = 30.0
+gravity = Vector2(0, -20)
+initial_velocity_min = 8.0
+initial_velocity_max = 20.0
+angle_min = -30.0
+angle_max = 30.0
+scale_amount_min = 0.4
+scale_amount_max = 0.6
+scale_amount_curve = SubResource("Curve_twinkle")

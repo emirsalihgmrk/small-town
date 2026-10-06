@@ -7,11 +7,12 @@ extends Node
 ## - Havuç tohumu: tutulunca ekilebilir parsellerde çukurlar belirir; torba bir çukurun üstünden
 ##   geçince içine tohum düşer.
 ## - Buğday tohumu: torba ekilebilir parselin üstünde gezdikçe tohum serpilir.
-## Tohum, torba parselin üstüne girdikten sonra sow_arm_time kadar orada kalınca düşmeye başlar:
-## raf ön sıranın altında olduğundan arka sıraya giderken yoldaki parsele istemeden ekilmesin.
+## - Kova: susamış parselin üstünde öne eğilip su döker; başka yerde dökmez.
+## Tohum ve su, araç parselin üstüne girdikten sonra sow_arm_time kadar orada kalınca dökülmeye başlar:
+## raf ön sıranın altında olduğundan arka sıraya giderken yoldaki parsele istemeden dökülmesin.
 ## Not: Sahnede kamera yok, dünya ve ekran koordinatları canvas dönüşümüyle çevrilir.
 
-enum Tool { HOE, CARROT_SEEDS, WHEAT_SEEDS }
+enum Tool { HOE, CARROT_SEEDS, WHEAT_SEEDS, BUCKET }
 
 const NO_TOUCH: int = -1
 const SLOT_BOUNCE_SCALE: float = 1.15
@@ -21,11 +22,13 @@ const SLOT_BOUNCE_TIME: float = 0.25
 @export var hoe_slot: Control
 @export var carrot_seed_slot: Control
 @export var wheat_seed_slot: Control
+@export var bucket_slot: Control
 
 @export_group("Tutulan araçlar")
 @export var hoe_scene: PackedScene
 @export var carrot_bag_scene: PackedScene
 @export var wheat_bag_scene: PackedScene
+@export var bucket_scene: PackedScene
 
 @export_group("")
 @export var plots_root: Node2D
@@ -53,14 +56,16 @@ var _last_tip: Vector2
 
 
 func _ready() -> void:
-	_slots = {Tool.HOE: hoe_slot, Tool.CARROT_SEEDS: carrot_seed_slot, Tool.WHEAT_SEEDS: wheat_seed_slot}
-	_scenes = {Tool.HOE: hoe_scene, Tool.CARROT_SEEDS: carrot_bag_scene, Tool.WHEAT_SEEDS: wheat_bag_scene}
+	_slots = {Tool.HOE: hoe_slot, Tool.CARROT_SEEDS: carrot_seed_slot, Tool.WHEAT_SEEDS: wheat_seed_slot,
+			Tool.BUCKET: bucket_slot}
+	_scenes = {Tool.HOE: hoe_scene, Tool.CARROT_SEEDS: carrot_bag_scene, Tool.WHEAT_SEEDS: wheat_bag_scene,
+			Tool.BUCKET: bucket_scene}
 	for kind: Tool in _slots:
 		_icons[kind] = _slots[kind].get_node(^"Icon") as Node2D
 		_icon_scales[kind] = _icons[kind].scale
 
 
-## Parmak kıpırdamasa da süre ilerlesin (torba bir çukurun üstünde bekletilince tohum düşsün).
+## Parmak kıpırdamasa da süre ilerlesin (torba çukurun üstünde bekletilince tohum düşsün, kova döksün).
 func _process(delta: float) -> void:
 	if _tool != null:
 		_update_plot(delta)
@@ -157,6 +162,11 @@ func _update_plot(delta: float) -> void:
 			_tool.set_pouring(sowing)
 			if sowing:
 				plot.sow_at(tip, Plot.Crop.WHEAT)
+		Tool.BUCKET:
+			var watering: bool = armed and plot.needs_water()
+			_tool.set_pouring(watering)
+			if watering:
+				plot.water(delta)
 	_plot = plot
 	_last_tip = tip
 

@@ -10,15 +10,19 @@ const USE_LIFT_TIME: float = 0.07
 const USE_STRIKE_TIME: float = 0.09
 const RETURN_TIME: float = 0.28
 const RETURN_END_SCALE: float = 0.45
+const POUR_TILT_TIME: float = 0.15
 
 ## Görselin kök noktasına göre ortası; rafa dönerken aracın ortası rafın ortasına otursun diye.
 @export var visual_center: Vector2 = Vector2.ZERO
 ## Kullanırken araç bu kadar kalkıp yatar, sonra hızla yerine iner (çapa vurur, torba silkelenir).
 @export var use_lift: Vector2 = Vector2(14.0, -34.0)
 @export_range(-45.0, 45.0, 1.0, "suffix:°") var use_tilt_degrees: float = 12.0
+## Dökerken araç kök noktası (ağzı) etrafında bu kadar eğilir (kova öne yatar); 0 ise eğilmez.
+@export_range(-90.0, 90.0, 1.0, "suffix:°") var pour_tilt_degrees: float = 0.0
 
 var _use_tween: Tween
 var _move_tween: Tween
+var _tilt_tween: Tween
 
 @onready var _visual: Node2D = $Visual
 @onready var _pour: CPUParticles2D = get_node_or_null(^"Pour") as CPUParticles2D
@@ -46,8 +50,14 @@ func play_use() -> void:
 
 ## Pour parçacığı olmayan araçlarda bir şey yapmaz.
 func set_pouring(pouring: bool) -> void:
-	if _pour != null and _pour.emitting != pouring:
-		_pour.emitting = pouring
+	if _pour == null or _pour.emitting == pouring:
+		return
+	_pour.emitting = pouring
+	if pour_tilt_degrees != 0.0:
+		if _tilt_tween != null:
+			_tilt_tween.kill()
+		_tilt_tween = create_tween().set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+		_tilt_tween.tween_property(_visual, ^"rotation", deg_to_rad(pour_tilt_degrees) if pouring else 0.0, POUR_TILT_TIME)
 
 
 ## Görsel ortası target'a gelecek şekilde rafa geri uçar, küçülüp kaybolur;

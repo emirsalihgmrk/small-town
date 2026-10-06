@@ -1,17 +1,44 @@
 class_name Plot
 extends Node2D
-## Tarladaki bir parsel: otlu -> (çapa) -> sürülmüş -> (tohum) -> ekili.
+## Tarladaki bir parsel: otlu -> (çapa) -> sürülmüş -> (tohum) -> ekili, büyüyor -> hazır.
 ## Çapanın her vuruşu (chop) vurulan noktaya en yakın ot kümesini söker ve sürülmüş toprağı biraz daha
 ## belirginleştirir; son ot da gidince parsel sürülmüş olur.
 ## Sürülmüş parsele havuç (3 çukura birer tohum) ya da buğday (yüzeye serpilir) ekilir; ilk tohum
-## parselin ürününü belirler, yarım kalan ekim sonra tamamlanabilir. Her aşamanın sonunda parsel
-## sevinçle zıplar.
+## parselin ürününü belirler, yarım kalan ekim sonra tamamlanabilir.
+## Ekili bitki tohum -> filiz -> yapraklı -> hazır aşamalarından geçer. Tohumken ve yapraklıyken susar:
+## toprak kurur, su balonu çıkar, bitki boynunu büker; sulanana kadar büyüme durur (bitki asla ölmez).
+## Büyüme yalnızca bu sahne açıkken ilerler. Her aşamanın sonunda parsel sevinçle zıplar.
 
 signal tilled
 signal sown
+signal ripened
 
-enum State { WEEDY, TILLED, SOWN }
+enum State { WEEDY, TILLED, SOWN, READY }
 enum Crop { NONE, CARROT, WHEAT }
+
+## Büyüme aşamaları. Bitki düğümlerinde aşamanın görseli "Stage<numara>" adlı çocuktur (tohumun yok).
+const STAGE_SEED: int = 0
+const STAGE_SPROUT: int = 1
+const STAGE_LEAFY: int = 2
+const STAGE_READY: int = 3
+## Toplam büyüme süresinin aşama geçişlerine dağılımı: tohum->filiz, filiz->yapraklı, yapraklı->hazır.
+const STAGE_TIME_SHARES: Array[float] = [0.25, 0.35, 0.4]
+## Bitki bu aşamalara gelince susar.
+const THIRSTY_STAGES: Array[int] = [STAGE_SEED, STAGE_LEAFY]
+## Ekim kutlaması görünsün diye ilk susama biraz sonra başlar.
+const FIRST_THIRST_DELAY: float = 0.7
+const DRY_FADE_TIME: float = 0.4
+const DROOP_DEGREES: float = 16.0
+const DROOP_TINT: Color = Color(1.0, 0.93, 0.72)
+const DROOP_TIME: float = 0.5
+const PERK_TIME: float = 0.6
+const BUBBLE_POP_TIME: float = 0.25
+const GROW_POP_SCALE: float = 0.55
+const GROW_POP_TIME: float = 0.5
+## Aynı parseldeki bitkiler aynı anda değil, bu süreye yayılarak büyür.
+const GROW_STAGGER: float = 0.25
+## Su sesi en fazla bu sıklıkta çalar.
+const SPLASH_SOUND_INTERVAL_MS: int = 300
 
 ## Toprağın dokunulabilir yüzü (yerel); ön kenarın kalınlığı da dahil.
 const AREA: Rect2 = Rect2(-165.0, -60.0, 330.0, 125.0)
@@ -42,6 +69,13 @@ const MAX_SOUND_PAN: float = 0.6
 @export var sparkle_scene: PackedScene
 @export var carrot_seed_texture: Texture2D
 
+@export_group("Büyüme")
+## Sulamayı bekleme süresi hariç, tohumdan hazır olana kadar geçen süre.
+@export_range(1.0, 600.0, 1.0, "suffix:s") var carrot_grow_time: float = 35.0
+@export_range(1.0, 600.0, 1.0, "suffix:s") var wheat_grow_time: float = 55.0
+## Susamış parsel kova altında bu kadar kalınca sulanmış olur.
+@export_range(0.1, 5.0, 0.1, "suffix:s") var water_needed: float = 1.0
+
 @export_group("Sesler")
 @export_file("*.ogg", "*.wav") var chop_sound_path: String = "res://assets/audio/sfx/hoe_chop.ogg"
 @export_range(0.0, 0.3, 0.01) var chop_pitch_variation: float = 0.1
@@ -50,9 +84,21 @@ const MAX_SOUND_PAN: float = 0.6
 @export_range(-40.0, 6.0, 0.5, "suffix:dB") var sprinkle_volume_db: float = -6.0
 @export_range(0.0, 0.3, 0.01) var seed_pitch_variation: float = 0.12
 @export_file("*.ogg", "*.wav") var ready_sound_path: String = "res://assets/audio/sfx/plot_ready.ogg"
+@export_file("*.ogg", "*.wav") var splash_sound_path: String = "res://assets/audio/sfx/water_splash.ogg"
+@export_range(-40.0, 6.0, 0.5, "suffix:dB") var splash_volume_db: float = -4.0
+@export_file("*.ogg", "*.wav") var grow_sound_path: String = "res://assets/audio/sfx/plant_grow.ogg"
 
 var state: State = State.WEEDY
 var crop: Crop = Crop.NONE
+var stage: int = STAGE_SEED
+var thirsty: bool = false
+
+var _plants: Array[Node2D] = []
+var _stage_time_left: float = 0.0
+var _water_progress: float = 0.0
+var _last_splash_ms: int = -SPLASH_SOUND_INTERVAL_MS
+var _splash_sound: AudioStream
+var _grow_sound: AudioStream
 
 var _weeds_left: Array[Node2D] = []
 var _weed_count: int = 0
@@ -70,6 +116,10 @@ var _ready_sound: AudioStream
 @onready var _weeds: Node2D = $Weeds
 @onready var _carrot_spots_root: Node2D = $CarrotSpots
 @onready var _wheat_seeds: Node2D = $WheatSeeds
+@onready var _wheat_plants: Node2D = $WheatPlants
+@onready var _dry_soil: CanvasItem = $DrySoil
+@onready var _water_bubble: Node2D = $WaterBubble
+@onready var _ready_glint: CPUParticles2D = $ReadyGlint
 
 
 func _ready() -> void:
@@ -77,6 +127,14 @@ func _ready() -> void:
 	_plop_sound = _load_stream(plop_sound_path)
 	_sprinkle_sound = _load_stream(sprinkle_sound_path)
 	_ready_sound = _load_stream(ready_sound_path)
+	_splash_sound = _load_stream(splash_sound_path)
+	_grow_sound = _load_stream(grow_sound_path)
+	_dry_soil.modulate.a = 0.0
+	_water_bubble.hide()
+	for plant: Node in _wheat_plants.get_children():
+		_set_plant_stage(plant as Node2D, STAGE_SEED)
+	for spot: Node in _carrot_spots_root.get_children():
+		_set_plant_stage(spot.get_node(^"Plant") as Node2D, STAGE_SEED)
 	for weed: Node in _weeds.get_children():
 		_weeds_left.append(weed as Node2D)
 	_weed_count = _weeds_left.size()
@@ -91,6 +149,14 @@ func _ready() -> void:
 		var seed_2d: Node2D = seed as Node2D
 		seed_2d.hide()
 		_wheat_seeds_left.append(seed_2d)
+
+
+func _process(delta: float) -> void:
+	if state != State.SOWN or thirsty:
+		return
+	_stage_time_left -= delta
+	if _stage_time_left <= 0.0:
+		_advance_stage()
 
 
 func contains(global_point: Vector2) -> bool:
@@ -198,8 +264,111 @@ func _sow_wheat(local_point: Vector2) -> bool:
 
 func _finish_sowing() -> void:
 	state = State.SOWN
+	stage = STAGE_SEED
+	_plants.clear()
+	if crop == Crop.CARROT:
+		for spot: Node2D in _carrot_spots:
+			_plants.append(spot.get_node(^"Plant") as Node2D)
+	else:
+		for plant: Node in _wheat_plants.get_children():
+			_plants.append(plant as Node2D)
 	_celebrate()
 	sown.emit()
+	_become_thirsty(FIRST_THIRST_DELAY)
+
+
+func needs_water() -> bool:
+	return state == State.SOWN and thirsty
+
+
+## Kova bu parselin üstünde delta saniye su döktü. Toprak döküldükçe koyulaşır.
+func water(delta: float) -> void:
+	if not needs_water():
+		return
+	_water_progress += delta
+	_dry_soil.modulate.a = clampf(1.0 - _water_progress / water_needed, 0.0, 1.0)
+	var now: int = Time.get_ticks_msec()
+	if now - _last_splash_ms >= SPLASH_SOUND_INTERVAL_MS:
+		_last_splash_ms = now
+		_play_sound(_splash_sound, splash_volume_db, 1.0 + randf_range(-seed_pitch_variation, seed_pitch_variation))
+	if _water_progress >= water_needed:
+		_quench()
+
+
+## Büyüme hemen durur; görünüş (kuru toprak, balon, bükülen bitkiler) visual_delay sonra gelir
+## (ekimden sonra kutlama görünsün diye). O arada sulanırsa görünüş hiç gelmez.
+func _become_thirsty(visual_delay: float = 0.0) -> void:
+	thirsty = true
+	_water_progress = 0.0
+	if visual_delay <= 0.0:
+		_show_thirst()
+		return
+	var tween: Tween = create_tween()
+	tween.tween_interval(visual_delay)
+	tween.tween_callback(func() -> void:
+		if thirsty:
+			_show_thirst())
+
+
+func _show_thirst() -> void:
+	create_tween().tween_property(_dry_soil, ^"modulate:a", 1.0, DRY_FADE_TIME)
+	_water_bubble.scale = Vector2.ZERO
+	_water_bubble.show()
+	create_tween().tween_property(_water_bubble, ^"scale", Vector2.ONE, BUBBLE_POP_TIME) \
+			.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	for plant: Node2D in _plants:
+		var side: float = 1.0 if randf() < 0.5 else -1.0
+		var tween: Tween = create_tween().set_parallel().set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+		tween.tween_property(plant, ^"rotation", deg_to_rad(DROOP_DEGREES) * side, DROOP_TIME)
+		tween.tween_property(plant, ^"modulate", DROOP_TINT, DROOP_TIME)
+
+
+## Sulandı: toprak koyulaşır, balon söner, bitkiler dikleşir ve büyüme sürer.
+func _quench() -> void:
+	thirsty = false
+	_dry_soil.modulate.a = 0.0
+	_play_sound(_plop_sound, 0.0, 1.0)
+	var bubble: Tween = create_tween()
+	bubble.tween_property(_water_bubble, ^"scale", Vector2.ZERO, BUBBLE_POP_TIME).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_IN)
+	bubble.tween_callback(_water_bubble.hide)
+	for plant: Node2D in _plants:
+		var tween: Tween = create_tween().set_parallel().set_trans(Tween.TRANS_ELASTIC).set_ease(Tween.EASE_OUT)
+		tween.tween_property(plant, ^"rotation", 0.0, PERK_TIME)
+		tween.tween_property(plant, ^"modulate", Color.WHITE, PERK_TIME * 0.5)
+	_stage_time_left = _grow_time() * STAGE_TIME_SHARES[stage]
+
+
+func _advance_stage() -> void:
+	stage += 1
+	_play_sound(_grow_sound, 0.0, 1.0 + randf_range(-seed_pitch_variation, seed_pitch_variation))
+	if stage == STAGE_SPROUT and crop == Crop.WHEAT:
+		_wheat_seeds.hide()
+	for i: int in _plants.size():
+		var plant: Node2D = _plants[i]
+		var delay: float = GROW_STAGGER * float(i) / maxf(_plants.size() - 1, 1)
+		var tween: Tween = create_tween()
+		tween.tween_interval(delay)
+		tween.tween_callback(_set_plant_stage.bind(plant, stage))
+		tween.tween_callback(func() -> void: plant.scale = Vector2.ONE * GROW_POP_SCALE)
+		tween.tween_property(plant, ^"scale", Vector2.ONE, GROW_POP_TIME).set_trans(Tween.TRANS_ELASTIC).set_ease(Tween.EASE_OUT)
+	if stage == STAGE_READY:
+		state = State.READY
+		_celebrate()
+		_ready_glint.emitting = true
+		ripened.emit()
+	elif stage in THIRSTY_STAGES:
+		_become_thirsty()
+	else:
+		_stage_time_left = _grow_time() * STAGE_TIME_SHARES[stage]
+
+
+func _grow_time() -> float:
+	return carrot_grow_time if crop == Crop.CARROT else wheat_grow_time
+
+
+func _set_plant_stage(plant: Node2D, plant_stage: int) -> void:
+	for i: int in range(STAGE_SPROUT, STAGE_READY + 1):
+		(plant.get_node(NodePath("Stage%d" % i)) as CanvasItem).visible = i == plant_stage
 
 
 func _take_nearest_weed(local_point: Vector2) -> Node2D:

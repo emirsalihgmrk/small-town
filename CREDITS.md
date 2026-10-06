@@ -19,6 +19,8 @@ Yeniden üretmek için proje kökünden: `python tools/audio/generate_audio.py`
 | `assets/audio/sfx/plot_ready.ogg` | Parsel hazır: yukarı çıkan üç notalı müzik kutusu arpeji |
 | `assets/audio/sfx/seed_plop.ogg` | Tohum çukura düşer: perdesi hızla inen yumuşak bir "pıt" |
 | `assets/audio/sfx/seed_sprinkle.ogg` | Serpilen tohumların toprağa düşerken çıkardığı ince tıkırtılar |
+| `assets/audio/sfx/water_splash.ogg` | Kovadan dökülen su: dalgalı akış hışırtısı ve birkaç baloncuk ("şırıl") |
+| `assets/audio/sfx/plant_grow.ogg` | Bitki bir aşama büyür: yukarı kayıp hafifçe geri inen yumuşak bir "boing" |
 
 ## Görseller
 

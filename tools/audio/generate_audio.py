@@ -338,6 +338,32 @@ def make_seed_sprinkle() -> np.ndarray:
     return fade_edges(linear_reverb(out, wet=0.1, seconds=0.15), fade_out=0.03)
 
 
+def make_water_splash() -> np.ndarray:
+    """Kovadan dökülen suyun kısa bir parçası ("şırıl"): dalgalı akış hışırtısı ve birkaç baloncuk."""
+    t = times(0.4)
+    flow = sosfilt(butter(2, [400, 2600], "band", fs=SR, output="sos"), rng.standard_normal(len(t)))
+    flow /= np.max(np.abs(flow))
+    flow *= (0.55 + 0.45 * np.sin(2 * np.pi * 23 * t + 0.4)) * np.sin(np.pi * t / 0.4) ** 0.6
+    bubbles = np.zeros(len(t))
+    for start in np.sort(rng.uniform(0.02, 0.3, 4)):
+        bt = times(0.035)
+        hz = np.interp(bt, [0, 0.035], [rng.uniform(450, 650), rng.uniform(900, 1300)])
+        blip = np.sin(2 * np.pi * np.cumsum(hz) / SR) * np.sin(np.pi * bt / 0.035)
+        k = int(start * SR)
+        bubbles[k: k + len(blip)] += 0.35 * blip
+    return fade_edges(lowpass(0.6 * flow + bubbles, 5000), fade_in=0.02, fade_out=0.08)
+
+
+def make_plant_grow() -> np.ndarray:
+    """Bitki bir aşama büyür: yukarı kayıp hafifçe geri inen yumuşak bir "boing"."""
+    t = times(0.4)
+    hz = np.interp(t, [0, 0.09, 0.22, 0.4], [330, 700, 620, 600])
+    hz *= 1 + 0.015 * np.sin(2 * np.pi * 9 * t)
+    phase = 2 * np.pi * np.cumsum(hz) / SR
+    tone = (np.sin(phase) + 0.25 * np.sin(2 * phase) + 0.08 * np.sin(3 * phase)) * np.exp(-t / 0.13)
+    return fade_edges(linear_reverb(tone * np.clip(t / 0.006, 0, 1), wet=0.15, seconds=0.4), fade_out=0.1)
+
+
 def main() -> None:
     write("music/home_theme.ogg", make_music())
     write("ambience/wind_loop.ogg", make_wind())
@@ -350,6 +376,8 @@ def main() -> None:
     write("sfx/plot_ready.ogg", make_plot_ready())
     write("sfx/seed_plop.ogg", make_seed_plop())
     write("sfx/seed_sprinkle.ogg", make_seed_sprinkle())
+    write("sfx/water_splash.ogg", make_water_splash())
+    write("sfx/plant_grow.ogg", make_plant_grow())
 
 
 if __name__ == "__main__":
