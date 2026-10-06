@@ -1,0 +1,14 @@
+[gd_scene format=3]
+
+[ext_resource type="Texture2D" path="res://assets/art/ui/icons/tools/seed_bag.svg" id="1_bag"]
+[ext_resource type="Texture2D" path="res://assets/art/ui/icons/field/wheat.svg" id="2_wheat"]
+
+[node name="SeedBagWheatIcon" type="Node2D"]
+
+[node name="Bag" type="Sprite2D" parent="."]
+texture = ExtResource("1_bag")
+
+[node name="Wheat" type="Sprite2D" parent="."]
+position = Vector2(0, 26)
+scale = Vector2(0.78, 0.78)
+texture = ExtResource("2_wheat")

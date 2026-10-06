@@ -1,0 +1,40 @@
+[gd_scene format=3]
+
+[ext_resource type="Texture2D" path="res://assets/art/field/plot_soil.svg" id="1_soil"]
+[ext_resource type="Texture2D" path="res://assets/art/field/weed_patch.svg" id="2_weed"]
+
+[node name="Plot" type="Node2D"]
+
+[node name="Soil" type="Sprite2D" parent="."]
+texture = ExtResource("1_soil")
+centered = false
+offset = Vector2(-170, -62)
+
+[node name="Weeds" type="Node2D" parent="."]
+
+[node name="Weed1" type="Sprite2D" parent="Weeds"]
+position = Vector2(-98, -14)
+texture = ExtResource("2_weed")
+centered = false
+offset = Vector2(-48, -38)
+
+[node name="Weed2" type="Sprite2D" parent="Weeds"]
+position = Vector2(8, -26)
+scale = Vector2(0.85, 0.85)
+texture = ExtResource("2_weed")
+centered = false
+offset = Vector2(-48, -38)
+
+[node name="Weed3" type="Sprite2D" parent="Weeds"]
+position = Vector2(102, 4)
+scale = Vector2(1.1, 1.1)
+texture = ExtResource("2_weed")
+centered = false
+offset = Vector2(-48, -38)
+
+[node name="Weed4" type="Sprite2D" parent="Weeds"]
+position = Vector2(-20, 24)
+scale = Vector2(0.95, 0.95)
+texture = ExtResource("2_weed")
+centered = false
+offset = Vector2(-48, -38)
