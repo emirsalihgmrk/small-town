@@ -390,6 +390,16 @@ def make_sickle_swish() -> np.ndarray:
     return fade_edges(out, fade_in=0.01, fade_out=0.04)
 
 
+def make_basket_drop() -> np.ndarray:
+    """Ürün sepete düşer: boğuk bir hasır "tok" ve kısa bir örgü hışırtısı."""
+    t = times(0.3)
+    hz = np.interp(t, [0, 0.05], [260, 120])
+    thump = np.sin(2 * np.pi * np.cumsum(hz) / SR) * np.exp(-t / 0.05) * np.clip(t / 0.003, 0, 1)
+    rustle = sosfilt(butter(2, [1200, 4500], "band", fs=SR, output="sos"), rng.standard_normal(len(t)))
+    rustle *= 0.3 * np.exp(-t / 0.05) * (0.6 + 0.4 * np.sin(2 * np.pi * 60 * t)) / np.max(np.abs(rustle))
+    return fade_edges(linear_reverb(lowpass(thump + rustle, 5000), wet=0.1, seconds=0.25), fade_out=0.06)
+
+
 def main() -> None:
     write("music/home_theme.ogg", make_music())
     write("ambience/wind_loop.ogg", make_wind())
@@ -406,6 +416,7 @@ def main() -> None:
     write("sfx/plant_grow.ogg", make_plant_grow())
     write("sfx/carrot_pop.ogg", make_carrot_pop())
     write("sfx/sickle_swish.ogg", make_sickle_swish())
+    write("sfx/basket_drop.ogg", make_basket_drop())
 
 
 if __name__ == "__main__":

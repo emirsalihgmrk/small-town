@@ -7,7 +7,8 @@ extends Node2D
 ## parselin ürününü belirler, yarım kalan ekim sonra tamamlanabilir.
 ## Ekili bitki tohum -> filiz -> yapraklı -> hazır aşamalarından geçer. Tohumken ve yapraklıyken susar:
 ## toprak kurur, su balonu çıkar, bitki boynunu büker; sulanana kadar büyüme durur (bitki asla ölmez).
-## Büyüme yalnızca bu sahne açıkken ilerler.
+## Sahne açıkken büyüme gerçek zamanlı ilerler; sahne kapalıyken geçen süre geri dönüldüğünde
+## load_state ile sessizce ileri sarılır (susamış bitki yine bekler).
 ## Hazır havuçlar parmakla tek tek çekilip çıkarılır, hazır buğday orakla biçilir. Hasat bitince parsel
 ## tamamen başa dönmez: toprak yarı sürülmüş kalır, üstünde birkaç ot çıkar.
 ## Her aşamanın sonunda parsel sevinçle zıplar.
@@ -15,7 +16,7 @@ extends Node2D
 signal tilled
 signal sown
 signal ripened
-## Topraktan bir ürün çıktı (havuç başına bir, buğday parseli başına bir demet).
+## Topraktan bir ürün çıktı (havuç başına bir, buğday parseli başına bir demet); görseli dinleyen çizer.
 signal harvested(harvested_crop: Crop, global_point: Vector2)
 
 enum State { WEEDY, TILLED, SOWN, READY }
@@ -58,13 +59,6 @@ const REAP_RADIUS: float = 60.0
 const STALK_FALL_DEGREES: float = 80.0
 const STALK_FALL_TIME: float = 0.35
 const SWISH_SOUND_INTERVAL_MS: int = 70
-## Topraktan çıkan ürün havalanır, kısa bir an asılı kalır, sonra kaybolur.
-const PRODUCE_START_SCALE: float = 0.6
-const PRODUCE_RISE: float = 130.0
-const PRODUCE_RISE_TIME: float = 0.4
-const PRODUCE_SPIN_DEGREES: float = 360.0
-const PRODUCE_HOLD_TIME: float = 0.35
-const PRODUCE_FADE_TIME: float = 0.3
 const BUNDLE_HEIGHT: float = 30.0
 ## Hasat kutlaması görünsün, sonra parsel yeniden otlansın.
 const REGROW_DELAY: float = 0.9
@@ -99,8 +93,6 @@ const MAX_SOUND_PAN: float = 0.6
 @export var dirt_burst_scene: PackedScene
 @export var sparkle_scene: PackedScene
 @export var carrot_seed_texture: Texture2D
-@export var carrot_produce_texture: Texture2D
-@export var wheat_bundle_texture: Texture2D
 
 @export_group("Büyüme")
 ## Sulamayı bekleme süresi hariç, tohumdan hazır olana kadar geçen süre.
@@ -145,6 +137,9 @@ var _swish_sound: AudioStream
 
 var _weeds_left: Array[Node2D] = []
 var _weed_count: int = 0
+var _all_weeds: Array[Node2D] = []
+var _all_wheat_seeds: Array[Node2D] = []
+var _all_wheat_plants: Array[Node2D] = []
 var _carrot_spots: Array[Node2D] = []
 var _carrot_spots_left: Array[Node2D] = []
 var _carrot_seeds_landed: int = 0
@@ -174,29 +169,20 @@ func _ready() -> void:
 	_grow_sound = _load_stream(grow_sound_path)
 	_carrot_pop_sound = _load_stream(carrot_pop_sound_path)
 	_swish_sound = _load_stream(swish_sound_path)
-	_dry_soil.modulate.a = 0.0
-	_water_bubble.hide()
-	for plant: Node in _wheat_plants.get_children():
-		_set_plant_stage(plant as Node2D, STAGE_SEED)
-	for spot: Node in _carrot_spots_root.get_children():
+	_all_weeds.assign(_weeds.get_children())
+	_all_wheat_seeds.assign(_wheat_seeds.get_children())
+	_all_wheat_plants.assign(_wheat_plants.get_children())
+	_carrot_spots.assign(_carrot_spots_root.get_children())
+	for weed: Node2D in _all_weeds:
+		_weed_rest[weed] = weed.transform
+	for spot: Node2D in _carrot_spots:
 		var plant: Node2D = spot.get_node(^"Plant") as Node2D
-		_set_plant_stage(plant, STAGE_SEED)
 		_plant_rest[plant] = plant.position
-	for weed: Node in _weeds.get_children():
-		_weeds_left.append(weed as Node2D)
-		_weed_rest[weed as Node2D] = (weed as Node2D).transform
-	_weed_count = _weeds_left.size()
-	_tilled_soil.modulate.a = 0.0
-	for spot: Node in _carrot_spots_root.get_children():
-		var spot_2d: Node2D = spot as Node2D
-		_carrot_spots.append(spot_2d)
-		_hole(spot_2d).modulate.a = 0.0
-		_mound(spot_2d).hide()
+	_weed_count = _all_weeds.size()
+	_weeds_left = _all_weeds.duplicate()
 	_carrot_spots_left = _carrot_spots.duplicate()
-	for seed: Node in _wheat_seeds.get_children():
-		var seed_2d: Node2D = seed as Node2D
-		seed_2d.hide()
-		_wheat_seeds_left.append(seed_2d)
+	_wheat_seeds_left = _all_wheat_seeds.duplicate()
+	_apply_visuals()
 
 
 func _process(delta: float) -> void:
@@ -313,13 +299,7 @@ func _sow_wheat(local_point: Vector2) -> bool:
 func _finish_sowing() -> void:
 	state = State.SOWN
 	stage = STAGE_SEED
-	_plants.clear()
-	if crop == Crop.CARROT:
-		for spot: Node2D in _carrot_spots:
-			_plants.append(spot.get_node(^"Plant") as Node2D)
-	else:
-		for plant: Node in _wheat_plants.get_children():
-			_plants.append(plant as Node2D)
+	_plants = _crop_plants()
 	_celebrate()
 	sown.emit()
 	_become_thirsty(FIRST_THIRST_DELAY)
@@ -387,7 +367,7 @@ func _quench() -> void:
 
 
 func _advance_stage() -> void:
-	stage += 1
+	_step_stage()
 	_play_sound(_grow_sound, 0.0, 1.0 + randf_range(-seed_pitch_variation, seed_pitch_variation))
 	if stage == STAGE_SPROUT and crop == Crop.WHEAT:
 		_wheat_seeds.hide()
@@ -399,19 +379,141 @@ func _advance_stage() -> void:
 		tween.tween_callback(_set_plant_stage.bind(plant, stage))
 		tween.tween_callback(func() -> void: plant.scale = Vector2.ONE * GROW_POP_SCALE)
 		tween.tween_property(plant, ^"scale", Vector2.ONE, GROW_POP_TIME).set_trans(Tween.TRANS_ELASTIC).set_ease(Tween.EASE_OUT)
+	if state == State.READY:
+		_celebrate()
+		_ready_glint.emitting = true
+		ripened.emit()
+	elif thirsty:
+		_become_thirsty()
+
+
+## Bir aşama ilerletir (yalnızca veri; görünüşe dokunmaz).
+func _step_stage() -> void:
+	stage += 1
 	if stage == STAGE_READY:
 		state = State.READY
 		if crop == Crop.CARROT:
 			_ready_carrots = _carrot_spots.duplicate()
 		else:
 			_stalks_left = _plants.duplicate()
-		_celebrate()
-		_ready_glint.emitting = true
-		ripened.emit()
 	elif stage in THIRSTY_STAGES:
-		_become_thirsty()
+		thirsty = true
 	else:
 		_stage_time_left = _grow_time() * STAGE_TIME_SHARES[stage]
+
+
+## Kayıt için parselin durumu (yalnızca JSON'a yazılabilir değerler; düğümler sıralarıyla tutulur).
+func save_state() -> Dictionary:
+	return {
+		"state": state,
+		"crop": crop,
+		"stage": stage,
+		"thirsty": thirsty,
+		"stage_time_left": _stage_time_left,
+		"weeds": _all_weeds.map(func(weed: Node2D) -> bool: return weed in _weeds_left),
+		"carrot_sown": _carrot_spots.map(func(spot: Node2D) -> bool: return spot not in _carrot_spots_left),
+		"carrot_ready": _carrot_spots.map(func(spot: Node2D) -> bool: return spot in _ready_carrots),
+		"wheat_sown": _all_wheat_seeds.map(func(seed: Node2D) -> bool: return seed not in _wheat_seeds_left),
+		"wheat_standing": _all_wheat_plants.map(func(plant: Node2D) -> bool: return plant in _stalks_left),
+	}
+
+
+## Kayıttan geri yükler, sahne kapalıyken geçen elapsed saniye kadar büyümeyi sessizce ileri sarar ve
+## görünüşü animasyonsuz kurar. Kayıt bir geçişin ortasında alındıysa (tohum düşerken, hasat
+## kutlamasında) o geçiş tamamlanmış sayılır.
+func load_state(data: Dictionary, elapsed: float) -> void:
+	state = clampi(int(data.get("state", State.WEEDY)), State.WEEDY, State.READY) as State
+	crop = clampi(int(data.get("crop", Crop.NONE)), Crop.NONE, Crop.WHEAT) as Crop
+	stage = clampi(int(data.get("stage", STAGE_SEED)), STAGE_SEED, STAGE_READY)
+	thirsty = bool(data.get("thirsty", false))
+	_stage_time_left = float(data.get("stage_time_left", 0.0))
+	_water_progress = 0.0
+	_weeds_left = _pick(_all_weeds, data.get("weeds", []), true)
+	_carrot_spots_left = _pick(_carrot_spots, data.get("carrot_sown", []), false)
+	_carrot_seeds_landed = _carrot_spots.size() - _carrot_spots_left.size()
+	_ready_carrots = _pick(_carrot_spots, data.get("carrot_ready", []), true)
+	_wheat_seeds_left = _pick(_all_wheat_seeds, data.get("wheat_sown", []), false)
+	_stalks_left = _pick(_all_wheat_plants, data.get("wheat_standing", []), true)
+	var fully_sown: bool = (crop == Crop.CARROT and _carrot_spots_left.is_empty()) \
+			or (crop == Crop.WHEAT and _wheat_seeds_left.is_empty())
+	if state == State.TILLED and fully_sown:
+		state = State.SOWN
+		stage = STAGE_SEED
+		thirsty = true
+	_plants.clear()
+	if state == State.SOWN or state == State.READY:
+		_plants = _crop_plants()
+	if state == State.SOWN:
+		_fast_forward(elapsed)
+	_apply_visuals()
+	if state == State.READY and _ready_carrots.is_empty() and _stalks_left.is_empty():
+		_regrow()
+
+
+func _fast_forward(seconds: float) -> void:
+	while seconds > 0.0 and state == State.SOWN and not thirsty:
+		if _stage_time_left > seconds:
+			_stage_time_left -= seconds
+			return
+		seconds -= _stage_time_left
+		_step_stage()
+
+
+## Görünüşü o anki verilerden, animasyonsuz kurar.
+func _apply_visuals() -> void:
+	var growing: bool = state == State.SOWN or state == State.READY
+	_tilled_soil.modulate.a = 1.0 - float(_weeds_left.size()) / maxf(_weed_count, 1) if state == State.WEEDY else 1.0
+	for weed: Node2D in _all_weeds:
+		weed.transform = _weed_rest[weed]
+		weed.modulate.a = 1.0
+		weed.visible = weed in _weeds_left
+	for spot: Node2D in _carrot_spots:
+		var sown: bool = crop == Crop.CARROT and spot not in _carrot_spots_left
+		var picked: bool = state == State.READY and crop == Crop.CARROT and spot not in _ready_carrots
+		var waiting_hole: bool = state == State.TILLED and crop == Crop.CARROT and not sown
+		_mound(spot).visible = sown and not picked
+		_hole(spot).modulate.a = 1.0 if picked or waiting_hole else 0.0
+		var plant: Node2D = spot.get_node(^"Plant") as Node2D
+		_reset_plant(plant)
+		if growing and crop == Crop.CARROT and not picked:
+			_set_plant_stage(plant, stage)
+	_wheat_seeds.visible = stage == STAGE_SEED
+	for seed: Node2D in _all_wheat_seeds:
+		seed.scale = Vector2.ONE
+		seed.visible = seed not in _wheat_seeds_left
+	for plant: Node2D in _all_wheat_plants:
+		_reset_plant(plant)
+		if growing and crop == Crop.WHEAT and (state != State.READY or plant in _stalks_left):
+			_set_plant_stage(plant, stage)
+	_dry_soil.modulate.a = 1.0 if thirsty else 0.0
+	_water_bubble.visible = thirsty
+	_water_bubble.scale = Vector2.ONE
+	if thirsty:
+		for plant: Node2D in _plants:
+			plant.rotation = deg_to_rad(DROOP_DEGREES) * (1.0 if randf() < 0.5 else -1.0)
+			plant.modulate = DROOP_TINT
+	_ready_glint.emitting = state == State.READY
+
+
+func _crop_plants() -> Array[Node2D]:
+	var plants: Array[Node2D] = []
+	if crop == Crop.CARROT:
+		for spot: Node2D in _carrot_spots:
+			plants.append(spot.get_node(^"Plant") as Node2D)
+	elif crop == Crop.WHEAT:
+		plants = _all_wheat_plants.duplicate()
+	return plants
+
+
+## Kayıttaki bayrak listesine göre düğüm seçer: bayrağı wanted olanlar. Liste eksik/bozuksa
+## eksik kalan düğümler bayrağı wanted'ın tersiymiş gibi sayılır.
+func _pick(nodes: Array[Node2D], flags: Variant, wanted: bool) -> Array[Node2D]:
+	var picked: Array[Node2D] = []
+	var list: Array = flags if flags is Array else []
+	for i: int in nodes.size():
+		if i < list.size() and bool(list[i]) == wanted:
+			picked.append(nodes[i])
+	return picked
 
 
 ## Noktadaki hazır havucun çukur sırası; yoksa -1.
@@ -455,7 +557,7 @@ func uproot_carrot(index: int) -> void:
 	_hole(spot).modulate.a = 1.0
 	_play_sound(_carrot_pop_sound, 0.0, 1.0 + randf_range(-seed_pitch_variation, seed_pitch_variation))
 	_spawn_effect(dirt_burst_scene, spot.global_position)
-	_launch_produce(carrot_produce_texture, from)
+	harvested.emit(crop, from)
 	if _ready_carrots.is_empty():
 		_finish_harvest()
 
@@ -482,7 +584,7 @@ func reap_at(global_point: Vector2) -> int:
 		_last_swish_ms = now
 		_play_sound(_swish_sound, swish_volume_db, 1.0 + randf_range(-seed_pitch_variation, seed_pitch_variation))
 	if _stalks_left.is_empty():
-		_launch_produce(wheat_bundle_texture, to_global(Vector2(0.0, -BUNDLE_HEIGHT)))
+		harvested.emit(crop, to_global(Vector2(0.0, -BUNDLE_HEIGHT)))
 		_finish_harvest()
 	return cut
 
@@ -497,27 +599,6 @@ func _fell(stalk: Node2D, from_local: Vector2) -> void:
 			.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
 	tween.tween_property(stalk, ^"modulate:a", 0.0, STALK_FALL_TIME * 0.6).set_delay(STALK_FALL_TIME * 0.4)
 	tween.chain().tween_callback(stalk.hide)
-
-
-## Ürün topraktan havalanıp döner, kısa bir an asılı kalır ve parıltıyla kaybolur.
-func _launch_produce(texture: Texture2D, global_point: Vector2) -> void:
-	harvested.emit(crop, global_point)
-	var produce: Sprite2D = Sprite2D.new()
-	produce.texture = texture
-	add_child(produce)
-	produce.global_position = global_point
-	produce.scale = Vector2.ONE * PRODUCE_START_SCALE
-	var tween: Tween = create_tween()
-	tween.set_parallel()
-	tween.tween_property(produce, ^"position:y", produce.position.y - PRODUCE_RISE, PRODUCE_RISE_TIME) \
-			.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
-	tween.tween_property(produce, ^"scale", Vector2.ONE, PRODUCE_RISE_TIME).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
-	tween.tween_property(produce, ^"rotation", deg_to_rad(PRODUCE_SPIN_DEGREES), PRODUCE_RISE_TIME).set_ease(Tween.EASE_OUT)
-	tween.chain().tween_interval(PRODUCE_HOLD_TIME)
-	tween.chain().tween_callback(func() -> void: _spawn_effect(sparkle_scene, produce.global_position))
-	tween.tween_property(produce, ^"modulate:a", 0.0, PRODUCE_FADE_TIME)
-	tween.tween_property(produce, ^"scale", Vector2.ONE * PRODUCE_START_SCALE, PRODUCE_FADE_TIME)
-	tween.chain().tween_callback(produce.queue_free)
 
 
 func _finish_harvest() -> void:
@@ -544,14 +625,14 @@ func _regrow() -> void:
 		_mound(spot).hide()
 		_reset_plant(spot.get_node(^"Plant") as Node2D)
 	_wheat_seeds.show()
-	_wheat_seeds_left.clear()
-	for seed: Node in _wheat_seeds.get_children():
-		(seed as Node2D).hide()
-		_wheat_seeds_left.append(seed as Node2D)
-	for plant: Node in _wheat_plants.get_children():
-		_reset_plant(plant as Node2D)
-	var weeds: Array[Node2D] = []
-	weeds.assign(_weed_rest.keys())
+	_wheat_seeds_left = _all_wheat_seeds.duplicate()
+	for seed: Node2D in _all_wheat_seeds:
+		seed.hide()
+	for plant: Node2D in _all_wheat_plants:
+		_reset_plant(plant)
+	_dry_soil.modulate.a = 0.0
+	_water_bubble.hide()
+	var weeds: Array[Node2D] = _all_weeds.duplicate()
 	weeds.shuffle()
 	_weeds_left.assign(weeds.slice(0, REGROW_WEEDS))
 	for weed: Node2D in _weeds_left:

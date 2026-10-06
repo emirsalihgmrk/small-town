@@ -20,8 +20,6 @@
 [ext_resource type="Texture2D" path="res://assets/art/field/water_bubble.svg" id="18_bubble"]
 [ext_resource type="Script" path="res://scripts/components/pulse_component.gd" id="19_pulse"]
 [ext_resource type="Texture2D" path="res://assets/art/environment/star.svg" id="20_star"]
-[ext_resource type="Texture2D" path="res://assets/art/ui/icons/field/carrot.svg" id="21_carrot_produce"]
-[ext_resource type="Texture2D" path="res://assets/art/field/wheat_bundle.svg" id="22_wheat_bundle"]
 
 [sub_resource type="Curve" id="Curve_twinkle"]
 _data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.3, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
@@ -32,8 +30,6 @@ script = ExtResource("4_plot")
 dirt_burst_scene = ExtResource("5_dirt")
 sparkle_scene = ExtResource("6_sparkle")
 carrot_seed_texture = ExtResource("10_carrot_seed")
-carrot_produce_texture = ExtResource("21_carrot_produce")
-wheat_bundle_texture = ExtResource("22_wheat_bundle")
 
 [node name="Soil" type="Sprite2D" parent="."]
 texture = ExtResource("1_soil")
