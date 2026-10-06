@@ -662,7 +662,9 @@ func _regrow() -> void:
 	create_tween().tween_property(_tilled_soil, ^"modulate:a", progress, TILL_REVEAL_TIME)
 
 
+## Biçilen başak düğümüyle birlikte gizlenir (_fell); yeniden kullanılmadan önce görünür yapılmalı.
 func _reset_plant(plant: Node2D) -> void:
+	plant.show()
 	_set_plant_stage(plant, STAGE_SEED)
 	plant.position = _plant_rest.get(plant, plant.position)
 	plant.rotation = 0.0
