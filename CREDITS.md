@@ -15,6 +15,8 @@ Yeniden üretmek için proje kökünden: `python tools/audio/generate_audio.py`
 | `assets/audio/ambience/bird_chirp_1..5.ogg` | Frekans süpürmeli kısa kuş cıvıltıları (5 varyasyon) |
 | `assets/audio/ambience/distant_cow.ogg` | Uzaktan, yumuşak bir inek böğürmesi |
 | `assets/audio/sfx/giggle.ogg` | Formant sentezli kısa bir çocuk kıkırdaması ("hi-hi-hi") |
+| `assets/audio/sfx/hoe_chop.ogg` | Çapa vuruşu: boğuk "tok", toprak hışırtısı ve dökülen kesekler |
+| `assets/audio/sfx/plot_ready.ogg` | Parsel hazır: yukarı çıkan üç notalı müzik kutusu arpeji |
 
 ## Görseller
 

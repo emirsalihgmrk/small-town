@@ -2,11 +2,24 @@
 
 [ext_resource type="Texture2D" path="res://assets/art/field/plot_soil.svg" id="1_soil"]
 [ext_resource type="Texture2D" path="res://assets/art/field/weed_patch.svg" id="2_weed"]
+[ext_resource type="Texture2D" path="res://assets/art/field/plot_soil_tilled.svg" id="3_tilled"]
+[ext_resource type="Script" path="res://scripts/field/plot.gd" id="4_plot"]
+[ext_resource type="PackedScene" path="res://scenes/field/effects/dirt_burst.tscn" id="5_dirt"]
+[ext_resource type="PackedScene" path="res://scenes/field/effects/sparkle_burst.tscn" id="6_sparkle"]
 
 [node name="Plot" type="Node2D"]
+script = ExtResource("4_plot")
+dirt_burst_scene = ExtResource("5_dirt")
+sparkle_scene = ExtResource("6_sparkle")
 
 [node name="Soil" type="Sprite2D" parent="."]
 texture = ExtResource("1_soil")
+centered = false
+offset = Vector2(-170, -62)
+
+[node name="TilledSoil" type="Sprite2D" parent="."]
+modulate = Color(1, 1, 1, 0)
+texture = ExtResource("3_tilled")
 centered = false
 offset = Vector2(-170, -62)
 

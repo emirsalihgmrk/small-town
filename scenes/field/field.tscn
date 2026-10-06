@@ -28,6 +28,8 @@
 [ext_resource type="Script" path="res://scripts/input/tap_router.gd" id="tap_router_script"]
 [ext_resource type="Script" path="res://scripts/components/pause_when_inactive.gd" id="pause_script"]
 [ext_resource type="Script" path="res://scripts/field/field.gd" id="field_script"]
+[ext_resource type="Script" path="res://scripts/field/field_tools.gd" id="field_tools_script"]
+[ext_resource type="PackedScene" path="res://scenes/field/held_hoe.tscn" id="held_hoe"]
 
 [sub_resource type="StyleBoxFlat" id="home_normal"]
 bg_color = Color(1, 0.945, 0.722, 1)
@@ -368,6 +370,13 @@ script = ExtResource("pause_script")
 [node name="TapRouter" type="Node" parent="."]
 script = ExtResource("tap_router_script")
 
+[node name="FieldTools" type="Node" parent="." node_paths=PackedStringArray("hoe_slot", "plots_root", "drag_layer")]
+script = ExtResource("field_tools_script")
+hoe_slot = NodePath("../UI/Root/ToolTray/Slots/Hoe")
+hoe_scene = ExtResource("held_hoe")
+plots_root = NodePath("../World/Plots")
+drag_layer = NodePath("../DragLayer")
+
 [node name="UI" type="CanvasLayer" parent="."]
 
 [node name="Root" type="Control" parent="UI"]
@@ -469,3 +478,6 @@ theme_override_styles/panel = SubResource("slot")
 position = Vector2(58, 58)
 scale = Vector2(0.5, 0.5)
 texture = ExtResource("23_sickle")
+
+[node name="DragLayer" type="CanvasLayer" parent="."]
+layer = 2

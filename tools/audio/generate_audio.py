@@ -285,6 +285,37 @@ def make_giggle() -> np.ndarray:
     return fade_edges(linear_reverb(lowpass(sequence(parts), 4500), wet=0.1, seconds=0.3))
 
 
+# ------------------------------------------------------------------ tarla
+def make_hoe_chop() -> np.ndarray:
+    """Çapanın toprağa girişi: boğuk bir "tok", ardından toprak hışırtısı ("hışt") ve dökülen kesekler."""
+    t = times(0.3)
+    thump_hz = np.interp(t, [0, 0.06], [150, 70])
+    thump = np.sin(2 * np.pi * np.cumsum(thump_hz) / SR) * np.exp(-t / 0.035)
+    scrape = sosfilt(butter(2, [700, 3600], "band", fs=SR, output="sos"), rng.standard_normal(len(t)))
+    scrape *= np.clip(t / 0.008, 0, 1) * np.exp(-t / 0.07)
+    scrape /= np.max(np.abs(scrape))
+    crumbs = np.zeros(len(t))
+    for i, start in enumerate(np.sort(rng.uniform(0.06, 0.22, 5))):
+        n = int(0.008 * SR)
+        k = int(start * SR)
+        grain = sosfilt(butter(2, 1500, "high", fs=SR, output="sos"), rng.standard_normal(n)) * np.hanning(n)
+        crumbs[k: k + n] += grain * 0.3 * (1 - i / 6)
+    out = thump + 0.7 * scrape + crumbs
+    return fade_edges(lowpass(out, 6000), fade_out=0.06)
+
+
+def make_plot_ready() -> np.ndarray:
+    """Parsel hazır: yukarı çıkan üç notalı müzik kutusu arpeji (Sol-Do-Mi, müzikle aynı Do majör)."""
+    step = 0.09
+    notes = ((79, 0.8), (84, 0.9), (88, 1.0))
+    buf = np.zeros(int((step * len(notes) + 1.9) * SR))
+    for i, (m, gain) in enumerate(notes):
+        sig = music_box(midi_hz(m), 0.6)
+        k = int(i * step * SR)
+        buf[k: k + len(sig)] += gain * sig
+    return fade_edges(linear_reverb(lowpass(buf, 6000), wet=0.2, seconds=0.6), fade_out=0.3)
+
+
 def main() -> None:
     write("music/home_theme.ogg", make_music())
     write("ambience/wind_loop.ogg", make_wind())
@@ -292,6 +323,9 @@ def main() -> None:
         write(f"ambience/bird_chirp_{i}.ogg", b)
     write("ambience/distant_cow.ogg", make_distant_cow())
     write("sfx/giggle.ogg", make_giggle())
+    # Yeni sesler hep sona eklenir: rastgele sayı sırası değişmesin, eski sesler birebir aynı kalsın.
+    write("sfx/hoe_chop.ogg", make_hoe_chop())
+    write("sfx/plot_ready.ogg", make_plot_ready())
 
 
 if __name__ == "__main__":
