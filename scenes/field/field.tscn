@@ -33,6 +33,8 @@
 [ext_resource type="PackedScene" path="res://scenes/field/held_carrot_bag.tscn" id="held_carrot_bag"]
 [ext_resource type="PackedScene" path="res://scenes/field/held_wheat_bag.tscn" id="held_wheat_bag"]
 [ext_resource type="PackedScene" path="res://scenes/field/held_bucket.tscn" id="held_bucket"]
+[ext_resource type="PackedScene" path="res://scenes/field/held_sickle.tscn" id="held_sickle"]
+[ext_resource type="Script" path="res://scripts/field/harvest_hand.gd" id="harvest_hand_script"]
 
 [sub_resource type="StyleBoxFlat" id="home_normal"]
 bg_color = Color(1, 0.945, 0.722, 1)
@@ -373,18 +375,24 @@ script = ExtResource("pause_script")
 [node name="TapRouter" type="Node" parent="."]
 script = ExtResource("tap_router_script")
 
-[node name="FieldTools" type="Node" parent="." node_paths=PackedStringArray("hoe_slot", "carrot_seed_slot", "wheat_seed_slot", "bucket_slot", "plots_root", "drag_layer")]
+[node name="FieldTools" type="Node" parent="." node_paths=PackedStringArray("hoe_slot", "carrot_seed_slot", "wheat_seed_slot", "bucket_slot", "sickle_slot", "plots_root", "drag_layer")]
 script = ExtResource("field_tools_script")
 hoe_slot = NodePath("../UI/Root/ToolTray/Slots/Hoe")
 carrot_seed_slot = NodePath("../UI/Root/ToolTray/Slots/CarrotSeeds")
 wheat_seed_slot = NodePath("../UI/Root/ToolTray/Slots/WheatSeeds")
 bucket_slot = NodePath("../UI/Root/ToolTray/Slots/Bucket")
+sickle_slot = NodePath("../UI/Root/ToolTray/Slots/Sickle")
 hoe_scene = ExtResource("held_hoe")
 carrot_bag_scene = ExtResource("held_carrot_bag")
 wheat_bag_scene = ExtResource("held_wheat_bag")
 bucket_scene = ExtResource("held_bucket")
+sickle_scene = ExtResource("held_sickle")
 plots_root = NodePath("../World/Plots")
 drag_layer = NodePath("../DragLayer")
+
+[node name="HarvestHand" type="Node" parent="." node_paths=PackedStringArray("plots_root")]
+script = ExtResource("harvest_hand_script")
+plots_root = NodePath("../World/Plots")
 
 [node name="UI" type="CanvasLayer" parent="."]
 

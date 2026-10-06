@@ -8,11 +8,12 @@ extends Node
 ##   geçince içine tohum düşer.
 ## - Buğday tohumu: torba ekilebilir parselin üstünde gezdikçe tohum serpilir.
 ## - Kova: susamış parselin üstünde öne eğilip su döker; başka yerde dökmez.
+## - Orak: hazır buğday parselinin üstünden geçtikçe yakındaki başakları biçer.
 ## Tohum ve su, araç parselin üstüne girdikten sonra sow_arm_time kadar orada kalınca dökülmeye başlar:
 ## raf ön sıranın altında olduğundan arka sıraya giderken yoldaki parsele istemeden dökülmesin.
 ## Not: Sahnede kamera yok, dünya ve ekran koordinatları canvas dönüşümüyle çevrilir.
 
-enum Tool { HOE, CARROT_SEEDS, WHEAT_SEEDS, BUCKET }
+enum Tool { HOE, CARROT_SEEDS, WHEAT_SEEDS, BUCKET, SICKLE }
 
 const NO_TOUCH: int = -1
 const SLOT_BOUNCE_SCALE: float = 1.15
@@ -23,12 +24,14 @@ const SLOT_BOUNCE_TIME: float = 0.25
 @export var carrot_seed_slot: Control
 @export var wheat_seed_slot: Control
 @export var bucket_slot: Control
+@export var sickle_slot: Control
 
 @export_group("Tutulan araçlar")
 @export var hoe_scene: PackedScene
 @export var carrot_bag_scene: PackedScene
 @export var wheat_bag_scene: PackedScene
 @export var bucket_scene: PackedScene
+@export var sickle_scene: PackedScene
 
 @export_group("")
 @export var plots_root: Node2D
@@ -57,9 +60,9 @@ var _last_tip: Vector2
 
 func _ready() -> void:
 	_slots = {Tool.HOE: hoe_slot, Tool.CARROT_SEEDS: carrot_seed_slot, Tool.WHEAT_SEEDS: wheat_seed_slot,
-			Tool.BUCKET: bucket_slot}
+			Tool.BUCKET: bucket_slot, Tool.SICKLE: sickle_slot}
 	_scenes = {Tool.HOE: hoe_scene, Tool.CARROT_SEEDS: carrot_bag_scene, Tool.WHEAT_SEEDS: wheat_bag_scene,
-			Tool.BUCKET: bucket_scene}
+			Tool.BUCKET: bucket_scene, Tool.SICKLE: sickle_scene}
 	for kind: Tool in _slots:
 		_icons[kind] = _slots[kind].get_node(^"Icon") as Node2D
 		_icon_scales[kind] = _icons[kind].scale
@@ -167,6 +170,9 @@ func _update_plot(delta: float) -> void:
 			_tool.set_pouring(watering)
 			if watering:
 				plot.water(delta)
+		Tool.SICKLE:
+			if plot != null and plot.reap_at(tip) > 0:
+				_tool.play_use()
 	_plot = plot
 	_last_tip = tip
 

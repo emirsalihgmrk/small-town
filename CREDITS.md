@@ -21,6 +21,8 @@ Yeniden üretmek için proje kökünden: `python tools/audio/generate_audio.py`
 | `assets/audio/sfx/seed_sprinkle.ogg` | Serpilen tohumların toprağa düşerken çıkardığı ince tıkırtılar |
 | `assets/audio/sfx/water_splash.ogg` | Kovadan dökülen su: dalgalı akış hışırtısı ve birkaç baloncuk ("şırıl") |
 | `assets/audio/sfx/plant_grow.ogg` | Bitki bir aşama büyür: yukarı kayıp hafifçe geri inen yumuşak bir "boing" |
+| `assets/audio/sfx/carrot_pop.ogg` | Havuç topraktan fırlar: mantar tıpa gibi tok bir "pop" ve dökülen toprak |
+| `assets/audio/sfx/sickle_swish.ogg` | Orak başağı keser: perdesi yükselen kısa bir "hışırt" |
 
 ## Görseller
 

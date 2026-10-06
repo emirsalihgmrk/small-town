@@ -364,6 +364,32 @@ def make_plant_grow() -> np.ndarray:
     return fade_edges(linear_reverb(tone * np.clip(t / 0.006, 0, 1), wet=0.15, seconds=0.4), fade_out=0.1)
 
 
+def make_carrot_pop() -> np.ndarray:
+    """Havuç topraktan fırlar: mantar tıpa gibi tok bir "pop" ve arkasından dökülen toprak."""
+    t = times(0.35)
+    hz = np.interp(t, [0, 0.025], [520, 160])
+    pop = np.sin(2 * np.pi * np.cumsum(hz) / SR) * np.exp(-t / 0.04) * np.clip(t / 0.002, 0, 1)
+    click = sosfilt(butter(2, [1800, 6000], "band", fs=SR, output="sos"), rng.standard_normal(len(t)))
+    click *= 0.4 * np.exp(-t / 0.004) / np.max(np.abs(click))
+    soil = sosfilt(butter(2, [600, 3000], "band", fs=SR, output="sos"), rng.standard_normal(len(t)))
+    soil *= 0.25 * np.clip((t - 0.03) / 0.02, 0, 1) * np.exp(-np.maximum(t - 0.03, 0) / 0.06) / np.max(np.abs(soil))
+    return fade_edges(linear_reverb(pop + click + soil, wet=0.12, seconds=0.3), fade_out=0.08)
+
+
+def make_sickle_swish() -> np.ndarray:
+    """Orak başağı keser: perdesi yükselen kısa bir "hışırt"."""
+    t = times(0.2)
+    noise = rng.standard_normal(len(t))
+    out = np.zeros(len(t))
+    # Bant geçiren süzgecin merkezini zamanla yukarı kaydır (parça parça süzerek).
+    for i, (lo, hi) in enumerate(((900, 2500), (1500, 3800), (2400, 6000))):
+        a, b = int(i * len(t) / 3), int((i + 1) * len(t) / 3)
+        seg = sosfilt(butter(2, [lo, hi], "band", fs=SR, output="sos"), noise)[a:b]
+        out[a:b] = seg
+    out *= np.sin(np.pi * np.clip(t / 0.2, 0, 1)) ** 1.5
+    return fade_edges(out, fade_in=0.01, fade_out=0.04)
+
+
 def main() -> None:
     write("music/home_theme.ogg", make_music())
     write("ambience/wind_loop.ogg", make_wind())
@@ -378,6 +404,8 @@ def main() -> None:
     write("sfx/seed_sprinkle.ogg", make_seed_sprinkle())
     write("sfx/water_splash.ogg", make_water_splash())
     write("sfx/plant_grow.ogg", make_plant_grow())
+    write("sfx/carrot_pop.ogg", make_carrot_pop())
+    write("sfx/sickle_swish.ogg", make_sickle_swish())
 
 
 if __name__ == "__main__":
