@@ -1,7 +1,8 @@
-class_name HomeAmbience
+class_name SceneAmbience
 extends Node
-## Ana sahnenin ses ortamı: müzik, kesintisiz rüzgâr döngüsü, rastgele aralıklı kuş cıvıltıları
-## ve seyrek, uzak bir çiftlik sesi. Sahneden çıkınca müzik ve ortam yumuşakça kapanır.
+## Bir sahnenin ses ortamı (ana ekran, tarla): müzik, kesintisiz rüzgâr döngüsü, rastgele aralıklı
+## kuş cıvıltıları ve seyrek, uzak bir çiftlik sesi. Sahneden çıkınca müzik ve ortam yumuşakça kapanır; sonraki sahne
+## aynı müziği istiyorsa AudioManager kesmeden sürdürür.
 ## Ses yolları dosya olarak verilir; dosya yoksa o ses sessizce atlanır.
 
 const MIN_BIRD_VARIANTS_FOR_NO_REPEAT: int = 2

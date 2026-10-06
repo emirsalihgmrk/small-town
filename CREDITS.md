@@ -24,6 +24,7 @@ Yeniden üretmek için proje kökünden: `python tools/audio/generate_audio.py`
 | `assets/audio/sfx/carrot_pop.ogg` | Havuç topraktan fırlar: mantar tıpa gibi tok bir "pop" ve dökülen toprak |
 | `assets/audio/sfx/sickle_swish.ogg` | Orak başağı keser: perdesi yükselen kısa bir "hışırt" |
 | `assets/audio/sfx/basket_drop.ogg` | Ürün sepete düşer: boğuk bir hasır "tok" ve kısa bir örgü hışırtısı |
+| `assets/audio/sfx/bunny_munch.ogg` | Tavşan havuç yer: art arda üç küçük, kıtır ısırık |
 
 ## Görseller
 

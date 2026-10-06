@@ -3,7 +3,8 @@ extends Node2D
 ## Tarladaki sepet. Hasat edilen ürün topraktan havalanıp kavis çizerek sepete uçar ve içine düşer;
 ## sepet esner. İçeride ürünlerden küçük bir yığın, altında havuç ve buğday sayıları görünür.
 ## Ürün ortak sepete (Basket) hasat anında zaten eklenmiştir: sahne aniden kapansa da kaybolmaz.
-## Burada yalnızca görünüş vardır; yoldaki ürünler sepete varınca sayılır.
+## Burada yalnızca görünüş vardır; yoldaki ürünler sepete varınca sayılır. Sepetten bir yere verilen
+## ürün de (tavşana havuç) sepetin ağzından oraya uçar.
 
 const MOUTH: Vector2 = Vector2(0.0, -120.0)
 const PRODUCE_START_SCALE: float = 0.6
@@ -44,6 +45,7 @@ func _ready() -> void:
 	_slots.assign($Body/Items.get_children())
 	if ResourceLoader.exists(land_sound_path):
 		_land_sound = load(land_sound_path) as AudioStream
+	Basket.changed.connect(func(_item: StringName, _count: int) -> void: _refresh(false))
 	_refresh(false)
 
 
@@ -72,6 +74,28 @@ func receive(item: StringName, from_global: Vector2) -> void:
 	tween.chain().tween_property(produce, ^"position:y", end.y + DROP, DROP_TIME).set_ease(Tween.EASE_IN)
 	tween.tween_property(produce, ^"modulate:a", 0.0, DROP_TIME)
 	tween.chain().tween_callback(_land.bind(item, produce))
+
+
+## Sepetten bir ürünü kavisle bir yere uçurur (ürün ortak sepetten önceden alınmış olmalı);
+## varınca ürün kaybolur ve on_arrived çağrılır.
+func send(item: StringName, to_global: Vector2, on_arrived: Callable) -> void:
+	_refresh(false)
+	var produce: Sprite2D = Sprite2D.new()
+	produce.texture = carrot_texture if item == Items.CARROT else wheat_texture
+	flights.add_child(produce)
+	var start: Vector2 = flights.to_local(to_global(MOUTH))
+	var end: Vector2 = flights.to_local(to_global)
+	produce.position = start
+	produce.scale = Vector2.ONE * FLIGHT_END_SCALE
+	var tween: Tween = create_tween().set_parallel()
+	tween.tween_method(_fly.bind(produce, start, end), 0.0, 1.0, FLIGHT_TIME).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	tween.tween_property(produce, ^"rotation", deg_to_rad(-SPIN_DEGREES), FLIGHT_TIME)
+	tween.chain().tween_callback(func() -> void:
+		produce.queue_free()
+		on_arrived.call())
+	var squash: Tween = create_tween()
+	squash.tween_property(_body, ^"scale", SQUASH, SQUASH_TIME).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	squash.tween_property(_body, ^"scale", Vector2.ONE, SETTLE_TIME).set_trans(Tween.TRANS_ELASTIC).set_ease(Tween.EASE_OUT)
 
 
 ## İkinci dereceden Bezier: başlangıç ve varışın ortasının ARC_HEIGHT üstünden geçer.

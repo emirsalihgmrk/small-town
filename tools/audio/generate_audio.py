@@ -400,6 +400,18 @@ def make_basket_drop() -> np.ndarray:
     return fade_edges(linear_reverb(lowpass(thump + rustle, 5000), wet=0.1, seconds=0.25), fade_out=0.06)
 
 
+def make_bunny_munch() -> np.ndarray:
+    """Tavşan havuç yer: art arda üç küçük, kıtır ısırık."""
+    parts = []
+    for i in range(3):
+        t = times(0.07)
+        crunch = sosfilt(butter(2, [1500, 6500], "band", fs=SR, output="sos"), rng.standard_normal(len(t)))
+        crunch *= np.exp(-t / 0.018) * (1 - 0.15 * i) / np.max(np.abs(crunch))
+        knock = np.sin(2 * np.pi * 180 * t) * np.exp(-t / 0.012) * 0.5
+        parts.append((crunch + knock, 0.09 if i else 0.0))
+    return fade_edges(linear_reverb(sequence(parts), wet=0.08, seconds=0.2), fade_out=0.04)
+
+
 def main() -> None:
     write("music/home_theme.ogg", make_music())
     write("ambience/wind_loop.ogg", make_wind())
@@ -417,6 +429,7 @@ def main() -> None:
     write("sfx/carrot_pop.ogg", make_carrot_pop())
     write("sfx/sickle_swish.ogg", make_sickle_swish())
     write("sfx/basket_drop.ogg", make_basket_drop())
+    write("sfx/bunny_munch.ogg", make_bunny_munch())
 
 
 if __name__ == "__main__":

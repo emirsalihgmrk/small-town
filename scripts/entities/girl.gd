@@ -1,6 +1,7 @@
 class_name Girl
 extends Node2D
-## Ana ekrandaki kız karakter: ara ara el sallar, göz kırpar, dokununca kıkırdayıp zıplar.
+## Kız karakter: ara ara el sallar, göz kırpar, dokununca kıkırdayıp zıplar.
+## Sahneler olaylara tepki verdirmek için cheer / wave / surprise / yawn çağırır.
 ## Sürekli nefes, gövde/baş sallanması ve şapka/örgü salınımı sahnedeki bileşenlerle yapılır
 ## (PulseComponent, SwayComponent, SpringFollowComponent).
 
@@ -11,6 +12,13 @@ const WAVE_LOWER_TIME: float = 0.8
 const JUMP_UP_TIME: float = 0.16
 const JUMP_DOWN_TIME: float = 0.2
 const REACTION_TIME: float = 0.7
+const SURPRISE_TIME: float = 0.9
+const SURPRISE_HOP: float = 0.5
+const YAWN_STRETCH: Vector2 = Vector2(0.97, 1.06)
+const YAWN_ARM_DEGREES: float = 40.0
+const YAWN_IN_TIME: float = 0.6
+const YAWN_HOLD_TIME: float = 0.6
+const YAWN_OUT_TIME: float = 0.5
 ## Sol kol (aynalanmamış) pozitif, sağ kol (scale.x = -1) negatif açıyla yukarı kalkar.
 const ARM_RAISE_SIGN: Array[float] = [1.0, -1.0]
 const SCREEN_WIDTH: float = 1920.0
@@ -41,6 +49,7 @@ var _blink_timer: Timer
 var _wave_timer: Timer
 
 @onready var _body: Node2D = $Body
+@onready var _torso: Node2D = $Body/Torso
 @onready var _arms: Array[Node2D] = [$Body/Torso/ArmL, $Body/Torso/ArmR]
 @onready var _eyes_open: CanvasItem = $Body/Torso/Head/Eyes/Open
 @onready var _eyes_closed: CanvasItem = $Body/Torso/Head/Eyes/Closed
@@ -72,11 +81,21 @@ func _blink() -> void:
 	_restart(_blink_timer, blink_interval_min, blink_interval_max)
 
 
+## Zamanı gelen el sallama bir tepkiye denk gelip atlandıysa bir sonrakini yine kur.
 func _wave() -> void:
-	if _waving:
+	wave()
+	if not _waving:
+		_restart(_wave_timer, wave_interval_min, wave_interval_max)
+
+
+## side: 0 = ekranda soldaki kol, 1 = sağdaki kol, -1 = rastgele. El sallarken ya da bir tepki sürerken
+## gelen istek yok sayılır.
+func wave(side: int = -1) -> void:
+	if _waving or _reacting:
 		return
 	_waving = true
-	var side: int = randi_range(0, 1)
+	if side < 0:
+		side = randi_range(0, 1)
 	var arm: Node2D = _arms[side]
 	var raised: float = deg_to_rad(wave_raise_degrees) * ARM_RAISE_SIGN[side]
 	var swing: float = deg_to_rad(wave_swing_degrees) * ARM_RAISE_SIGN[side]
@@ -91,8 +110,13 @@ func _wave() -> void:
 		_restart(_wave_timer, wave_interval_min, wave_interval_max))
 
 
-## Tepki sürerken gelen dokunuşlar yok sayılır; animasyonlar üst üste binmez.
 func _on_tapped(_global_tap_position: Vector2) -> void:
+	cheer()
+
+
+## Sevinir: kıkırdar, zıplar, kalpler ve yıldızlar saçar. Tepki sürerken gelen istek yok sayılır;
+## animasyonlar üst üste binmez.
+func cheer() -> void:
 	if _reacting:
 		return
 	_reacting = true
@@ -112,6 +136,46 @@ func _on_tapped(_global_tap_position: Vector2) -> void:
 		_set_eyes_closed(false)
 		_set_mouth_open(false)
 		_reacting = false)
+
+
+## Şaşırır: gözler açık, ağız açık, küçük bir sıçrama.
+func surprise() -> void:
+	if _reacting:
+		return
+	_reacting = true
+	_set_eyes_closed(false)
+	_set_mouth_open(true)
+	var hop: Tween = create_tween()
+	hop.tween_property(_body, ^"position:y", -jump_height * SURPRISE_HOP, JUMP_UP_TIME).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	hop.tween_property(_body, ^"position:y", 0.0, JUMP_DOWN_TIME).set_trans(Tween.TRANS_BOUNCE).set_ease(Tween.EASE_OUT)
+	var face: Tween = create_tween()
+	face.tween_interval(SURPRISE_TIME)
+	face.tween_callback(func() -> void:
+		_set_mouth_open(false)
+		_reacting = false)
+
+
+## Uzun süre bir şey olmayınca esner: gözler kapanır, ağız açılır, gerinip kollarını biraz kaldırır.
+## Başka bir hareketin ortasındaysa esnemez ve false döner.
+func yawn() -> bool:
+	if _reacting or _waving:
+		return false
+	_reacting = true
+	_set_eyes_closed(true)
+	_set_mouth_open(true)
+	var stretch: Tween = create_tween().set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	stretch.tween_property(_torso, ^"scale", YAWN_STRETCH, YAWN_IN_TIME)
+	for i: int in _arms.size():
+		stretch.parallel().tween_property(_arms[i], ^"rotation", deg_to_rad(YAWN_ARM_DEGREES) * ARM_RAISE_SIGN[i], YAWN_IN_TIME)
+	stretch.tween_interval(YAWN_HOLD_TIME)
+	stretch.tween_property(_torso, ^"scale", Vector2.ONE, YAWN_OUT_TIME)
+	for arm: Node2D in _arms:
+		stretch.parallel().tween_property(arm, ^"rotation", 0.0, YAWN_OUT_TIME)
+	stretch.tween_callback(func() -> void:
+		_set_eyes_closed(false)
+		_set_mouth_open(false)
+		_reacting = false)
+	return true
 
 
 func _set_eyes_closed(closed: bool) -> void:

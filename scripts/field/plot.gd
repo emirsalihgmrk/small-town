@@ -46,6 +46,11 @@ const GROW_STAGGER: float = 0.25
 ## Su sesi en fazla bu sıklıkta çalar.
 const SPLASH_SOUND_INTERVAL_MS: int = 300
 
+const WHEAT_SWAY_DEGREES: float = 4.0
+const WHEAT_SWAY_PERIOD: float = 2.6
+## Komşu başaklar arasındaki faz farkı (radyan): dalga parsel boyunca yürür.
+const WHEAT_SWAY_PHASE_STEP: float = 0.7
+
 ## Hazır havucun dokunulabilir alanı (çukura göre yerel): yapraklar ve görünen tepe.
 const CARROT_HIT: Rect2 = Rect2(-48.0, -100.0, 96.0, 115.0)
 ## Tam çekilmiş (amount = 1) havucun ölçek değişimi, yükselişi ve yana eğilişi.
@@ -132,6 +137,7 @@ var _stalks_left: Array[Node2D] = []
 var _plant_rest: Dictionary[Node2D, Vector2] = {}
 var _weed_rest: Dictionary[Node2D, Transform2D] = {}
 var _last_swish_ms: int = -SWISH_SOUND_INTERVAL_MS
+var _sway_time: float = 0.0
 var _carrot_pop_sound: AudioStream
 var _swish_sound: AudioStream
 
@@ -186,11 +192,24 @@ func _ready() -> void:
 
 
 func _process(delta: float) -> void:
+	_sway_wheat(delta)
 	if state != State.SOWN or thirsty:
 		return
 	_stage_time_left -= delta
 	if _stage_time_left <= 0.0:
 		_advance_stage()
+
+
+## Boy atmış buğday rüzgârda dalgalanır: her başak biraz farklı fazda, kökü etrafında sallanır.
+## Sallanan aşama görselidir; bitki düğümünün kendi dönüşü (susama, biçilme) bundan etkilenmez.
+func _sway_wheat(delta: float) -> void:
+	if crop != Crop.WHEAT or stage < STAGE_LEAFY or (state != State.SOWN and state != State.READY):
+		return
+	_sway_time += delta
+	var stage_path: NodePath = NodePath("Stage%d" % stage)
+	for i: int in _all_wheat_plants.size():
+		var phase: float = _sway_time * TAU / WHEAT_SWAY_PERIOD + i * WHEAT_SWAY_PHASE_STEP
+		(_all_wheat_plants[i].get_node(stage_path) as Node2D).rotation = sin(phase) * deg_to_rad(WHEAT_SWAY_DEGREES)
 
 
 func contains(global_point: Vector2) -> bool:
