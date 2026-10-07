@@ -80,10 +80,12 @@ func set_locked(locked: bool) -> void:
 	_lock_tween.tween_property(self, ^"modulate:a", LOCKED_ALPHA if locked else 1.0, LOCK_TIME)
 
 
-## index. malzeme kasaya kondu: simge renklenip zıplar.
-func fill_slot(index: int) -> void:
+## index. malzeme kasaya kondu: simge renklenir (animate ise zıplar).
+func fill_slot(index: int, animate: bool = true) -> void:
 	var icon: Sprite2D = _slots[index]
 	icon.modulate.a = 1.0
+	if not animate:
+		return
 	var rest: Vector2 = Vector2.ONE * (INGREDIENT_HEIGHT / icon.texture.get_height())
 	var tween: Tween = create_tween()
 	tween.tween_property(icon, ^"scale", rest * SLOT_POP_SCALE, SLOT_POP_TIME).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)

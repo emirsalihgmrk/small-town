@@ -8,8 +8,12 @@ extends Node2D
 ## karışım hamur olunca kız sevinir. Hamur hazırken boş fırın parlayarak çağırır; hamur fırına girince kase
 ## boşalır, kartlar sıfırlanır (yeni tarife başlanabilir), kapak kapanınca kız fırına el sallar, ürün
 ## pişince sevinir. Pişen ürün fırından çıkınca ortak sepete eklenir, sepete uçar ve kız yine sevinir.
-## Kasedeki ve fırındaki ürünler henüz kayda geçmiyor: sahneden çıkarken ortak sepete konur (pişmiş ürün
-## olarak ya da, pişmemişse, malzemeleri olarak).
+## Kase ve fırın SaveGame'in "bakery" bölümünde tutulur: seçili tarif, kasedeki malzemeler, karışma
+## miktarı ve fırındaki ürünle pişmesine kalan süre. Tarif seçilince, kaseye malzeme konunca, hamur olunca,
+## hamur fırına girince, sahneden çıkarken ve SaveGame diske yazmadan hemen önce kayda geçer. Açılışta
+## sahne kapalıyken geçen oyun süresi kadar pişme ileri sarılır.
+
+const SECTION: String = "bakery"
 
 ## Kızın fırına (sağa) bakan kolu.
 const GIRL_OVEN_ARM: int = 1
@@ -28,6 +32,7 @@ var _selected: RecipeCard
 
 func _ready() -> void:
 	_cards.assign($World/RecipeBoard/Cards.get_children())
+	_restore()
 	_home_button.pressed.connect(SceneRouter.go_home)
 	_basket.tapped.connect(_basket_menu.open)
 	for card: RecipeCard in _cards:
@@ -43,17 +48,51 @@ func _ready() -> void:
 	_bowl.bubble_tapped.connect(SceneRouter.go_to_section)
 	_ingredient_hand.no_recipe.connect(_nudge_cards)
 	_ingredient_hand.missing.connect(_bowl.nudge_bubble)
+	_bowl.slot_filled.connect(func(_index: int) -> void: SaveGame.request_save())
+	_bowl.mixed.connect(SaveGame.request_save)
+	_bowl.cleared.connect(SaveGame.request_save)
+	SaveGame.before_save.connect(_store)
 
 
 func _exit_tree() -> void:
-	for item: StringName in _bowl.contents():
-		Basket.add(item)
-	if _oven.has_baked_product():
-		Basket.add(_oven.recipe)
-	elif not _oven.can_bake():
-		for item: StringName in Recipes.ingredients(_oven.recipe):
-			Basket.add(item)
+	_store()
 	SaveGame.save_now()
+
+
+func _store() -> void:
+	SaveGame.set_section(SECTION, {
+		"saved_at": SaveGame.play_time,
+		"bowl": _bowl.save_state(),
+		"oven": _oven.save_state(),
+	})
+
+
+## Kase ve fırın animasyonsuz kurulur; kasedeki tarifin kartı seçili, konmuş malzemeleri renkli olur.
+func _restore() -> void:
+	var data: Dictionary = SaveGame.get_section(SECTION)
+	if data.is_empty():
+		return
+	var elapsed: float = maxf(SaveGame.play_time - float(data.get("saved_at", SaveGame.play_time)), 0.0)
+	var bowl_data: Variant = data.get("bowl")
+	if bowl_data is Dictionary:
+		_bowl.load_state(bowl_data)
+	var oven_data: Variant = data.get("oven")
+	if oven_data is Dictionary:
+		_oven.load_state(oven_data, elapsed)
+	for card: RecipeCard in _cards:
+		if card.recipe == _bowl.recipe:
+			_selected = card
+	if _selected == null:
+		return
+	_selected.set_selected(true)
+	var empty_slots: Array[int] = _bowl.open_slots()
+	for i: int in Recipes.ingredients(_bowl.recipe).size():
+		if not empty_slots.has(i):
+			_selected.fill_slot(i, false)
+	if not _bowl.is_empty():
+		for card: RecipeCard in _cards:
+			card.set_locked(card != _selected)
+	_refresh_oven_invite()
 
 
 func _on_card_tapped(card: RecipeCard) -> void:
@@ -64,6 +103,7 @@ func _on_card_tapped(card: RecipeCard) -> void:
 		other.set_selected(other == card)
 		other.clear_slots()
 	_bowl.set_recipe(card.recipe)
+	SaveGame.request_save()
 
 
 func _on_slot_filled(index: int) -> void:

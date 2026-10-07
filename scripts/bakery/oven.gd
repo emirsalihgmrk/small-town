@@ -8,6 +8,8 @@ extends Node2D
 ## Pişmiş ürün varken fırına dokununca kapak açılır, ürün buharla öne çıkar ve fırın boşalır; ürün
 ## çıkınca taken_out o ürünle ve bulunduğu yerle yayılır (sepete uçurmak için). Pişerken dokunulursa
 ## fırın kısaca sallanır.
+## Durum kayda save_state ile yazılır (çıkarılmakta olan ürün fırında pişmiş sayılır); load_state sahne
+## kapalıyken geçen süre kadar pişmeyi ileri sarar.
 ## Hamur hazırken ve fırın boşken fırının ağzı yavaşça parlayarak çağırır (set_inviting). Pişerken ışık
 ## daha hızlı titrer. Kök noktası fırının dibinin ortasıdır.
 
@@ -173,18 +175,32 @@ func bake(recipe_id: StringName, arrive_delay: float = 0.0) -> void:
 		return
 	recipe = recipe_id
 	_time_left = bake_time
-	_raw.texture = raw_texture(recipe_id)
-	_baked.texture = baked_textures.get(recipe_id)
-	for sprite: Sprite2D in [_raw, _baked]:
-		if sprite.texture != null:
-			sprite.offset = Vector2(0.0, -sprite.texture.get_height() * 0.5)
-	_product_scale = Vector2.ONE * product_scale(recipe_id)
-	_show_progress()
+	_setup_product()
 	set_highlighted(false)
 	_refresh_glow()
 	var tween: Tween = create_tween()
 	tween.tween_interval(arrive_delay)
 	tween.tween_callback(_close_door)
+
+
+func save_state() -> Dictionary:
+	return {"recipe": String(recipe), "time_left": _time_left}
+
+
+## Kayıttan animasyonsuz kurar: ürün fırında, kapak kapalı; elapsed kadar pişmiş sayılır. Tanınmayan tarif
+## yok sayılır (fırın boş kalır).
+func load_state(data: Dictionary, elapsed: float) -> void:
+	var recipe_id: StringName = StringName(str(data.get("recipe", "")))
+	if not raw_textures.has(recipe_id):
+		return
+	recipe = recipe_id
+	_time_left = maxf(clampf(float(data.get("time_left", bake_time)), 0.0, bake_time) - elapsed, 0.0)
+	_setup_product()
+	_product.show()
+	_door.scale = Vector2.ONE
+	_door.show()
+	_steam.emitting = is_baked()
+	_refresh_glow()
 
 
 ## Hamur "fırın dolu" diye geri dönerken fırın kısaca sallanır.
@@ -224,6 +240,17 @@ func _close_door() -> void:
 			.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 	AudioManager.play_sfx(_door_sound, AudioManager.BUS_SFX, 0.0, 0.9, _pan())
 	door_closed.emit()
+
+
+## Fırındaki tarifin çiğ ve pişmiş resmi, ürün altından oturacak şekilde.
+func _setup_product() -> void:
+	_raw.texture = raw_texture(recipe)
+	_baked.texture = baked_textures.get(recipe)
+	for sprite: Sprite2D in [_raw, _baked]:
+		if sprite.texture != null:
+			sprite.offset = Vector2(0.0, -sprite.texture.get_height() * 0.5)
+	_product_scale = Vector2.ONE * product_scale(recipe)
+	_show_progress()
 
 
 ## Ürün piştikçe kabarır, pişmiş resmi çiğin üstünde belirir.

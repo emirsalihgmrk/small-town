@@ -9,6 +9,7 @@ extends Node2D
 ## tarifin hamuru büyür; yeterince karıştırılınca kaşık kaybolur, hamur zıplar ve mixed yayılır.
 ## Hamur parmakla kaseden kaldırılabilir (lift_dough); yerine konmazsa ve fırına girerse kase boşaltılır
 ## (clear), tarif seçimi sıfırlanır ve cleared yayılır.
+## Durum kayda save_state ile yazılır, load_state ile animasyonsuz kurulur (kaldırılmış hamur kasede sayılır).
 ## Tarif seçiliyken ortak sepette eksik bir malzeme varsa kasenin yanında bir düşünce balonu durur ve
 ## o malzemenin nereden geldiğini gösterir (tarla ya da kümes). Balona dokununca bubble_tapped o bölümle
 ## yayılır. Kök noktası kasenin dibidir.
@@ -295,6 +296,47 @@ func add(slot: int) -> void:
 	tween.tween_callback(_on_added)
 
 
+func save_state() -> Dictionary:
+	return {"recipe": String(recipe), "filled": _filled.duplicate(), "mix": _mix}
+
+
+## Kayıttan animasyonsuz kurar; tanınmayan tarif ya da tutmayan yuva sayısı yok sayılır (kase boş kalır).
+## cleared yayılmaz.
+func load_state(data: Dictionary) -> void:
+	var recipe_id: StringName = StringName(str(data.get("recipe", "")))
+	if not Recipes.INGREDIENTS.has(recipe_id):
+		return
+	recipe = recipe_id
+	_items = Recipes.ingredients(recipe_id)
+	_dough.texture = dough_textures.get(recipe_id)
+	_filled.resize(_items.size())
+	_filled.fill(false)
+	var filled: Variant = data.get("filled")
+	if filled is Array and (filled as Array).size() == _items.size():
+		for i: int in _items.size():
+			_filled[i] = bool((filled as Array)[i])
+	_mix = clampf(float(data.get("mix", 0.0)), 0.0, mix_distance) if is_complete() else 0.0
+	var items: Array[StringName] = contents()
+	_flour.visible = items.has(Items.WHEAT)
+	_flour.scale = _flour_target_scale()
+	_yolk.visible = items.has(Items.EGG)
+	_yolk.scale = Vector2.ONE
+	_carrot.visible = items.has(Items.CARROT)
+	_carrot.scale = Vector2.ONE
+	if is_mixed():
+		_flour.hide()
+		_yolk.hide()
+		_carrot.hide()
+		_dough.modulate.a = 1.0
+		_dough.scale = Vector2.ONE
+		_dough.show()
+	elif is_complete():
+		_show_spoon(false)
+		if _mix > 0.0:
+			_show_mix()
+	_refresh_bubble()
+
+
 ## Kaşık kasede distance kadar yol aldı: karışım o kadar hamura döner.
 func stir(distance: float) -> void:
 	if not can_stir():
@@ -344,10 +386,7 @@ func _show_content(item: StringName) -> void:
 	match item:
 		Items.WHEAT:
 			_puff.restart()
-			var wheat_total: int = _items.count(Items.WHEAT)
-			var ratio: float = float(contents().count(Items.WHEAT)) / maxi(wheat_total, 1)
-			var target: Vector2 = _flour_scale * Vector2(lerpf(FLOUR_MIN_WIDTH, 1.0, ratio),
-					lerpf(FLOUR_MIN_HEIGHT, 1.0, ratio))
+			var target: Vector2 = _flour_target_scale()
 			if not _flour.visible:
 				_flour.scale = Vector2(target.x, 0.0)
 				_flour.show()
@@ -360,6 +399,12 @@ func _show_content(item: StringName) -> void:
 			_carrot.scale = Vector2.ZERO
 			_carrot.show()
 			_pop(_carrot, Vector2.ONE)
+
+
+## Un yığını kasedeki buğday demeti sayısına göre büyür.
+func _flour_target_scale() -> Vector2:
+	var ratio: float = float(contents().count(Items.WHEAT)) / maxi(_items.count(Items.WHEAT), 1)
+	return _flour_scale * Vector2(lerpf(FLOUR_MIN_WIDTH, 1.0, ratio), lerpf(FLOUR_MIN_HEIGHT, 1.0, ratio))
 
 
 func _pop(sprite: Sprite2D, to_scale: Vector2) -> void:
@@ -382,15 +427,18 @@ func _on_added() -> void:
 		_show_spoon()
 
 
-func _show_spoon() -> void:
+func _show_spoon(animate: bool = true) -> void:
 	_spoon_held = false
 	_spoon_target = SPOON_REST
 	_spoon.position = SPOON_REST
 	_spoon.rotation = deg_to_rad(SPOON_REST_DEGREES)
-	_spoon.scale = Vector2.ZERO
 	_spoon.show()
-	create_tween().tween_property(_spoon, ^"scale", Vector2.ONE, SPOON_POP_TIME) \
-			.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	if animate:
+		_spoon.scale = Vector2.ZERO
+		create_tween().tween_property(_spoon, ^"scale", Vector2.ONE, SPOON_POP_TIME) \
+				.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	else:
+		_spoon.scale = Vector2.ONE
 	_spoon_hint_tween = Oscillation.ping_pong(self, _spoon_sprite, ^"rotation", deg_to_rad(-SPOON_HINT_DEGREES),
 			deg_to_rad(SPOON_HINT_DEGREES), SPOON_HINT_PERIOD, 0.0, false)
 
