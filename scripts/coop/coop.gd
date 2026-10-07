@@ -2,7 +2,8 @@ extends Node2D
 ## Kümes bölümü: eve dönüş, sepetten yemliğe buğday, kovayla suluğa su, folluktan sepete yumurta ve
 ## kızın tepkileri. Tavuklar yemliği, suluğu ve folluklarını kendileri kullanır (Hen).
 ## Yemlik ya da suluk dolunca ve yumurta toplanınca kız sevinir; bir tavuk yumurtlayınca kümese el
-## sallar. Folluğa dokununca içindeki yumurtalar ortak sepete eklenir ve sepete uçar.
+## sallar; kedi uyanınca şaşırır; uzun süre dokunulmazsa esner. Folluğa dokununca içindeki yumurtalar
+## ortak sepete eklenir ve sepete uçar.
 ## Sepette buğday yokken demet çekilmeye çalışılırsa yemliğin balonu zıplar; balonda tarla görünürken
 ## balona dokununca tarlaya gidilir. Sepete dokununca sepetin içi açılır.
 ## Yemlik, suluk, folluklar ve tavuklar açılışta kayıttan geri yüklenir; sahne kapalıyken geçen oyun
@@ -16,6 +17,11 @@ const FIELD_SECTION: StringName = &"field"
 const GIRL_COOP_ARM: int = 1
 ## Bir folluktan birden çok yumurta toplanınca üst üste binmesinler diye yan yana havalanırlar.
 const EGG_SPREAD: float = 26.0
+## Esneme zamanı geldiğinde kız başka bir hareketteyse bu kadar sonra yeniden denenir.
+const YAWN_RETRY_TIME: float = 2.0
+
+## Bu kadar süre hiç dokunulmazsa kız esner (sonra yine aynı süre beklenir).
+@export_range(5.0, 120.0, 1.0, "suffix:s") var idle_yawn_time: float = 25.0
 
 @onready var _home_button: Button = $UI/Root/HomeButton
 @onready var _basket: BasketView = $World/Basket
@@ -24,9 +30,11 @@ const EGG_SPREAD: float = 26.0
 @onready var _girl: Girl = $World/Girl
 @onready var _feed_hand: FeedHand = $FeedHand
 @onready var _basket_menu: BasketMenu = $BasketMenu
+@onready var _cat: SleepyCat = $World/Cat
 
 var _nests: Array[Nest] = []
 var _hens: Array[Hen] = []
+var _idle_time: float = 0.0
 
 
 func _ready() -> void:
@@ -47,7 +55,19 @@ func _ready() -> void:
 		nest.laid.connect(_girl.wave.bind(GIRL_COOP_ARM))
 		nest.laid.connect(SaveGame.request_save)
 		nest.collected.connect(_on_eggs_collected)
+	_cat.woke.connect(_girl.surprise)
 	SaveGame.before_save.connect(_store)
+
+
+func _process(delta: float) -> void:
+	_idle_time += delta
+	if _idle_time >= idle_yawn_time:
+		_idle_time = 0.0 if _girl.yawn() else idle_yawn_time - YAWN_RETRY_TIME
+
+
+func _input(event: InputEvent) -> void:
+	if event is InputEventScreenTouch or event is InputEventScreenDrag:
+		_idle_time = 0.0
 
 
 func _exit_tree() -> void:

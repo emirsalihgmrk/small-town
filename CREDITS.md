@@ -24,7 +24,9 @@ Yeniden üretmek için proje kökünden: `python tools/audio/generate_audio.py`
 | `assets/audio/sfx/sickle_swish.ogg` | Orak başağı keser: perdesi yükselen kısa bir "hışırt" |
 | `assets/audio/sfx/basket_drop.ogg` | Ürün sepete düşer: boğuk bir hasır "tok" ve kısa bir örgü hışırtısı |
 | `assets/audio/sfx/bunny_munch.ogg` | Tavşan havuç yer: art arda üç küçük, kıtır ısırık |
-| `assets/audio/sfx/happy_chime.ogg` | Kız sevinir (dokununca): iki notalı yumuşak müzik kutusu "tirin" ve birkaç minik pırıltı |
+| `assets/audio/sfx/egg_laid.ogg` | Tavuk yumurtlar: yuvarlak, yumuşak bir "pıt" ve tek, yüksek bir müzik kutusu notası |
+| `assets/audio/sfx/egg_pick.ogg` | Yumurta folluktan havalanır: perdesi hızla yükselen kısa bir "fiyuv" ve minik bir tın |
+| `assets/audio/sfx/feather_fluff.ogg` | Kıza ya da tavuğa dokununca: yumuşak, kısa bir tüy kabarması "fırt" |
 
 ## Görseller
 

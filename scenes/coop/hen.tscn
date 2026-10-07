@@ -6,34 +6,39 @@
 [ext_resource type="Script" path="res://scripts/components/pulse_component.gd" id="4_pulse"]
 [ext_resource type="Script" path="res://scripts/components/sway_component.gd" id="5_sway"]
 [ext_resource type="Texture2D" path="res://assets/art/field/water_bubble.svg" id="6_water_bubble"]
+[ext_resource type="Script" path="res://scripts/input/tappable.gd" id="7_tappable"]
+[ext_resource type="PackedScene" path="res://scenes/field/effects/heart_burst.tscn" id="8_heart"]
 
 [node name="Hen" type="Node2D"]
 script = ExtResource("1_hen")
+heart_scene = ExtResource("8_heart")
 
-[node name="Body" type="Node2D" parent="."]
+[node name="Hop" type="Node2D" parent="."]
 
-[node name="Sprite" type="Sprite2D" parent="Body"]
+[node name="Body" type="Node2D" parent="Hop"]
+
+[node name="Sprite" type="Sprite2D" parent="Hop/Body"]
 texture = ExtResource("2_body")
 centered = false
 offset = Vector2(-86, -138)
 
-[node name="Neck" type="Node2D" parent="Body"]
+[node name="Neck" type="Node2D" parent="Hop/Body"]
 position = Vector2(38, -79)
 
-[node name="Head" type="Node2D" parent="Body/Neck"]
+[node name="Head" type="Node2D" parent="Hop/Body/Neck"]
 
-[node name="Sprite" type="Sprite2D" parent="Body/Neck/Head"]
+[node name="Sprite" type="Sprite2D" parent="Hop/Body/Neck/Head"]
 texture = ExtResource("3_head")
 centered = false
 offset = Vector2(-36, -84)
 
-[node name="Sway" type="Node" parent="Body/Neck"]
+[node name="Sway" type="Node" parent="Hop/Body/Neck"]
 script = ExtResource("5_sway")
 amplitude_degrees = 5.0
 period = 1.8
 period_randomness = 0.2
 
-[node name="Pulse" type="Node" parent="Body"]
+[node name="Pulse" type="Node" parent="Hop/Body"]
 script = ExtResource("4_pulse")
 scale_amount = Vector2(0.015, 0.03)
 period = 2.2
@@ -53,3 +58,8 @@ period = 1.1
 
 [node name="PeckTimer" type="Timer" parent="."]
 one_shot = true
+
+[node name="TapArea" type="Node2D" parent="."]
+script = ExtResource("7_tappable")
+area = Rect2(-90, -170, 180, 175)
+priority = 3

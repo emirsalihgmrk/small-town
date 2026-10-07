@@ -267,20 +267,13 @@ def skip_old_giggle() -> None:
     rng.standard_normal(4 * len(times(0.085)) + len(times(0.3)))
 
 
-def make_happy_chime() -> np.ndarray:
-    """Kız sevinir: iki notalı yumuşak bir müzik kutusu "tirin" (Do-Sol) ve üstünde birkaç minik pırıltı."""
-    step = 0.075
-    buf = np.zeros(int((step + 1.9) * SR))
-    for i, (m, gain) in enumerate(((84, 0.7), (91, 1.0))):
-        sig = music_box(midi_hz(m), 0.5)
-        k = int(i * step * SR)
-        buf[k: k + len(sig)] += gain * sig
-    for start in np.sort(rng.uniform(0.1, 0.35, 4)):
-        t = times(0.12)
-        tink = np.sin(2 * np.pi * midi_hz(rng.uniform(100, 105)) * t) * np.exp(-t / 0.03) * np.clip(t / 0.003, 0, 1)
-        k = int(start * SR)
-        buf[k: k + len(t)] += 0.12 * tink
-    return fade_edges(linear_reverb(lowpass(buf, 7000), wet=0.25, seconds=0.6), fade_out=0.4)
+def skip_old_happy_chime() -> None:
+    """Eski "tirin" sesi (sfx/happy_chime.ogg) kaldırıldı; kız artık tavuğun tüy sesini kullanıyor. Ondan
+    sonraki seslerin rastgele sayı sırası değişmesin diye onun çektiği kadar sayı (pırıltıların dört
+    başlangıcı ve dört perdesi) çekilip atılır."""
+    rng.uniform(0.1, 0.35, 4)
+    for _ in range(4):
+        rng.uniform(100, 105)
 
 
 # ------------------------------------------------------------------ tarla
@@ -410,6 +403,43 @@ def make_bunny_munch() -> np.ndarray:
     return fade_edges(linear_reverb(sequence(parts), wet=0.08, seconds=0.2), fade_out=0.04)
 
 
+# ------------------------------------------------------------------ kümes
+def make_egg_laid() -> np.ndarray:
+    """Tavuk yumurtlar: yuvarlak, yumuşak bir "pıt" ve ardından tek, yüksek bir müzik kutusu notası."""
+    t = times(0.25)
+    hz = np.interp(t, [0, 0.06], [420, 240])
+    plop = np.sin(2 * np.pi * np.cumsum(hz) / SR) * np.exp(-t / 0.05) * np.clip(t / 0.004, 0, 1)
+    note = music_box(midi_hz(88), 0.8)
+    buf = np.zeros(int(0.09 * SR) + len(note))
+    buf[: len(plop)] += 0.8 * plop
+    k = int(0.09 * SR)
+    buf[k: k + len(note)] += 0.6 * note
+    return fade_edges(linear_reverb(lowpass(buf, 7000), wet=0.2, seconds=0.5), fade_out=0.3)
+
+
+def make_egg_pick() -> np.ndarray:
+    """Yumurta folluktan havalanır: perdesi hızla yükselen kısa bir "fiyuv" ve minik bir tın."""
+    t = times(0.3)
+    hz = np.interp(t, [0, 0.12], [380, 980])
+    rise = np.sin(2 * np.pi * np.cumsum(hz) / SR) * np.sin(np.pi * np.clip(t / 0.14, 0, 1)) ** 2
+    tink_t = times(0.15)
+    tink = np.sin(2 * np.pi * midi_hz(100) * tink_t) * np.exp(-tink_t / 0.035) * np.clip(tink_t / 0.003, 0, 1)
+    k = int(0.11 * SR)
+    rise[k: k + len(tink)] += 0.25 * tink[: len(rise) - k]
+    return fade_edges(linear_reverb(0.7 * rise, wet=0.15, seconds=0.35), fade_out=0.08)
+
+
+def make_feather_fluff() -> np.ndarray:
+    """Tüy kabarması (kıza ya da tavuğa dokununca): yumuşak, kısa bir "fırt" (iki hızlı tüy hışırtısı)."""
+    parts = []
+    for i in range(2):
+        t = times(0.09)
+        puff = sosfilt(butter(2, [700, 3200], "band", fs=SR, output="sos"), rng.standard_normal(len(t)))
+        puff *= np.sin(np.pi * t / 0.09) ** 2 * (1.0 - 0.3 * i) / np.max(np.abs(puff))
+        parts.append((puff, 0.07 if i else 0.0))
+    return fade_edges(lowpass(sequence(parts), 4000), fade_in=0.005, fade_out=0.03)
+
+
 def main() -> None:
     write("music/home_theme.ogg", make_music())
     write("ambience/wind_loop.ogg", make_wind())
@@ -428,7 +458,10 @@ def main() -> None:
     write("sfx/sickle_swish.ogg", make_sickle_swish())
     write("sfx/basket_drop.ogg", make_basket_drop())
     write("sfx/bunny_munch.ogg", make_bunny_munch())
-    write("sfx/happy_chime.ogg", make_happy_chime())
+    skip_old_happy_chime()
+    write("sfx/egg_laid.ogg", make_egg_laid())
+    write("sfx/egg_pick.ogg", make_egg_pick())
+    write("sfx/feather_fluff.ogg", make_feather_fluff())
 
 
 if __name__ == "__main__":

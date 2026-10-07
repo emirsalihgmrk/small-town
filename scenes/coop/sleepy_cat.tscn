@@ -1,0 +1,75 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/coop/sleepy_cat.gd" id="1_cat"]
+[ext_resource type="Texture2D" path="res://assets/art/coop/cat_sleep.svg" id="2_body"]
+[ext_resource type="Texture2D" path="res://assets/art/coop/cat_tail.svg" id="3_tail"]
+[ext_resource type="Texture2D" path="res://assets/art/coop/zzz.svg" id="4_zzz"]
+[ext_resource type="Script" path="res://scripts/components/pulse_component.gd" id="5_pulse"]
+[ext_resource type="Script" path="res://scripts/components/sway_component.gd" id="6_sway"]
+[ext_resource type="Script" path="res://scripts/input/tappable.gd" id="7_tappable"]
+
+[sub_resource type="Curve" id="Curve_zzz"]
+_data = [Vector2(0, 0.3), 0.0, 0.0, 0, 0, Vector2(0.3, 1), 0.0, 0.0, 0, 0, Vector2(1, 1.2), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="Gradient" id="Gradient_zzz"]
+offsets = PackedFloat32Array(0, 0.2, 0.7, 1)
+colors = PackedColorArray(1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0)
+
+[node name="SleepyCat" type="Node2D"]
+script = ExtResource("1_cat")
+
+[node name="Stretch" type="Node2D" parent="."]
+
+[node name="Tail" type="Node2D" parent="Stretch"]
+position = Vector2(-60, -24)
+scale = Vector2(-1, 1)
+
+[node name="Sway" type="Node2D" parent="Stretch/Tail"]
+
+[node name="SwayComponent" type="Node" parent="Stretch/Tail/Sway"]
+script = ExtResource("6_sway")
+amplitude_degrees = 10.0
+period = 2.8
+period_randomness = 0.1
+
+[node name="Flick" type="Node2D" parent="Stretch/Tail/Sway"]
+
+[node name="Sprite" type="Sprite2D" parent="Stretch/Tail/Sway/Flick"]
+texture = ExtResource("3_tail")
+centered = false
+offset = Vector2(-8, -17)
+
+[node name="Body" type="Node2D" parent="Stretch"]
+
+[node name="Sprite" type="Sprite2D" parent="Stretch/Body"]
+texture = ExtResource("2_body")
+centered = false
+offset = Vector2(-82, -96)
+
+[node name="Pulse" type="Node" parent="Stretch/Body"]
+script = ExtResource("5_pulse")
+scale_amount = Vector2(0.02, 0.05)
+period = 3.2
+
+[node name="Zzz" type="CPUParticles2D" parent="."]
+position = Vector2(50, -80)
+amount = 3
+lifetime = 2.6
+texture = ExtResource("4_zzz")
+direction = Vector2(0.4, -1)
+spread = 15.0
+gravity = Vector2(0, -10)
+initial_velocity_min = 22.0
+initial_velocity_max = 30.0
+angle_min = -15.0
+angle_max = 15.0
+scale_amount_min = 0.6
+scale_amount_max = 0.9
+scale_amount_curve = SubResource("Curve_zzz")
+color_ramp = SubResource("Gradient_zzz")
+
+[node name="TapArea" type="Node2D" parent="."]
+script = ExtResource("7_tappable")
+area = Rect2(-90, -100, 180, 110)
+priority = 4

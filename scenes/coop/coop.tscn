@@ -16,6 +16,7 @@
 [ext_resource type="Texture2D" path="res://assets/art/coop/coop_yard.svg" id="14_yard"]
 [ext_resource type="Texture2D" path="res://assets/art/coop/coop_house.svg" id="15_house"]
 [ext_resource type="PackedScene" path="res://scenes/coop/nest.tscn" id="16_nest"]
+[ext_resource type="PackedScene" path="res://scenes/coop/sleepy_cat.tscn" id="cat_scene"]
 [ext_resource type="PackedScene" path="res://scenes/coop/feeder.tscn" id="17_feeder"]
 [ext_resource type="PackedScene" path="res://scenes/coop/waterer.tscn" id="18_waterer"]
 [ext_resource type="PackedScene" path="res://scenes/coop/hen.tscn" id="19_hen"]
@@ -246,6 +247,9 @@ position = Vector2(560, 700)
 texture = ExtResource("10_tuft")
 centered = false
 offset = Vector2(-14, -28)
+
+[node name="Cat" parent="World" instance=ExtResource("cat_scene")]
+position = Vector2(1805, 690)
 
 [node name="House" type="Node2D" parent="World"]
 position = Vector2(1500, 800)

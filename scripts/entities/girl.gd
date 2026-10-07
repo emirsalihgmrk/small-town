@@ -1,6 +1,7 @@
 class_name Girl
 extends Node2D
-## Kız karakter: ara ara el sallar, göz kırpar, dokununca tatlı bir "tirin" sesiyle zıplar.
+## Kız karakter: ara ara el sallar, göz kırpar, dokununca yumuşak bir "fırt" sesiyle zıplar (kümesteki
+## tavuğa dokununca çalan sesin aynısı).
 ## Sahneler olaylara tepki verdirmek için cheer / wave / surprise / yawn çağırır. Bu tepkiler sessizdir:
 ## işlerin (hasat, ekim...) kendi sesi zaten vardır, her seferinde üstüne bir ses daha binmesin.
 ## Sürekli nefes, gövde/baş sallanması ve şapka/örgü salınımı sahnedeki bileşenlerle yapılır
@@ -40,9 +41,9 @@ const MAX_SOUND_PAN: float = 0.6
 
 @export_group("Dokunma")
 @export_range(0.0, 80.0, 1.0, "suffix:px") var jump_height: float = 22.0
-@export_file("*.ogg", "*.wav") var happy_sound_path: String = "res://assets/audio/sfx/happy_chime.ogg"
-@export_range(-30.0, 6.0, 0.5, "suffix:dB") var happy_volume_db: float = -4.0
-@export_range(0.0, 0.3, 0.01) var happy_pitch_variation: float = 0.05
+@export_file("*.ogg", "*.wav") var happy_sound_path: String = "res://assets/audio/sfx/feather_fluff.ogg"
+@export_range(-30.0, 6.0, 0.5, "suffix:dB") var happy_volume_db: float = 0.0
+@export_range(0.0, 0.3, 0.01) var happy_pitch_variation: float = 0.1
 
 var _waving: bool = false
 var _reacting: bool = false
@@ -116,7 +117,7 @@ func _on_tapped(_global_tap_position: Vector2) -> void:
 	cheer(true)
 
 
-## Sevinir: zıplar, kalpler ve yıldızlar saçar; with_sound ise (yalnızca kıza dokunulunca) "tirin" sesi
+## Sevinir: zıplar, kalpler ve yıldızlar saçar; with_sound ise (yalnızca kıza dokunulunca) "fırt" sesi
 ## de çalar. Tepki sürerken gelen istek yok sayılır; animasyonlar üst üste binmez.
 func cheer(with_sound: bool = false) -> void:
 	if _reacting:

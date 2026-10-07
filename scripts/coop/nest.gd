@@ -13,13 +13,19 @@ const EGG_POP_TIME: float = 0.3
 const SQUASH: Vector2 = Vector2(1.08, 0.92)
 const SQUASH_TIME: float = 0.08
 const SETTLE_TIME: float = 0.35
+const SCREEN_WIDTH: float = 1920.0
+const MAX_SOUND_PAN: float = 0.6
 
 @export var sparkle_scene: PackedScene
+@export_file("*.ogg", "*.wav") var laid_sound_path: String = "res://assets/audio/sfx/egg_laid.ogg"
+@export_file("*.ogg", "*.wav") var pick_sound_path: String = "res://assets/audio/sfx/egg_pick.ogg"
 
 var eggs: int = 0
 
 var _egg_sprites: Array[Node2D] = []
 var _egg_scales: Array[Vector2] = []
+var _laid_sound: AudioStream
+var _pick_sound: AudioStream
 
 @onready var _body: Node2D = $Body
 @onready var _glint: CPUParticles2D = $Glint
@@ -31,6 +37,10 @@ func _ready() -> void:
 	for egg: Node2D in _egg_sprites:
 		_egg_scales.append(egg.scale)
 	_tap_area.tapped.connect(func(_point: Vector2) -> void: _collect())
+	if ResourceLoader.exists(laid_sound_path):
+		_laid_sound = load(laid_sound_path) as AudioStream
+	if ResourceLoader.exists(pick_sound_path):
+		_pick_sound = load(pick_sound_path) as AudioStream
 	_refresh(false)
 
 
@@ -45,6 +55,7 @@ func lay(animate: bool = true) -> void:
 	_refresh(animate)
 	if not animate:
 		return
+	_play_sound(_laid_sound)
 	if sparkle_scene != null:
 		var sparkle: CPUParticles2D = sparkle_scene.instantiate() as CPUParticles2D
 		_body.add_child(sparkle)
@@ -70,6 +81,7 @@ func _collect() -> void:
 	var from: Vector2 = egg_position()
 	eggs = 0
 	_refresh(false)
+	_play_sound(_pick_sound)
 	var tween: Tween = create_tween()
 	tween.tween_property(_body, ^"scale", SQUASH, SQUASH_TIME).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 	tween.tween_property(_body, ^"scale", Vector2.ONE, SETTLE_TIME).set_trans(Tween.TRANS_ELASTIC).set_ease(Tween.EASE_OUT)
@@ -87,3 +99,8 @@ func _refresh(animate: bool) -> void:
 					.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 	_glint.emitting = eggs > 0
 	_tap_area.enabled = eggs > 0
+
+
+func _play_sound(stream: AudioStream) -> void:
+	var pan: float = clampf((global_position.x / SCREEN_WIDTH) * 2.0 - 1.0, -1.0, 1.0) * MAX_SOUND_PAN
+	AudioManager.play_sfx(stream, AudioManager.BUS_SFX, 0.0, randf_range(0.96, 1.04), pan)

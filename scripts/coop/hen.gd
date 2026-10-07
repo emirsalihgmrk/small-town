@@ -6,6 +6,8 @@ extends Node2D
 ## kadar orada bekler. Sonra yumurtlar, folluktan kalkıp avludaki yerine döner ve yeniden acıkır;
 ## yumurta folluğa kalır (toplanmasını beklemez).
 ## Her zaman nefes alır ve başını hafifçe sallar; avluda aç beklerken ara sıra yere gagalar.
+## Dokununca tüylerini kabartıp zıplar ve başından kalpler çıkar; o an yaptığı işi bölmez (zıplama
+## görselin üstündeki ayrı bir düğümde, Hop, oynar).
 ## Kayıtta tavuk üç durgun evreden biriyle tutulur (aç, susamış, follukta); yoldaki ya da işin ortasındaki
 ## tavuk, işi henüz yapılmamış evreye sayılır. Kayıttan açılırken sahne kapalıyken geçen süre kadar
 ## döngü ileri sarılır: yemlikte ve sulukta pay varsa yer, içer, follukta bekleyip yumurtlar.
@@ -47,6 +49,15 @@ const EAT_SIM_TIME: float = 5.0
 const DRINK_SIM_TIME: float = 4.0
 ## İleri sarmada bir tavuğun en fazla bu kadar adım atması (sonsuz döngüye karşı).
 const MAX_FAST_FORWARD_STEPS: int = 30
+const TAP_HOP: float = 34.0
+const TAP_HOP_TIME: float = 0.16
+const TAP_SQUASH: Vector2 = Vector2(1.12, 0.88)
+const TAP_STRETCH: Vector2 = Vector2(0.92, 1.1)
+const TAP_SQUASH_TIME: float = 0.07
+const TAP_SETTLE_TIME: float = 0.35
+const HEART_OFFSET: Vector2 = Vector2(40.0, -150.0)
+const SCREEN_WIDTH: float = 1920.0
+const MAX_SOUND_PAN: float = 0.6
 const PHASE_HUNGRY: String = "hungry"
 const PHASE_THIRSTY: String = "thirsty"
 const PHASE_NESTING: String = "nesting"
@@ -61,6 +72,8 @@ const PHASE_NESTING: String = "nesting"
 @export_range(1.0, 300.0, 1.0, "suffix:s") var lay_wait_time: float = 30.0
 @export_range(0.5, 30.0, 0.5, "suffix:s") var peck_interval_min: float = 2.5
 @export_range(0.5, 30.0, 0.5, "suffix:s") var peck_interval_max: float = 6.0
+@export var heart_scene: PackedScene
+@export_file("*.ogg", "*.wav") var fluff_sound_path: String = "res://assets/audio/sfx/feather_fluff.ogg"
 
 var state: State = State.HUNGRY
 
@@ -71,9 +84,12 @@ var _move_tween: Tween
 var _waddle_tween: Tween
 var _head_tween: Tween
 var _bubble_tween: Tween
+var _tap_tween: Tween
+var _fluff_sound: AudioStream
 
-@onready var _body: Node2D = $Body
-@onready var _head: Node2D = $Body/Neck/Head
+@onready var _hop: Node2D = $Hop
+@onready var _body: Node2D = $Hop/Body
+@onready var _head: Node2D = $Hop/Body/Neck/Head
 @onready var _water_bubble: Node2D = $WaterBubble
 @onready var _peck_timer: Timer = $PeckTimer
 
@@ -82,6 +98,9 @@ func _ready() -> void:
 	_home = global_position
 	_water_bubble.hide()
 	_peck_timer.timeout.connect(_on_peck_timer)
+	($TapArea as Tappable).tapped.connect(func(_point: Vector2) -> void: _on_tapped())
+	if ResourceLoader.exists(fluff_sound_path):
+		_fluff_sound = load(fluff_sound_path) as AudioStream
 	_peck_timer.start(randf_range(peck_interval_min, peck_interval_max))
 
 
@@ -170,6 +189,26 @@ func _place(phase: String, wait: float) -> void:
 	else:
 		global_position = _home
 		state = State.HUNGRY
+
+
+## Tüylerini kabartıp zıplar, kalpler çıkar. Önceki zıplama bitmeden gelen dokunuş yok sayılır.
+func _on_tapped() -> void:
+	if _tap_tween != null and _tap_tween.is_running():
+		return
+	var pan: float = clampf((global_position.x / SCREEN_WIDTH) * 2.0 - 1.0, -1.0, 1.0) * MAX_SOUND_PAN
+	AudioManager.play_sfx(_fluff_sound, AudioManager.BUS_SFX, 0.0, randf_range(0.9, 1.1), pan)
+	if heart_scene != null:
+		var hearts: CPUParticles2D = heart_scene.instantiate() as CPUParticles2D
+		add_child(hearts)
+		hearts.position = HEART_OFFSET
+		hearts.finished.connect(hearts.queue_free)
+		hearts.emitting = true
+	_tap_tween = create_tween()
+	_tap_tween.tween_property(_hop, ^"scale", TAP_SQUASH, TAP_SQUASH_TIME).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	_tap_tween.tween_property(_hop, ^"scale", TAP_STRETCH, TAP_SQUASH_TIME).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	_tap_tween.parallel().tween_property(_hop, ^"position:y", -TAP_HOP, TAP_HOP_TIME).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	_tap_tween.tween_property(_hop, ^"position:y", 0.0, TAP_HOP_TIME).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+	_tap_tween.parallel().tween_property(_hop, ^"scale", Vector2.ONE, TAP_SETTLE_TIME).set_trans(Tween.TRANS_ELASTIC).set_ease(Tween.EASE_OUT)
 
 
 func _eat() -> void:
