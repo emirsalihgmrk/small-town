@@ -5,6 +5,7 @@ extends Node2D
 ## parsellerin durumu kayda geçer.
 ## Kız; parsel sürülünce, ekilince, ürün çıkınca ve tavşan havucu yiyince sevinir; bir parsel hazır
 ## olunca tarlaya el sallar; tavşan görününce şaşırır; uzun süre dokunulmazsa esner.
+## Sepete dokununca sepetin içini gösteren menü açılır.
 
 const SECTION: String = "field"
 const CROP_ITEMS: Dictionary = {
@@ -26,6 +27,7 @@ var _idle_time: float = 0.0
 @onready var _basket: BasketView = $World/Basket
 @onready var _girl: Girl = $World/Girl
 @onready var _bunny: FieldBunny = $World/Bushes/Bunny
+@onready var _basket_menu: BasketMenu = $BasketMenu
 
 
 func _ready() -> void:
@@ -42,6 +44,7 @@ func _ready() -> void:
 		plot.ripened.connect(_girl.wave.bind(GIRL_FIELD_ARM))
 	_bunny.peeked.connect(_girl.surprise)
 	_bunny.fed.connect(_girl.cheer)
+	_basket.tapped.connect(_basket_menu.open)
 	SaveGame.before_save.connect(_store_plots)
 
 

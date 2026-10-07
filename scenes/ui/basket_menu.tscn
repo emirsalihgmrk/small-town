@@ -1,0 +1,250 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/basket_menu.gd" id="1_menu"]
+[ext_resource type="Texture2D" path="res://assets/art/ui/icons/field/carrot.svg" id="2_carrot"]
+[ext_resource type="Texture2D" path="res://assets/art/field/wheat_bundle.svg" id="3_wheat"]
+[ext_resource type="Texture2D" path="res://assets/art/field/basket_back.svg" id="4_basket_back"]
+[ext_resource type="Texture2D" path="res://assets/art/field/basket_front.svg" id="5_basket_front"]
+[ext_resource type="Texture2D" path="res://assets/art/ui/icons/close.svg" id="6_close"]
+
+[sub_resource type="StyleBoxFlat" id="card"]
+content_margin_left = 36.0
+content_margin_top = 28.0
+content_margin_right = 28.0
+content_margin_bottom = 36.0
+bg_color = Color(1, 0.973, 0.906, 1)
+border_width_left = 8
+border_width_top = 8
+border_width_right = 8
+border_width_bottom = 8
+border_color = Color(1, 1, 1, 1)
+corner_radius_top_left = 48
+corner_radius_top_right = 48
+corner_radius_bottom_right = 48
+corner_radius_bottom_left = 48
+shadow_color = Color(0, 0, 0, 0.25)
+shadow_size = 12
+shadow_offset = Vector2(0, 8)
+
+[sub_resource type="StyleBoxFlat" id="slot"]
+bg_color = Color(1, 0.886, 0.659, 1)
+corner_radius_top_left = 36
+corner_radius_top_right = 36
+corner_radius_bottom_right = 36
+corner_radius_bottom_left = 36
+
+[sub_resource type="StyleBoxFlat" id="close_normal"]
+bg_color = Color(1, 0.945, 0.722, 1)
+border_width_left = 6
+border_width_top = 6
+border_width_right = 6
+border_width_bottom = 6
+border_color = Color(1, 1, 1, 1)
+corner_radius_top_left = 50
+corner_radius_top_right = 50
+corner_radius_bottom_right = 50
+corner_radius_bottom_left = 50
+shadow_color = Color(0, 0, 0, 0.2)
+shadow_size = 6
+shadow_offset = Vector2(0, 4)
+
+[sub_resource type="StyleBoxFlat" id="close_hover"]
+bg_color = Color(1, 0.952, 0.755, 1)
+border_width_left = 6
+border_width_top = 6
+border_width_right = 6
+border_width_bottom = 6
+border_color = Color(1, 1, 1, 1)
+corner_radius_top_left = 50
+corner_radius_top_right = 50
+corner_radius_bottom_right = 50
+corner_radius_bottom_left = 50
+shadow_color = Color(0, 0, 0, 0.2)
+shadow_size = 6
+shadow_offset = Vector2(0, 4)
+
+[sub_resource type="StyleBoxFlat" id="close_pressed"]
+bg_color = Color(0.9, 0.851, 0.65, 1)
+border_width_left = 6
+border_width_top = 6
+border_width_right = 6
+border_width_bottom = 6
+border_color = Color(1, 1, 1, 1)
+corner_radius_top_left = 50
+corner_radius_top_right = 50
+corner_radius_bottom_right = 50
+corner_radius_bottom_left = 50
+shadow_color = Color(0, 0, 0, 0.2)
+shadow_size = 6
+shadow_offset = Vector2(0, 4)
+
+[sub_resource type="StyleBoxEmpty" id="close_focus"]
+
+[node name="BasketMenu" type="CanvasLayer"]
+layer = 3
+script = ExtResource("1_menu")
+item_icons = Dictionary[StringName, Texture2D]({
+&"carrot": ExtResource("2_carrot"),
+&"wheat": ExtResource("3_wheat")
+})
+
+[node name="Root" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Dim" type="ColorRect" parent="Root"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.12, 0.08, 0.04, 0.4)
+
+[node name="Panel" type="PanelContainer" parent="Root"]
+custom_minimum_size = Vector2(640, 0)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 0
+theme_override_styles/panel = SubResource("card")
+
+[node name="VBox" type="VBoxContainer" parent="Root/Panel"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 24
+
+[node name="Header" type="HBoxContainer" parent="Root/Panel/VBox"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 18
+
+[node name="BasketIcon" type="Control" parent="Root/Panel/VBox/Header"]
+custom_minimum_size = Vector2(124, 108)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="Back" type="Sprite2D" parent="Root/Panel/VBox/Header/BasketIcon"]
+position = Vector2(62, 104)
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("4_basket_back")
+centered = false
+offset = Vector2(-120, -196)
+
+[node name="Wheat" type="Sprite2D" parent="Root/Panel/VBox/Header/BasketIcon/Back"]
+position = Vector2(-30, -112)
+rotation = -0.25
+scale = Vector2(0.55, 0.55)
+texture = ExtResource("3_wheat")
+
+[node name="Carrot" type="Sprite2D" parent="Root/Panel/VBox/Header/BasketIcon/Back"]
+position = Vector2(28, -108)
+rotation = 0.3
+scale = Vector2(0.45, 0.45)
+texture = ExtResource("2_carrot")
+
+[node name="Front" type="Sprite2D" parent="Root/Panel/VBox/Header/BasketIcon"]
+position = Vector2(62, 104)
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("5_basket_front")
+centered = false
+offset = Vector2(-120, -196)
+
+[node name="Title" type="Label" parent="Root/Panel/VBox/Header"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.36, 0.24, 0.13, 1)
+theme_override_colors/font_outline_color = Color(1, 1, 1, 1)
+theme_override_constants/outline_size = 12
+theme_override_font_sizes/font_size = 56
+text = "Sepetim"
+vertical_alignment = 1
+
+[node name="CloseButton" type="Button" parent="Root/Panel/VBox/Header"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+size_flags_vertical = 0
+focus_mode = 0
+theme_override_styles/focus = SubResource("close_focus")
+theme_override_styles/hover = SubResource("close_hover")
+theme_override_styles/pressed = SubResource("close_pressed")
+theme_override_styles/normal = SubResource("close_normal")
+
+[node name="Icon" type="Sprite2D" parent="Root/Panel/VBox/Header/CloseButton"]
+position = Vector2(50, 50)
+scale = Vector2(0.3, 0.3)
+texture = ExtResource("6_close")
+
+[node name="Items" type="HBoxContainer" parent="Root/Panel/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 40
+alignment = 1
+
+[node name="Template" type="Control" parent="Root/Panel/VBox/Items"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(200, 284)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="Content" type="Control" parent="Root/Panel/VBox/Items/Template"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Slot" type="Panel" parent="Root/Panel/VBox/Items/Template/Content"]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 200.0
+grow_horizontal = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("slot")
+
+[node name="Icon" type="TextureRect" parent="Root/Panel/VBox/Items/Template/Content/Slot"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 30.0
+offset_top = 30.0
+offset_right = -30.0
+offset_bottom = -30.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Count" type="Label" parent="Root/Panel/VBox/Items/Template/Content"]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -80.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_colors/font_color = Color(0.36, 0.24, 0.13, 1)
+theme_override_colors/font_outline_color = Color(1, 1, 1, 1)
+theme_override_constants/outline_size = 12
+theme_override_font_sizes/font_size = 64
+text = "0"
+horizontal_alignment = 1
+vertical_alignment = 1

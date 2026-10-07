@@ -49,6 +49,7 @@
 [ext_resource type="Texture2D" path="res://assets/art/animals/bunny.svg" id="bunny"]
 [ext_resource type="Texture2D" path="res://assets/art/field/thought_bubble.svg" id="thought_bubble"]
 [ext_resource type="PackedScene" path="res://scenes/field/effects/heart_burst.tscn" id="heart_burst"]
+[ext_resource type="PackedScene" path="res://scenes/ui/basket_menu.tscn" id="basket_menu"]
 
 [sub_resource type="StyleBoxFlat" id="home_normal"]
 bg_color = Color(1, 0.945, 0.722, 1)
@@ -630,6 +631,10 @@ theme_override_font_sizes/font_size = 34
 text = "0"
 vertical_alignment = 1
 
+[node name="TapArea" type="Node2D" parent="World/Basket"]
+script = ExtResource("tappable_script")
+area = Rect2(-120, -200, 240, 270)
+
 [node name="Flights" type="Node2D" parent="World"]
 
 [node name="PauseWhenInactive" type="Node" parent="."]
@@ -764,3 +769,5 @@ texture = ExtResource("23_sickle")
 
 [node name="DragLayer" type="CanvasLayer" parent="."]
 layer = 2
+
+[node name="BasketMenu" parent="." instance=ExtResource("basket_menu")]

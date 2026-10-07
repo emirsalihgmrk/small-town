@@ -5,6 +5,9 @@ extends Node2D
 ## Ürün ortak sepete (Basket) hasat anında zaten eklenmiştir: sahne aniden kapansa da kaybolmaz.
 ## Burada yalnızca görünüş vardır; yoldaki ürünler sepete varınca sayılır. Sepetten bir yere verilen
 ## ürün de (tavşana havuç) sepetin ağzından oraya uçar.
+## Sepete dokununca sepet esner ve tapped yayılır (tarla bunu sepet menüsünü açmak için kullanır).
+
+signal tapped
 
 const MOUTH: Vector2 = Vector2(0.0, -120.0)
 const PRODUCE_START_SCALE: float = 0.6
@@ -39,6 +42,7 @@ var _land_sound: AudioStream
 @onready var _body: Node2D = $Body
 @onready var _carrot_count: Label = $Tally/CarrotCount
 @onready var _wheat_count: Label = $Tally/WheatCount
+@onready var _tap_area: Tappable = $TapArea
 
 
 func _ready() -> void:
@@ -46,6 +50,9 @@ func _ready() -> void:
 	if ResourceLoader.exists(land_sound_path):
 		_land_sound = load(land_sound_path) as AudioStream
 	Basket.changed.connect(func(_item: StringName, _count: int) -> void: _refresh(false))
+	_tap_area.tapped.connect(func(_point: Vector2) -> void:
+		_squash()
+		tapped.emit())
 	_refresh(false)
 
 
@@ -93,9 +100,7 @@ func send(item: StringName, to_global: Vector2, on_arrived: Callable) -> void:
 	tween.chain().tween_callback(func() -> void:
 		produce.queue_free()
 		on_arrived.call())
-	var squash: Tween = create_tween()
-	squash.tween_property(_body, ^"scale", SQUASH, SQUASH_TIME).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
-	squash.tween_property(_body, ^"scale", Vector2.ONE, SETTLE_TIME).set_trans(Tween.TRANS_ELASTIC).set_ease(Tween.EASE_OUT)
+	_squash()
 
 
 ## İkinci dereceden Bezier: başlangıç ve varışın ortasının ARC_HEIGHT üstünden geçer.
@@ -115,10 +120,14 @@ func _land(item: StringName, produce: Node2D) -> void:
 		sparkle.position = MOUTH
 		sparkle.finished.connect(sparkle.queue_free)
 		sparkle.emitting = true
+	_squash()
+	_refresh(true)
+
+
+func _squash() -> void:
 	var tween: Tween = create_tween()
 	tween.tween_property(_body, ^"scale", SQUASH, SQUASH_TIME).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 	tween.tween_property(_body, ^"scale", Vector2.ONE, SETTLE_TIME).set_trans(Tween.TRANS_ELASTIC).set_ease(Tween.EASE_OUT)
-	_refresh(true)
 
 
 ## Sayılar ve yığın: sepettekilerden yolda olanlar düşülür. Yığında demetler arkaya, havuçlar öne
