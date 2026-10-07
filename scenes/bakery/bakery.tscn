@@ -6,7 +6,13 @@
 [ext_resource type="Texture2D" path="res://assets/art/bakery/bakery_oven.svg" id="4_oven"]
 [ext_resource type="Texture2D" path="res://assets/art/bakery/firewood.svg" id="5_firewood"]
 [ext_resource type="Texture2D" path="res://assets/art/bakery/bakery_table.svg" id="6_table"]
-[ext_resource type="Texture2D" path="res://assets/art/bakery/mixing_bowl.svg" id="7_bowl"]
+[ext_resource type="PackedScene" path="res://scenes/bakery/mixing_bowl.tscn" id="7_bowl"]
+[ext_resource type="Texture2D" path="res://assets/art/bakery/recipe_board.svg" id="board"]
+[ext_resource type="PackedScene" path="res://scenes/bakery/recipe_card.tscn" id="card_scene"]
+[ext_resource type="Texture2D" path="res://assets/art/ui/icons/bakery/bread.svg" id="bread"]
+[ext_resource type="Texture2D" path="res://assets/art/bakery/cookie.svg" id="cookie"]
+[ext_resource type="Texture2D" path="res://assets/art/bakery/carrot_cake.svg" id="carrot_cake"]
+[ext_resource type="Script" path="res://scripts/bakery/ingredient_hand.gd" id="ingredient_hand_script"]
 [ext_resource type="PackedScene" path="res://scenes/entities/girl.tscn" id="8_girl"]
 [ext_resource type="Texture2D" path="res://assets/art/ui/icons/home.svg" id="9_home"]
 [ext_resource type="PackedScene" path="res://scenes/entities/basket.tscn" id="basket_scene"]
@@ -73,11 +79,13 @@ texture = ExtResource("1_room")
 centered = false
 
 [node name="Window" type="Sprite2D" parent="World"]
-position = Vector2(560, 300)
+position = Vector2(370, 300)
+scale = Vector2(0.9, 0.9)
 texture = ExtResource("2_window")
 
 [node name="Shelf" type="Sprite2D" parent="World"]
-position = Vector2(1000, 400)
+position = Vector2(1745, 250)
+scale = Vector2(0.75, 0.75)
 texture = ExtResource("3_shelf")
 centered = false
 offset = Vector2(-230, -180)
@@ -100,11 +108,33 @@ texture = ExtResource("6_table")
 centered = false
 offset = Vector2(-330, -268)
 
-[node name="Bowl" type="Sprite2D" parent="World"]
-position = Vector2(820, 678)
-texture = ExtResource("7_bowl")
+[node name="RecipeBoard" type="Node2D" parent="World"]
+position = Vector2(880, 320)
+
+[node name="Board" type="Sprite2D" parent="World/RecipeBoard"]
+texture = ExtResource("board")
 centered = false
-offset = Vector2(-120, -114)
+offset = Vector2(-320, -240)
+
+[node name="Cards" type="Node2D" parent="World/RecipeBoard"]
+position = Vector2(0, 2)
+
+[node name="Bread" parent="World/RecipeBoard/Cards" instance=ExtResource("card_scene")]
+position = Vector2(-190, 0)
+recipe = &"bread"
+product_texture = ExtResource("bread")
+
+[node name="Cookie" parent="World/RecipeBoard/Cards" instance=ExtResource("card_scene")]
+recipe = &"cookie"
+product_texture = ExtResource("cookie")
+
+[node name="CarrotCake" parent="World/RecipeBoard/Cards" instance=ExtResource("card_scene")]
+position = Vector2(190, 0)
+recipe = &"carrot_cake"
+product_texture = ExtResource("carrot_cake")
+
+[node name="Bowl" parent="World" instance=ExtResource("7_bowl")]
+position = Vector2(820, 678)
 
 [node name="Girl" parent="World" instance=ExtResource("8_girl")]
 position = Vector2(230, 1000)
@@ -124,6 +154,12 @@ script = ExtResource("tap_router_script")
 
 [node name="Ambience" type="Node" parent="."]
 script = ExtResource("ambience_script")
+
+[node name="IngredientHand" type="Node" parent="." node_paths=PackedStringArray("basket", "bowl", "drag_layer")]
+script = ExtResource("ingredient_hand_script")
+basket = NodePath("../World/Basket")
+bowl = NodePath("../World/Bowl")
+drag_layer = NodePath("../DragLayer")
 
 [node name="UI" type="CanvasLayer" parent="."]
 
@@ -152,5 +188,8 @@ theme_override_styles/normal = SubResource("home_normal")
 position = Vector2(65, 65)
 scale = Vector2(0.5, 0.5)
 texture = ExtResource("9_home")
+
+[node name="DragLayer" type="CanvasLayer" parent="."]
+layer = 2
 
 [node name="BasketMenu" parent="." instance=ExtResource("basket_menu")]

@@ -1,0 +1,92 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/bakery/mixing_bowl.gd" id="1_bowl_script"]
+[ext_resource type="Texture2D" path="res://assets/art/bakery/mixing_bowl.svg" id="2_bowl"]
+[ext_resource type="Texture2D" path="res://assets/art/bakery/bowl_flour.svg" id="3_flour"]
+[ext_resource type="Texture2D" path="res://assets/art/bakery/bowl_yolk.svg" id="4_yolk"]
+[ext_resource type="Texture2D" path="res://assets/art/bakery/bowl_carrot.svg" id="5_carrot"]
+[ext_resource type="Texture2D" path="res://assets/art/environment/smoke_puff.svg" id="6_puff"]
+[ext_resource type="Texture2D" path="res://assets/art/field/thought_bubble.svg" id="7_bubble"]
+[ext_resource type="PackedScene" path="res://scenes/ui/icons/field_icon.tscn" id="8_field_icon"]
+[ext_resource type="PackedScene" path="res://scenes/ui/icons/coop_icon.tscn" id="9_coop_icon"]
+[ext_resource type="Script" path="res://scripts/input/tappable.gd" id="10_tappable"]
+[ext_resource type="PackedScene" path="res://scenes/field/effects/sparkle_burst.tscn" id="11_sparkle"]
+
+[sub_resource type="Gradient" id="Gradient_puff"]
+offsets = PackedFloat32Array(0, 0.5, 1)
+colors = PackedColorArray(1, 1, 1, 0.9, 1, 1, 1, 0.7, 1, 1, 1, 0)
+
+[node name="MixingBowl" type="Node2D"]
+script = ExtResource("1_bowl_script")
+sparkle_scene = ExtResource("11_sparkle")
+
+[node name="Body" type="Node2D" parent="."]
+
+[node name="Sprite" type="Sprite2D" parent="Body"]
+texture = ExtResource("2_bowl")
+centered = false
+offset = Vector2(-120, -114)
+
+[node name="Contents" type="Node2D" parent="Body"]
+position = Vector2(0, -80)
+
+[node name="Flour" type="Sprite2D" parent="Body/Contents"]
+texture = ExtResource("3_flour")
+centered = false
+offset = Vector2(-94, -44)
+
+[node name="Yolk" type="Sprite2D" parent="Body/Contents"]
+position = Vector2(18, -8)
+texture = ExtResource("4_yolk")
+centered = false
+offset = Vector2(-52, -40)
+
+[node name="Carrot" type="Sprite2D" parent="Body/Contents"]
+position = Vector2(-6, -12)
+texture = ExtResource("5_carrot")
+centered = false
+offset = Vector2(-75, -44)
+
+[node name="Puff" type="CPUParticles2D" parent="."]
+position = Vector2(0, -110)
+emitting = false
+amount = 8
+lifetime = 0.9
+one_shot = true
+explosiveness = 0.85
+local_coords = false
+texture = ExtResource("6_puff")
+emission_shape = 3
+emission_rect_extents = Vector2(60, 8)
+direction = Vector2(0, -1)
+spread = 70.0
+gravity = Vector2(0, -30)
+initial_velocity_min = 50.0
+initial_velocity_max = 120.0
+damping_min = 40.0
+damping_max = 80.0
+scale_amount_min = 0.6
+scale_amount_max = 1.0
+color_ramp = SubResource("Gradient_puff")
+
+[node name="Bubble" type="Node2D" parent="."]
+position = Vector2(-210, -130)
+scale = Vector2(1.6, 1.6)
+
+[node name="Cloud" type="Sprite2D" parent="Bubble"]
+texture = ExtResource("7_bubble")
+centered = false
+offset = Vector2(-46, -44)
+
+[node name="Field" parent="Bubble" instance=ExtResource("8_field_icon")]
+position = Vector2(0, -2)
+scale = Vector2(0.28, 0.28)
+
+[node name="Coop" parent="Bubble" instance=ExtResource("9_coop_icon")]
+position = Vector2(0, -6)
+scale = Vector2(0.3, 0.3)
+
+[node name="TapArea" type="Node2D" parent="Bubble"]
+script = ExtResource("10_tappable")
+area = Rect2(-46, -44, 96, 96)
+priority = 5

@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="176" height="150" viewBox="-88 -82 176 150">
+<ellipse cx="0" cy="50" rx="84" ry="14" fill="#e9f6fb" stroke="#8fb9cc" stroke-width="5"/>
+<path d="M-70 -14 L-70 38 Q0 54 70 38 L70 -14 Z" fill="#e3a157" stroke="#a8682a" stroke-width="6" stroke-linejoin="round"/>
+<path d="M-68 14 Q0 28 68 14" fill="none" stroke="#fff3dc" stroke-width="9" stroke-linecap="round"/>
+<g fill="#ff8a2b"><circle cx="-44" cy="30" r="3"/><circle cx="-12" cy="38" r="3"/><circle cx="26" cy="36" r="3"/><circle cx="52" cy="28" r="3"/><circle cx="-30" cy="-2" r="3"/><circle cx="40" cy="0" r="3"/></g>
+<path d="M-74 -14 Q-74 -36 0 -38 Q74 -36 74 -14 Q74 0 62 -2 Q56 14 46 -2 Q36 4 26 -4 Q14 12 4 -4 Q-8 8 -18 -4 Q-30 14 -40 -4 Q-52 6 -60 -4 Q-74 4 -74 -14 Z" fill="#fff3dc" stroke="#d9c4a0" stroke-width="5" stroke-linejoin="round"/>
+<path d="M-6 -36 L10 -72 L22 -36 Z" fill="#ff8a2b" stroke="#c45f12" stroke-width="4" stroke-linejoin="round" transform="rotate(18 8 -40)"/>
+<path d="M14 -72 Q4 -84 -2 -80 Q8 -76 14 -70 Z M16 -72 Q22 -86 30 -84 Q24 -76 18 -70 Z" fill="#6cbf4f" stroke="#3f8a32" stroke-width="3" stroke-linejoin="round" transform="rotate(18 8 -40)"/>
+</svg>

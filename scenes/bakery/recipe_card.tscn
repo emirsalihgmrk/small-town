@@ -1,0 +1,36 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/bakery/recipe_card.gd" id="1_card_script"]
+[ext_resource type="Texture2D" path="res://assets/art/bakery/recipe_card_glow.svg" id="2_glow"]
+[ext_resource type="Texture2D" path="res://assets/art/bakery/recipe_card.svg" id="3_card"]
+[ext_resource type="Texture2D" path="res://assets/art/field/wheat_bundle.svg" id="4_wheat"]
+[ext_resource type="Texture2D" path="res://assets/art/coop/egg.svg" id="5_egg"]
+[ext_resource type="Texture2D" path="res://assets/art/ui/icons/field/carrot.svg" id="6_carrot"]
+[ext_resource type="Script" path="res://scripts/input/tappable.gd" id="7_tappable"]
+
+[node name="RecipeCard" type="Node2D"]
+script = ExtResource("1_card_script")
+ingredient_textures = Dictionary[StringName, Texture2D]({
+&"carrot": ExtResource("6_carrot"),
+&"egg": ExtResource("5_egg"),
+&"wheat": ExtResource("4_wheat")
+})
+
+[node name="Body" type="Node2D" parent="."]
+
+[node name="Glow" type="Sprite2D" parent="Body"]
+texture = ExtResource("2_glow")
+
+[node name="Card" type="Sprite2D" parent="Body"]
+texture = ExtResource("3_card")
+
+[node name="Product" type="Sprite2D" parent="Body"]
+position = Vector2(0, -30)
+
+[node name="Ingredients" type="Node2D" parent="Body"]
+position = Vector2(0, 72)
+
+[node name="TapArea" type="Node2D" parent="."]
+script = ExtResource("7_tappable")
+area = Rect2(-90, -116, 180, 228)
+priority = 3
