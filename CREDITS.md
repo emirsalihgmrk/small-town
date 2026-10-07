@@ -14,7 +14,6 @@ Yeniden üretmek için proje kökünden: `python tools/audio/generate_audio.py`
 | `assets/audio/ambience/wind_loop.ogg` | Süzülmüş gürültüden rüzgâr ve yaprak hışırtısı, 40 sn dikişsiz döngü |
 | `assets/audio/ambience/bird_chirp_1..5.ogg` | Frekans süpürmeli kısa kuş cıvıltıları (5 varyasyon) |
 | `assets/audio/ambience/distant_cow.ogg` | Uzaktan, yumuşak bir inek böğürmesi |
-| `assets/audio/sfx/giggle.ogg` | Formant sentezli kısa bir çocuk kıkırdaması ("hi-hi-hi") |
 | `assets/audio/sfx/hoe_chop.ogg` | Çapa vuruşu: boğuk "tok", toprak hışırtısı ve dökülen kesekler |
 | `assets/audio/sfx/plot_ready.ogg` | Parsel hazır: yukarı çıkan üç notalı müzik kutusu arpeji |
 | `assets/audio/sfx/seed_plop.ogg` | Tohum çukura düşer: perdesi hızla inen yumuşak bir "pıt" |
@@ -25,6 +24,7 @@ Yeniden üretmek için proje kökünden: `python tools/audio/generate_audio.py`
 | `assets/audio/sfx/sickle_swish.ogg` | Orak başağı keser: perdesi yükselen kısa bir "hışırt" |
 | `assets/audio/sfx/basket_drop.ogg` | Ürün sepete düşer: boğuk bir hasır "tok" ve kısa bir örgü hışırtısı |
 | `assets/audio/sfx/bunny_munch.ogg` | Tavşan havuç yer: art arda üç küçük, kıtır ısırık |
+| `assets/audio/sfx/happy_chime.ogg` | Kız sevinir (dokununca): iki notalı yumuşak müzik kutusu "tirin" ve birkaç minik pırıltı |
 
 ## Görseller
 

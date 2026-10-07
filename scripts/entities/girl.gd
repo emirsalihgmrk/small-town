@@ -1,7 +1,8 @@
 class_name Girl
 extends Node2D
-## Kız karakter: ara ara el sallar, göz kırpar, dokununca kıkırdayıp zıplar.
-## Sahneler olaylara tepki verdirmek için cheer / wave / surprise / yawn çağırır.
+## Kız karakter: ara ara el sallar, göz kırpar, dokununca tatlı bir "tirin" sesiyle zıplar.
+## Sahneler olaylara tepki verdirmek için cheer / wave / surprise / yawn çağırır. Bu tepkiler sessizdir:
+## işlerin (hasat, ekim...) kendi sesi zaten vardır, her seferinde üstüne bir ses daha binmesin.
 ## Sürekli nefes, gövde/baş sallanması ve şapka/örgü salınımı sahnedeki bileşenlerle yapılır
 ## (PulseComponent, SwayComponent, SpringFollowComponent).
 
@@ -39,12 +40,13 @@ const MAX_SOUND_PAN: float = 0.6
 
 @export_group("Dokunma")
 @export_range(0.0, 80.0, 1.0, "suffix:px") var jump_height: float = 22.0
-@export_file("*.ogg", "*.wav") var giggle_sound_path: String = "res://assets/audio/sfx/giggle.ogg"
-@export_range(0.0, 0.3, 0.01) var giggle_pitch_variation: float = 0.05
+@export_file("*.ogg", "*.wav") var happy_sound_path: String = "res://assets/audio/sfx/happy_chime.ogg"
+@export_range(-30.0, 6.0, 0.5, "suffix:dB") var happy_volume_db: float = -4.0
+@export_range(0.0, 0.3, 0.01) var happy_pitch_variation: float = 0.05
 
 var _waving: bool = false
 var _reacting: bool = false
-var _giggle: AudioStream
+var _happy_sound: AudioStream
 var _blink_timer: Timer
 var _wave_timer: Timer
 
@@ -61,8 +63,8 @@ var _wave_timer: Timer
 
 
 func _ready() -> void:
-	if ResourceLoader.exists(giggle_sound_path):
-		_giggle = load(giggle_sound_path) as AudioStream
+	if ResourceLoader.exists(happy_sound_path):
+		_happy_sound = load(happy_sound_path) as AudioStream
 	_tap_area.tapped.connect(_on_tapped)
 	_blink_timer = _make_timer(_blink)
 	_wave_timer = _make_timer(_wave)
@@ -111,18 +113,19 @@ func wave(side: int = -1) -> void:
 
 
 func _on_tapped(_global_tap_position: Vector2) -> void:
-	cheer()
+	cheer(true)
 
 
-## Sevinir: kıkırdar, zıplar, kalpler ve yıldızlar saçar. Tepki sürerken gelen istek yok sayılır;
-## animasyonlar üst üste binmez.
-func cheer() -> void:
+## Sevinir: zıplar, kalpler ve yıldızlar saçar; with_sound ise (yalnızca kıza dokunulunca) "tirin" sesi
+## de çalar. Tepki sürerken gelen istek yok sayılır; animasyonlar üst üste binmez.
+func cheer(with_sound: bool = false) -> void:
 	if _reacting:
 		return
 	_reacting = true
-	var pan: float = clampf((global_position.x / SCREEN_WIDTH) * 2.0 - 1.0, -1.0, 1.0) * MAX_SOUND_PAN
-	AudioManager.play_sfx(_giggle, AudioManager.BUS_SFX, 0.0,
-			1.0 + randf_range(-giggle_pitch_variation, giggle_pitch_variation), pan)
+	if with_sound:
+		var pan: float = clampf((global_position.x / SCREEN_WIDTH) * 2.0 - 1.0, -1.0, 1.0) * MAX_SOUND_PAN
+		AudioManager.play_sfx(_happy_sound, AudioManager.BUS_SFX, happy_volume_db,
+				1.0 + randf_range(-happy_pitch_variation, happy_pitch_variation), pan)
 	_hearts.restart()
 	_stars.restart()
 	_set_eyes_closed(true)

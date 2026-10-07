@@ -260,29 +260,27 @@ def make_distant_cow() -> np.ndarray:
     return fade_edges(linear_reverb(out, wet=0.55, seconds=1.4, damp_hz=1500), fade_out=0.3)
 
 
-# ------------------------------------------------------------------ kıkırdama
-def giggle_syllable(f0: float, dur: float) -> np.ndarray:
-    """Formantlı tek bir "hi" hecesi: kısa nefes sesi + "i/e" ünlüsü, perdesi hafifçe iner."""
-    t = times(dur)
-    pitch = f0 * np.interp(t, [0, dur], [1.04, 0.94])
-    phase = 2 * np.pi * np.cumsum(pitch) / SR
-    voice = np.zeros(len(t))
-    for k in range(1, 12):
-        hk = pitch * k
-        formant = (np.exp(-((hk - 480) / 160) ** 2) + 0.55 * np.exp(-((hk - 2300) / 300) ** 2)
-                   + 0.25 * np.exp(-((hk - 3000) / 350) ** 2))
-        voice += formant * np.sin(k * phase)
-    voice *= np.clip((t - 0.018) / 0.012, 0, 1) * np.sin(np.pi * np.clip(t / dur, 0, 1)) ** 0.7
-    breath = sosfilt(butter(2, [1200, 3800], "band", fs=SR, output="sos"), rng.standard_normal(len(t)))
-    breath *= 0.08 * np.exp(-t / 0.02)
-    return voice / 4 + breath
+# ------------------------------------------------------------------ kız
+def skip_old_giggle() -> None:
+    """Eski kıkırdama sesi (sfx/giggle.ogg) kaldırıldı. Ondan sonraki seslerin rastgele sayı sırası
+    değişmesin diye onun çektiği kadar sayı (dört hecenin nefesi + yankı) çekilip atılır."""
+    rng.standard_normal(4 * len(times(0.085)) + len(times(0.3)))
 
 
-def make_giggle() -> np.ndarray:
-    parts = []
-    for i, (f0, gain) in enumerate(((640, 1.0), (610, 0.92), (585, 0.82), (560, 0.68))):
-        parts.append((giggle_syllable(f0, 0.085) * gain, 0.055 if i else 0.0))
-    return fade_edges(linear_reverb(lowpass(sequence(parts), 4500), wet=0.1, seconds=0.3))
+def make_happy_chime() -> np.ndarray:
+    """Kız sevinir: iki notalı yumuşak bir müzik kutusu "tirin" (Do-Sol) ve üstünde birkaç minik pırıltı."""
+    step = 0.075
+    buf = np.zeros(int((step + 1.9) * SR))
+    for i, (m, gain) in enumerate(((84, 0.7), (91, 1.0))):
+        sig = music_box(midi_hz(m), 0.5)
+        k = int(i * step * SR)
+        buf[k: k + len(sig)] += gain * sig
+    for start in np.sort(rng.uniform(0.1, 0.35, 4)):
+        t = times(0.12)
+        tink = np.sin(2 * np.pi * midi_hz(rng.uniform(100, 105)) * t) * np.exp(-t / 0.03) * np.clip(t / 0.003, 0, 1)
+        k = int(start * SR)
+        buf[k: k + len(t)] += 0.12 * tink
+    return fade_edges(linear_reverb(lowpass(buf, 7000), wet=0.25, seconds=0.6), fade_out=0.4)
 
 
 # ------------------------------------------------------------------ tarla
@@ -418,7 +416,7 @@ def main() -> None:
     for i, b in enumerate(make_birds(), 1):
         write(f"ambience/bird_chirp_{i}.ogg", b)
     write("ambience/distant_cow.ogg", make_distant_cow())
-    write("sfx/giggle.ogg", make_giggle())
+    skip_old_giggle()
     # Yeni sesler hep sona eklenir: rastgele sayı sırası değişmesin, eski sesler birebir aynı kalsın.
     write("sfx/hoe_chop.ogg", make_hoe_chop())
     write("sfx/plot_ready.ogg", make_plot_ready())
@@ -430,6 +428,7 @@ def main() -> None:
     write("sfx/sickle_swish.ogg", make_sickle_swish())
     write("sfx/basket_drop.ogg", make_basket_drop())
     write("sfx/bunny_munch.ogg", make_bunny_munch())
+    write("sfx/happy_chime.ogg", make_happy_chime())
 
 
 if __name__ == "__main__":
