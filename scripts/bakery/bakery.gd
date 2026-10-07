@@ -8,6 +8,7 @@ extends Node2D
 ## karışım hamur olunca kız sevinir. Hamur hazırken boş fırın parlayarak çağırır; hamur fırına girince kase
 ## boşalır, kartlar sıfırlanır (yeni tarife başlanabilir), kapak kapanınca kız fırına el sallar, ürün
 ## pişince sevinir. Pişen ürün fırından çıkınca ortak sepete eklenir, sepete uçar ve kız yine sevinir.
+## Kız tarladaki ve kümesteki gibi uzun süre dokunulmazsa esner.
 ## Kase ve fırın SaveGame'in "bakery" bölümünde tutulur: seçili tarif, kasedeki malzemeler, karışma
 ## miktarı ve fırındaki ürünle pişmesine kalan süre. Tarif seçilince, kaseye malzeme konunca, hamur olunca,
 ## hamur fırına girince, sahneden çıkarken ve SaveGame diske yazmadan hemen önce kayda geçer. Açılışta
@@ -17,6 +18,11 @@ const SECTION: String = "bakery"
 
 ## Kızın fırına (sağa) bakan kolu.
 const GIRL_OVEN_ARM: int = 1
+## Esneme zamanı geldiğinde kız başka bir hareketteyse bu kadar sonra yeniden denenir.
+const YAWN_RETRY_TIME: float = 2.0
+
+## Bu kadar süre hiç dokunulmazsa kız esner (sonra yine aynı süre beklenir).
+@export_range(5.0, 120.0, 1.0, "suffix:s") var idle_yawn_time: float = 25.0
 
 @onready var _home_button: Button = $UI/Root/HomeButton
 @onready var _basket: BasketView = $World/Basket
@@ -28,6 +34,7 @@ const GIRL_OVEN_ARM: int = 1
 
 var _cards: Array[RecipeCard] = []
 var _selected: RecipeCard
+var _idle_time: float = 0.0
 
 
 func _ready() -> void:
@@ -52,6 +59,17 @@ func _ready() -> void:
 	_bowl.mixed.connect(SaveGame.request_save)
 	_bowl.cleared.connect(SaveGame.request_save)
 	SaveGame.before_save.connect(_store)
+
+
+func _process(delta: float) -> void:
+	_idle_time += delta
+	if _idle_time >= idle_yawn_time:
+		_idle_time = 0.0 if _girl.yawn() else idle_yawn_time - YAWN_RETRY_TIME
+
+
+func _input(event: InputEvent) -> void:
+	if event is InputEventScreenTouch or event is InputEventScreenDrag:
+		_idle_time = 0.0
 
 
 func _exit_tree() -> void:
@@ -84,7 +102,7 @@ func _restore() -> void:
 			_selected = card
 	if _selected == null:
 		return
-	_selected.set_selected(true)
+	_selected.set_selected(true, false)
 	var empty_slots: Array[int] = _bowl.open_slots()
 	for i: int in Recipes.ingredients(_bowl.recipe).size():
 		if not empty_slots.has(i):

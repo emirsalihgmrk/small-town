@@ -440,6 +440,96 @@ def make_feather_fluff() -> np.ndarray:
     return fade_edges(lowpass(sequence(parts), 4000), fade_in=0.005, fade_out=0.03)
 
 
+def make_card_flip() -> np.ndarray:
+    """Tarif kartı seçilir: kâğıt kenarının hızlı bir "fıt"ı ve yumuşak bir ikinci dokunuş."""
+    parts = []
+    for i, (dur, gain) in enumerate([(0.05, 1.0), (0.035, 0.45)]):
+        t = times(dur)
+        flick = sosfilt(butter(2, [2200, 7000], "band", fs=SR, output="sos"), rng.standard_normal(len(t)))
+        flick *= np.exp(-t / (dur * 0.3)) * np.clip(t / 0.002, 0, 1) * gain / np.max(np.abs(flick))
+        parts.append((flick, 0.045 if i else 0.0))
+    return fade_edges(lowpass(sequence(parts), 6500), fade_in=0.001, fade_out=0.02)
+
+
+def make_egg_crack() -> np.ndarray:
+    """Yumurta kaseye kırılır: kabuğun iki üç ince "çıt"ı ve kaseye düşen yumuşak bir "pıt"."""
+    buf = np.zeros(int(0.3 * SR))
+    for start, gain in [(0.0, 1.0), (0.022, 0.6), (0.04, 0.35)]:
+        t = times(0.006)
+        tick = sosfilt(butter(2, [2500, 7500], "band", fs=SR, output="sos"), rng.standard_normal(len(t)))
+        tick *= np.hanning(len(t)) * gain / np.max(np.abs(tick))
+        k = int(start * SR)
+        buf[k: k + len(tick)] += tick
+    t = times(0.12)
+    hz = np.interp(t, [0, 0.05], [520, 260])
+    plop = np.sin(2 * np.pi * np.cumsum(hz) / SR) * np.exp(-t / 0.035) * np.clip(t / 0.004, 0, 1)
+    k = int(0.09 * SR)
+    buf[k: k + len(plop)] += 0.7 * plop
+    return fade_edges(linear_reverb(buf, wet=0.12, seconds=0.3), fade_out=0.05)
+
+
+def make_dough_stir() -> np.ndarray:
+    """Kaşık hamuru karıştırır: boğuk, yumuşak bir "vıcık" sürtünmesi (kısa, art arda çalınır)."""
+    t = times(0.32)
+    noise = sosfilt(butter(2, [180, 900], "band", fs=SR, output="sos"), rng.standard_normal(len(t)))
+    squelch = 0.6 + 0.4 * np.sin(2 * np.pi * 11 * t)
+    x = noise * squelch * np.sin(np.pi * t / 0.32) ** 2
+    return fade_edges(lowpass(x / np.max(np.abs(x)), 1400), fade_in=0.01, fade_out=0.05)
+
+
+def make_oven_door() -> np.ndarray:
+    """Fırının tahta kapağı kapanır: tok, alçak bir "tak" ve mandalın minik metal tıkırtısı."""
+    t = times(0.3)
+    hz = np.interp(t, [0, 0.04], [190, 120])
+    thud = np.sin(2 * np.pi * np.cumsum(hz) / SR) * np.exp(-t / 0.06) * np.clip(t / 0.002, 0, 1)
+    knock = lowpass(rng.standard_normal(len(t)), 1200) * np.exp(-t / 0.015)
+    buf = thud + 0.4 * knock / np.max(np.abs(knock))
+    lt = times(0.12)
+    latch = np.sin(2 * np.pi * midi_hz(98) * lt) * np.exp(-lt / 0.02) * np.clip(lt / 0.001, 0, 1)
+    k = int(0.07 * SR)
+    buf[k: k + len(latch)] += 0.18 * latch
+    return fade_edges(linear_reverb(buf, wet=0.15, seconds=0.35), fade_out=0.08)
+
+
+def make_fire_crackle() -> np.ndarray:
+    """Fırındaki köz çıtırdar: birkaç minik, düzensiz "çıt" (pişerken ara ara çalınır)."""
+    buf = np.zeros(int(0.22 * SR))
+    for start in np.sort(rng.uniform(0.0, 0.16, 4)):
+        n = int(rng.uniform(0.002, 0.005) * SR)
+        pop = sosfilt(butter(2, 1500, "high", fs=SR, output="sos"), rng.standard_normal(n)) * np.hanning(n)
+        k = int(start * SR)
+        buf[k: k + n] += pop * rng.uniform(0.4, 1.0) / np.max(np.abs(pop))
+    return fade_edges(lowpass(buf, 6000), fade_in=0.001, fade_out=0.02)
+
+
+def bell(freq: float, dur: float) -> np.ndarray:
+    """Küçük mutfak zili: hafif uyumsuz kısmi titreşimlerle tınlayan yumuşak bir çan."""
+    t = times(dur)
+    x = np.zeros(len(t))
+    for ratio, gain, decay in [(1.0, 1.0, 0.5), (2.76, 0.35, 0.25), (5.4, 0.12, 0.12)]:
+        x += gain * np.sin(2 * np.pi * freq * ratio * t) * np.exp(-t / decay)
+    return x * np.clip(t / 0.002, 0, 1)
+
+
+def make_oven_ding() -> np.ndarray:
+    """Ürün pişti: mutfak zilinin iki tatlı vuruşu ("di-ding")."""
+    first = bell(midi_hz(88), 1.2)
+    second = bell(midi_hz(93), 1.4)
+    buf = np.zeros(int(0.16 * SR) + len(second))
+    buf[: len(first)] += 0.7 * first
+    k = int(0.16 * SR)
+    buf[k: k + len(second)] += second
+    return fade_edges(linear_reverb(buf, wet=0.25, seconds=0.8), fade_out=0.3)
+
+
+def make_steam_puff() -> np.ndarray:
+    """Fırın kapağı açılır, sıcak buhar çıkar: yumuşak, kısa bir "fışş"."""
+    t = times(0.5)
+    hiss = sosfilt(butter(2, [2500, 8000], "band", fs=SR, output="sos"), rng.standard_normal(len(t)))
+    env = np.clip(t / 0.04, 0, 1) * np.exp(-np.clip(t - 0.04, 0, None) / 0.14)
+    return fade_edges(lowpass(hiss * env / np.max(np.abs(hiss)), 7000), fade_out=0.08)
+
+
 def main() -> None:
     write("music/home_theme.ogg", make_music())
     write("ambience/wind_loop.ogg", make_wind())
@@ -462,6 +552,13 @@ def main() -> None:
     write("sfx/egg_laid.ogg", make_egg_laid())
     write("sfx/egg_pick.ogg", make_egg_pick())
     write("sfx/feather_fluff.ogg", make_feather_fluff())
+    write("sfx/card_flip.ogg", make_card_flip())
+    write("sfx/egg_crack.ogg", make_egg_crack())
+    write("sfx/dough_stir.ogg", make_dough_stir())
+    write("sfx/oven_door.ogg", make_oven_door())
+    write("sfx/fire_crackle.ogg", make_fire_crackle())
+    write("sfx/oven_ding.ogg", make_oven_ding())
+    write("sfx/steam_puff.ogg", make_steam_puff())
 
 
 if __name__ == "__main__":

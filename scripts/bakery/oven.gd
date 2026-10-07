@@ -11,7 +11,8 @@ extends Node2D
 ## Durum kayda save_state ile yazılır (çıkarılmakta olan ürün fırında pişmiş sayılır); load_state sahne
 ## kapalıyken geçen süre kadar pişmeyi ileri sarar.
 ## Hamur hazırken ve fırın boşken fırının ağzı yavaşça parlayarak çağırır (set_inviting). Pişerken ışık
-## daha hızlı titrer. Kök noktası fırının dibinin ortasıdır.
+## daha hızlı titrer ve közler ara ara çıtırdar; fırın boş ve beklerken közler yine hafifçe kızarır.
+## Kök noktası fırının dibinin ortasıdır.
 
 signal door_closed
 signal baked
@@ -39,6 +40,9 @@ const GLOW_BAKING_MIN: float = 0.35
 const GLOW_BAKING_MAX: float = 0.7
 const GLOW_BAKING_PERIOD: float = 0.9
 const GLOW_WARM: float = 0.45
+const GLOW_IDLE_MIN: float = 0.0
+const GLOW_IDLE_MAX: float = 0.22
+const GLOW_IDLE_PERIOD: float = 2.6
 const GLOW_FADE_TIME: float = 0.3
 const DOOR_OPEN_TIME: float = 0.25
 ## Çıkarılan ürün fırının ağzından bu kadar öne (aşağı) kayar.
@@ -58,9 +62,13 @@ const MAX_SOUND_PAN: float = 0.6
 @export var raw_textures: Dictionary[StringName, Texture2D] = {}
 @export var baked_textures: Dictionary[StringName, Texture2D] = {}
 @export var sparkle_scene: PackedScene
-@export_file("*.ogg", "*.wav") var door_sound_path: String = "res://assets/audio/sfx/basket_drop.ogg"
-@export_file("*.ogg", "*.wav") var ready_sound_path: String = "res://assets/audio/sfx/plot_ready.ogg"
-@export_file("*.ogg", "*.wav") var take_out_sound_path: String = "res://assets/audio/sfx/carrot_pop.ogg"
+@export_file("*.ogg", "*.wav") var door_sound_path: String = "res://assets/audio/sfx/oven_door.ogg"
+@export_file("*.ogg", "*.wav") var ready_sound_path: String = "res://assets/audio/sfx/oven_ding.ogg"
+@export_file("*.ogg", "*.wav") var take_out_sound_path: String = "res://assets/audio/sfx/steam_puff.ogg"
+@export_file("*.ogg", "*.wav") var crackle_sound_path: String = "res://assets/audio/sfx/fire_crackle.ogg"
+@export_range(-40.0, 6.0, 0.5, "suffix:dB") var crackle_volume_db: float = -8.0
+@export_range(0.1, 10.0, 0.1, "suffix:s") var crackle_interval_min: float = 0.6
+@export_range(0.1, 10.0, 0.1, "suffix:s") var crackle_interval_max: float = 1.8
 
 ## Fırındaki tarif; fırın boşsa boş.
 var recipe: StringName = &""
@@ -70,6 +78,8 @@ var _inviting: bool = false
 var _door_sound: AudioStream
 var _ready_sound: AudioStream
 var _take_out_sound: AudioStream
+var _crackle_sound: AudioStream
+var _crackle_timer: Timer
 var _taking_out: bool = false
 var _highlighted: bool = false
 var _highlight_tween: Tween
@@ -94,11 +104,18 @@ func _ready() -> void:
 		_ready_sound = load(ready_sound_path) as AudioStream
 	if ResourceLoader.exists(take_out_sound_path):
 		_take_out_sound = load(take_out_sound_path) as AudioStream
+	if ResourceLoader.exists(crackle_sound_path):
+		_crackle_sound = load(crackle_sound_path) as AudioStream
+	_crackle_timer = Timer.new()
+	_crackle_timer.one_shot = true
+	_crackle_timer.timeout.connect(_on_crackle_timer_timeout)
+	add_child(_crackle_timer)
 	_tap_area.tapped.connect(_on_tapped)
 	_product.position = PRODUCT_POINT
 	_product.hide()
 	_door.hide()
 	_glow.modulate.a = 0.0
+	_refresh_glow()
 
 
 func _process(delta: float) -> void:
@@ -302,12 +319,25 @@ func _refresh_glow() -> void:
 	if is_baking():
 		_glow_tween = Oscillation.ping_pong(self, _glow, ^"modulate:a", GLOW_BAKING_MIN, GLOW_BAKING_MAX,
 				GLOW_BAKING_PERIOD, 0.0, false)
+		if _crackle_timer.is_stopped():
+			_crackle_timer.start(randf_range(crackle_interval_min, maxf(crackle_interval_min, crackle_interval_max)))
 	elif can_bake() and _inviting:
 		_glow_tween = Oscillation.ping_pong(self, _glow, ^"modulate:a", GLOW_INVITE_MIN, GLOW_INVITE_MAX,
 				GLOW_INVITE_PERIOD, 0.0, false)
+	elif can_bake():
+		_glow_tween = Oscillation.ping_pong(self, _glow, ^"modulate:a", GLOW_IDLE_MIN, GLOW_IDLE_MAX,
+				GLOW_IDLE_PERIOD, 0.0, false)
 	else:
 		_glow_tween = create_tween()
 		_glow_tween.tween_property(_glow, ^"modulate:a", GLOW_WARM if is_baked() else 0.0, GLOW_FADE_TIME)
+
+
+## Pişerken közler rastgele aralıklarla çıtırdar.
+func _on_crackle_timer_timeout() -> void:
+	if not is_baking():
+		return
+	AudioManager.play_sfx(_crackle_sound, AudioManager.BUS_SFX, crackle_volume_db, randf_range(0.85, 1.2), _pan())
+	_crackle_timer.start(randf_range(crackle_interval_min, maxf(crackle_interval_min, crackle_interval_max)))
 
 
 func _pan() -> float:

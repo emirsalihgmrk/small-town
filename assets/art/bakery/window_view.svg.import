@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dupxcr3gge0l0"
-path="res://.godot/imported/bakery_window.svg-7ae31dc7f7e06cd792e7ac953e76817e.ctex"
+uid="uid://bq18v01ar2bmi"
+path="res://.godot/imported/window_view.svg-7dcbf934180a7f1dde5fc0a54f44a72e.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/art/bakery/bakery_window.svg"
-dest_files=["res://.godot/imported/bakery_window.svg-7ae31dc7f7e06cd792e7ac953e76817e.ctex"]
+source_file="res://assets/art/bakery/window_view.svg"
+dest_files=["res://.godot/imported/window_view.svg-7dcbf934180a7f1dde5fc0a54f44a72e.ctex"]
 
 [params]
 

@@ -27,6 +27,13 @@ Yeniden üretmek için proje kökünden: `python tools/audio/generate_audio.py`
 | `assets/audio/sfx/egg_laid.ogg` | Tavuk yumurtlar: yuvarlak, yumuşak bir "pıt" ve tek, yüksek bir müzik kutusu notası |
 | `assets/audio/sfx/egg_pick.ogg` | Yumurta folluktan havalanır: perdesi hızla yükselen kısa bir "fiyuv" ve minik bir tın |
 | `assets/audio/sfx/feather_fluff.ogg` | Kıza ya da tavuğa dokununca: yumuşak, kısa bir tüy kabarması "fırt" |
+| `assets/audio/sfx/card_flip.ogg` | Tarif kartı seçilir: kâğıt kenarının hızlı bir "fıt"ı |
+| `assets/audio/sfx/egg_crack.ogg` | Yumurta kaseye kırılır: kabuğun ince "çıt"ları ve yumuşak bir "pıt" |
+| `assets/audio/sfx/dough_stir.ogg` | Kaşık hamuru karıştırır: boğuk, yumuşak bir "vıcık" sürtünmesi |
+| `assets/audio/sfx/oven_door.ogg` | Fırının tahta kapağı kapanır: tok bir "tak" ve mandalın minik tıkırtısı |
+| `assets/audio/sfx/fire_crackle.ogg` | Fırındaki köz çıtırdar: birkaç minik, düzensiz "çıt" |
+| `assets/audio/sfx/oven_ding.ogg` | Ürün pişti: mutfak zilinin iki tatlı vuruşu ("di-ding") |
+| `assets/audio/sfx/steam_puff.ogg` | Fırın kapağı açılır: sıcak buharın yumuşak, kısa "fışş"ı |
 
 ## Görseller
 

@@ -1,8 +1,8 @@
 class_name RecipeCard
 extends Node2D
-## Tarif panosundaki resimli kart: üstte pişecek ürün, altta malzemeleri. Kasaya konmamış malzeme soluk
-## durur, konunca renklenip zıplar. Seçili kartın çevresi parlar ve kart biraz büyür; kasede başka bir
-## tarifin malzemesi varken kart kilitlenir (soluklaşır). Dokununca tapped yayılır.
+## Tarif panosundaki resimli kart: üstte pişecek ürün, altta malzemeleri. Kaseye konmamış malzeme soluk
+## durur, konunca renklenip zıplar. Seçilen kartın çevresi parlar, kart biraz büyür ve kâğıt sesi çıkar;
+## kasede başka bir tarifin malzemesi varken kart kilitlenir (soluklaşır). Dokununca tapped yayılır.
 ## Malzeme simgeleri Ingredients altında, Recipes'teki sırayla çoğaltılır.
 
 signal tapped
@@ -22,13 +22,17 @@ const INGREDIENT_SPACING: float = 50.0
 const PRODUCT_SIZE: Vector2 = Vector2(130.0, 112.0)
 const NUDGE_DEGREES: float = 6.0
 const NUDGE_TIME: float = 0.07
+const SCREEN_WIDTH: float = 1920.0
+const MAX_SOUND_PAN: float = 0.6
 
 @export var recipe: StringName
 @export var product_texture: Texture2D
 ## Malzeme simgeleri (Items kimliği -> resmi).
 @export var ingredient_textures: Dictionary[StringName, Texture2D] = {}
+@export_file("*.ogg", "*.wav") var select_sound_path: String = "res://assets/audio/sfx/card_flip.ogg"
 
 var _slots: Array[Sprite2D] = []
+var _select_sound: AudioStream
 var _selected: bool = false
 var _select_tween: Tween
 var _lock_tween: Tween
@@ -43,6 +47,8 @@ var _nudge_tween: Tween
 
 func _ready() -> void:
 	_glow.hide()
+	if ResourceLoader.exists(select_sound_path):
+		_select_sound = load(select_sound_path) as AudioStream
 	_product.texture = product_texture
 	if product_texture != null:
 		var size: Vector2 = product_texture.get_size()
@@ -62,10 +68,14 @@ func _ready() -> void:
 	_tap_area.tapped.connect(func(_point: Vector2) -> void: tapped.emit())
 
 
-func set_selected(selected: bool) -> void:
+## animate değilse (kayıttan kurulurken) ses çalmaz.
+func set_selected(selected: bool, animate: bool = true) -> void:
 	if selected == _selected:
 		return
 	_selected = selected
+	if selected and animate:
+		var pan: float = clampf((global_position.x / SCREEN_WIDTH) * 2.0 - 1.0, -1.0, 1.0) * MAX_SOUND_PAN
+		AudioManager.play_sfx(_select_sound, AudioManager.BUS_SFX, 0.0, randf_range(0.95, 1.05), pan)
 	_glow.visible = selected
 	if _select_tween != null:
 		_select_tween.kill()

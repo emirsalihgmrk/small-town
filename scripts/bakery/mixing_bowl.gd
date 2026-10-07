@@ -73,7 +73,7 @@ const MAX_SOUND_PAN: float = 0.6
 ## Malzeme kaseye dökülürken çalan ses (Items kimliği -> ses dosyası).
 @export var add_sound_paths: Dictionary[StringName, String] = {
 	Items.WHEAT: "res://assets/audio/sfx/seed_sprinkle.ogg",
-	Items.EGG: "res://assets/audio/sfx/egg_pick.ogg",
+	Items.EGG: "res://assets/audio/sfx/egg_crack.ogg",
 	Items.CARROT: "res://assets/audio/sfx/seed_plop.ogg",
 }
 ## Hamur olana kadar kaşığın kasede gezmesi gereken toplam yol.
@@ -83,6 +83,9 @@ const MAX_SOUND_PAN: float = 0.6
 ## Tarifin hamuru (Recipes kimliği -> resmi).
 @export var dough_textures: Dictionary[StringName, Texture2D] = {}
 @export_file("*.ogg", "*.wav") var mixed_sound_path: String = "res://assets/audio/sfx/plot_ready.ogg"
+@export_file("*.ogg", "*.wav") var stir_sound_path: String = "res://assets/audio/sfx/dough_stir.ogg"
+## Karıştırırken kaşık bu kadar yol aldıkça bir "vıcık" sesi çalar.
+@export_range(20.0, 2000.0, 10.0, "suffix:px") var stir_sound_distance: float = 180.0
 
 ## Seçili tarif; seçilmemişse boş.
 var recipe: StringName = &""
@@ -98,6 +101,9 @@ var _bubble_scale: Vector2
 var _flour_scale: Vector2
 var _mix: float = 0.0
 var _mixed_sound: AudioStream
+var _stir_sound: AudioStream
+## Son karıştırma sesinden beri kaşığın aldığı yol.
+var _stir_sound_travel: float = 0.0
 var _spoon_target: Vector2 = SPOON_REST
 var _spoon_held: bool = false
 var _spoon_hint_tween: Tween
@@ -129,6 +135,8 @@ func _ready() -> void:
 			_add_sounds[item] = load(add_sound_paths[item]) as AudioStream
 	if ResourceLoader.exists(mixed_sound_path):
 		_mixed_sound = load(mixed_sound_path) as AudioStream
+	if ResourceLoader.exists(stir_sound_path):
+		_stir_sound = load(stir_sound_path) as AudioStream
 	_flour_scale = _flour.scale
 	_flour.hide()
 	_yolk.hide()
@@ -343,6 +351,11 @@ func stir(distance: float) -> void:
 		return
 	_mix = minf(_mix + distance, mix_distance)
 	_stir_energy = 1.0
+	_stir_sound_travel += distance
+	if _stir_sound_travel >= stir_sound_distance:
+		_stir_sound_travel = 0.0
+		var pan: float = clampf((global_position.x / SCREEN_WIDTH) * 2.0 - 1.0, -1.0, 1.0) * MAX_SOUND_PAN
+		AudioManager.play_sfx(_stir_sound, AudioManager.BUS_SFX, -2.0, randf_range(0.9, 1.1), pan)
 	_stop_spoon_hint()
 	_show_mix()
 	if is_mixed():

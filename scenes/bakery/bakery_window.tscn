@@ -1,0 +1,68 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/bakery/bakery_window.gd" id="1_window_script"]
+[ext_resource type="Texture2D" path="res://assets/art/bakery/window_view.svg" id="2_view"]
+[ext_resource type="Texture2D" path="res://assets/art/bakery/window_mask.svg" id="3_mask"]
+[ext_resource type="Texture2D" path="res://assets/art/bakery/window_cloud.svg" id="4_cloud"]
+[ext_resource type="Texture2D" path="res://assets/art/environment/bird_body.svg" id="5_bird_body"]
+[ext_resource type="Texture2D" path="res://assets/art/environment/bird_wing.svg" id="6_bird_wing"]
+[ext_resource type="Texture2D" path="res://assets/art/bakery/window_frame.svg" id="7_frame"]
+[ext_resource type="Texture2D" path="res://assets/art/bakery/curtain_left.svg" id="8_curtain_left"]
+[ext_resource type="Texture2D" path="res://assets/art/bakery/curtain_right.svg" id="9_curtain_right"]
+[ext_resource type="Texture2D" path="res://assets/art/bakery/window_valance.svg" id="10_valance"]
+[ext_resource type="Script" path="res://scripts/input/tappable.gd" id="11_tappable"]
+
+[node name="BakeryWindow" type="Node2D"]
+script = ExtResource("1_window_script")
+
+[node name="View" type="Sprite2D" parent="."]
+texture = ExtResource("2_view")
+
+[node name="Mask" type="Sprite2D" parent="."]
+clip_children = 1
+texture = ExtResource("3_mask")
+
+[node name="Cloud" type="Sprite2D" parent="Mask"]
+position = Vector2(0, -95)
+texture = ExtResource("4_cloud")
+
+[node name="Bird" type="Node2D" parent="Mask"]
+scale = Vector2(0.9, 0.9)
+
+[node name="Body" type="Sprite2D" parent="Mask/Bird"]
+texture = ExtResource("5_bird_body")
+
+[node name="Wing" type="Node2D" parent="Mask/Bird"]
+position = Vector2(2, -2)
+
+[node name="Sprite" type="Sprite2D" parent="Mask/Bird/Wing"]
+texture = ExtResource("6_bird_wing")
+centered = false
+offset = Vector2(-22, -20)
+
+[node name="Frame" type="Sprite2D" parent="."]
+texture = ExtResource("7_frame")
+
+[node name="CurtainLeft" type="Node2D" parent="."]
+position = Vector2(-160, -176)
+
+[node name="Sprite" type="Sprite2D" parent="CurtainLeft"]
+texture = ExtResource("8_curtain_left")
+centered = false
+offset = Vector2(-50, -6)
+
+[node name="CurtainRight" type="Node2D" parent="."]
+position = Vector2(160, -176)
+
+[node name="Sprite" type="Sprite2D" parent="CurtainRight"]
+texture = ExtResource("9_curtain_right")
+centered = false
+offset = Vector2(-70, -6)
+
+[node name="Valance" type="Sprite2D" parent="."]
+texture = ExtResource("10_valance")
+
+[node name="TapArea" type="Node2D" parent="."]
+script = ExtResource("11_tappable")
+area = Rect2(-210, -200, 420, 360)
+priority = 1
