@@ -5,3 +5,5 @@ extends RefCounted
 const CARROT: StringName = &"carrot"
 ## Buğday sepette demet olarak sayılır.
 const WHEAT: StringName = &"wheat"
+## Kümesteki tavukların yumurtası.
+const EGG: StringName = &"egg"

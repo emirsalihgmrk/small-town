@@ -2,7 +2,7 @@ class_name BasketView
 extends Node2D
 ## Sepet (tarlada ve kümeste aynı sahne: scenes/entities/basket.tscn). Hasat edilen ürün topraktan
 ## havalanıp kavis çizerek sepete uçar ve içine düşer; sepet esner. İçeride ürünlerden küçük bir yığın,
-## altında havuç ve buğday sayıları görünür.
+## altında her ürünün sayısı görünür (item_textures'taki ürünler, bu sırayla).
 ## Ürün ortak sepete (Basket) hasat anında zaten eklenmiştir: sahne aniden kapansa da kaybolmaz.
 ## Burada yalnızca görünüş vardır; yoldaki ürünler sepete varınca sayılır. Sepetten bir yere verilen
 ## ürün de (tavşana havuç) sepetin ağzından oraya uçar.
@@ -28,11 +28,17 @@ const SQUASH: Vector2 = Vector2(1.08, 0.92)
 const SQUASH_TIME: float = 0.08
 const SETTLE_TIME: float = 0.4
 const PILE_POP_TIME: float = 0.3
+## Yığındaki ürünler gerçek boylarının bu oranında çizilir.
+const PILE_SCALE: float = 0.5
+## Sayaçtaki simgeler bu yüksekliğe sığdırılır.
+const TALLY_ICON_HEIGHT: float = 36.0
+const TALLY_ENTRY_WIDTH: float = 104.0
+const TALLY_PADDING: float = 10.0
 const SCREEN_WIDTH: float = 1920.0
 const MAX_SOUND_PAN: float = 0.6
 
-@export var carrot_texture: Texture2D
-@export var wheat_texture: Texture2D
+## Sepette görünebilen ürünler (Items kimliği -> resmi). Sayaç soldan sağa, yığın arkadan öne bu sırayla.
+@export var item_textures: Dictionary[StringName, Texture2D] = {}
 ## Uçan ürünler burada çizilir; tarladaki her şeyin üstünde olmalı.
 @export var flights: Node2D
 @export var sparkle_scene: PackedScene
@@ -42,16 +48,16 @@ var _in_flight: Dictionary[StringName, int] = {}
 ## Parmakla dışarı çıkarılmış, henüz ortak sepetten düşmemiş ürünler.
 var _carried: Dictionary[StringName, int] = {}
 var _slots: Array[Node2D] = []
+var _counts: Dictionary[StringName, Label] = {}
 var _land_sound: AudioStream
 
 @onready var _body: Node2D = $Body
-@onready var _carrot_count: Label = $Tally/CarrotCount
-@onready var _wheat_count: Label = $Tally/WheatCount
 @onready var _tap_area: Tappable = $TapArea
 
 
 func _ready() -> void:
 	_slots.assign($Body/Items.get_children())
+	_build_tally()
 	if ResourceLoader.exists(land_sound_path):
 		_land_sound = load(land_sound_path) as AudioStream
 	Basket.changed.connect(func(_item: StringName, _count: int) -> void: _refresh(false))
@@ -108,7 +114,7 @@ func receive(item: StringName, from_global: Vector2) -> void:
 	_in_flight[item] = _in_flight.get(item, 0) + 1
 	_refresh(false)
 	var produce: Sprite2D = Sprite2D.new()
-	produce.texture = carrot_texture if item == Items.CARROT else wheat_texture
+	produce.texture = item_textures.get(item)
 	flights.add_child(produce)
 	produce.global_position = from_global
 	produce.scale = Vector2.ONE * PRODUCE_START_SCALE
@@ -135,7 +141,7 @@ func receive(item: StringName, from_global: Vector2) -> void:
 func send(item: StringName, to_global: Vector2, on_arrived: Callable) -> void:
 	_refresh(false)
 	var produce: Sprite2D = Sprite2D.new()
-	produce.texture = carrot_texture if item == Items.CARROT else wheat_texture
+	produce.texture = item_textures.get(item)
 	flights.add_child(produce)
 	var start: Vector2 = flights.to_local(to_global(MOUTH))
 	var end: Vector2 = flights.to_local(to_global)
@@ -181,30 +187,84 @@ func _squash() -> void:
 	tween.tween_property(_body, ^"scale", Vector2.ONE, SETTLE_TIME).set_trans(Tween.TRANS_ELASTIC).set_ease(Tween.EASE_OUT)
 
 
-## Sayılar ve yığın: sepettekilerden yolda olanlar ve dışarı çıkarılanlar düşülür. Yığında demetler
-## arkaya, havuçlar öne dizilir; slot sayısından fazlası sayıda görünür, yığında değil. Her iki üründen
-## de varsa ikisi de görünür.
+## Sayaçtaki her ürün, gizli şablondan (Tally/Entry) item_textures sırasıyla çoğaltılır; çerçeve
+## ürün sayısına göre genişler.
+func _build_tally() -> void:
+	var template: Node2D = $Tally/Entry
+	var panel: Panel = $Tally/Panel
+	var width: float = TALLY_ENTRY_WIDTH * item_textures.size()
+	panel.offset_left = -width * 0.5 - TALLY_PADDING
+	panel.offset_right = width * 0.5 + TALLY_PADDING
+	var x: float = -width * 0.5
+	for item: StringName in item_textures:
+		var entry: Node2D = template.duplicate() as Node2D
+		entry.name = String(item).capitalize()
+		entry.position.x = x
+		var icon: Sprite2D = entry.get_node(^"Icon") as Sprite2D
+		icon.texture = item_textures[item]
+		icon.scale = Vector2.ONE * (TALLY_ICON_HEIGHT / icon.texture.get_height())
+		$Tally.add_child(entry)
+		entry.show()
+		_counts[item] = entry.get_node(^"Count") as Label
+		x += TALLY_ENTRY_WIDTH
+
+
+## Sayılar ve yığın: sepettekilerden yolda olanlar ve dışarı çıkarılanlar düşülür. Yığın slotları
+## ürünler arasında sayılarıyla orantılı paylaştırılır; sepette olan her ürün en az bir slotta görünür
+## (slot yetiyorsa). Slot sayısından fazlası sayıda görünür, yığında değil.
 func _refresh(animate: bool) -> void:
-	var carrots: int = _shown_count(Items.CARROT)
-	var wheat: int = _shown_count(Items.WHEAT)
-	_carrot_count.text = str(carrots)
-	_wheat_count.text = str(wheat)
-	var shown: int = mini(carrots + wheat, _slots.size())
-	var shown_wheat: int = 0
-	if shown > 0:
-		shown_wheat = roundi(float(shown) * wheat / (carrots + wheat))
-		if wheat > 0 and shown_wheat == 0:
-			shown_wheat = 1
-		if carrots > 0 and shown_wheat == shown and shown > 1:
-			shown_wheat = shown - 1
+	var counts: Dictionary[StringName, int] = {}
+	for item: StringName in item_textures:
+		counts[item] = _shown_count(item)
+		_counts[item].text = str(counts[item])
+	var pile: Array[StringName] = _pile(counts)
 	for i: int in _slots.size():
 		var slot: Node2D = _slots[i]
-		var wheat_sprite: CanvasItem = slot.get_node(^"Wheat") as CanvasItem
-		var carrot_sprite: CanvasItem = slot.get_node(^"Carrot") as CanvasItem
-		var was_visible: bool = wheat_sprite.visible or carrot_sprite.visible
-		wheat_sprite.visible = i < shown_wheat
-		carrot_sprite.visible = i >= shown_wheat and i < shown
-		if animate and not was_visible and i < shown:
+		var sprite: Sprite2D = slot.get_node(^"Item") as Sprite2D
+		var was_visible: bool = sprite.visible
+		sprite.visible = i < pile.size()
+		if not sprite.visible:
+			continue
+		sprite.texture = item_textures[pile[i]]
+		sprite.scale = Vector2.ONE * PILE_SCALE
+		if animate and not was_visible:
 			slot.scale = Vector2.ZERO
-			create_tween().tween_property(slot, ^"scale", Vector2.ONE, PILE_POP_TIME) \
-					.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+			create_tween().tween_property(slot, ^"scale", Vector2.ONE, PILE_POP_TIME) 					.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+
+
+## Yığında arkadan öne hangi slotta hangi ürünün görüneceği.
+func _pile(counts: Dictionary[StringName, int]) -> Array[StringName]:
+	var total: int = 0
+	var present: Array[StringName] = []
+	for item: StringName in counts:
+		total += counts[item]
+		if counts[item] > 0:
+			present.append(item)
+	var shown: int = mini(total, _slots.size())
+	var share: Dictionary[StringName, int] = {}
+	var used: int = 0
+	for item: StringName in present:
+		share[item] = floori(float(shown) * counts[item] / total)
+		if share[item] == 0 and shown >= present.size():
+			share[item] = 1
+		used += share[item]
+	# Yuvarlamadan artan slotlar en kalabalık ürüne, fazlası en çok slotu olandan.
+	while used < shown:
+		var most: StringName = present[0]
+		for item: StringName in present:
+			if counts[item] - share[item] > counts[most] - share[most]:
+				most = item
+		share[most] += 1
+		used += 1
+	while used > shown:
+		var largest: StringName = present[0]
+		for item: StringName in present:
+			if share[item] > share[largest]:
+				largest = item
+		share[largest] -= 1
+		used -= 1
+	var pile: Array[StringName] = []
+	for item: StringName in present:
+		for i: int in share[item]:
+			pile.append(item)
+	return pile

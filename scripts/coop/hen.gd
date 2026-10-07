@@ -2,13 +2,14 @@ class_name Hen
 extends Node2D
 ## Kümesteki tavuk. Yemlikte ayrılmamış pay varken yemliğe yürüyüp yer, sonra suluğa gidip içer. Sulukta
 ## su yoksa başının üstünde su balonuyla bekler (susar); su gelince içer. Tavuk asla üzülüp kaybolmaz.
-## Yiyip içtikten sonra yerine döner, lay_wait_time kadar dinlenir, sonra kümesteki kendi folluğuna
-## yürüyüp üstüne oturur (yumurta sonraki adımda).
-## Boştayken (aç ya da dinlenirken) nefes alır, başını hafifçe sallar, ara sıra yere gagalar.
+## Yiyip içtikten sonra doğrudan kümesteki kendi folluğuna yürüyüp üstüne oturur ve lay_wait_time
+## kadar orada bekler. Sonra yumurtlar, folluktan kalkıp avludaki yerine döner ve yeniden acıkır;
+## yumurta folluğa kalır (toplanmasını beklemez).
+## Her zaman nefes alır ve başını hafifçe sallar; avluda aç beklerken ara sıra yere gagalar.
 ## Kök noktası tavuğun ayaklarıdır; görsel sağa bakar, sola baksın diye kök aynalanır.
 
-enum State { HUNGRY, GOING_TO_FEEDER, EATING, GOING_TO_WATERER, THIRSTY, DRINKING, GOING_HOME, RESTING,
-		GOING_TO_NEST, NESTING }
+enum State { HUNGRY, GOING_TO_FEEDER, EATING, GOING_TO_WATERER, THIRSTY, DRINKING, GOING_TO_NEST, NESTING,
+		GOING_HOME }
 
 const PECK_DEGREES: float = 38.0
 const PECK_TIME: float = 0.11
@@ -35,14 +36,17 @@ const BUBBLE_POP_TIME: float = 0.25
 const NEST_SEAT: Vector2 = Vector2(0.0, -8.0)
 const NEST_HOP: float = 30.0
 const NEST_HOP_TIME: float = 0.18
+## Yumurtlarken hafifçe çöküp kalkar.
+const LAY_PUSH: float = 6.0
+const LAY_PUSH_TIME: float = 0.15
 
 @export var feeder: Feeder
 @export var waterer: Waterer
 ## Kümesteki kendi folluğu.
-@export var nest: Node2D
+@export var nest: Nest
 ## Yemlikte ve sulukta durduğu yer (0, 1, 2); her tavuk ayrı yerde durur.
 @export_range(0, 2) var spot_index: int = 0
-## Yiyip içtikten sonra folluğa gitmeden önce yerinde dinlendiği süre.
+## Folluğa oturduktan sonra yumurtlayana kadar orada beklediği süre.
 @export_range(1.0, 300.0, 1.0, "suffix:s") var lay_wait_time: float = 30.0
 @export_range(0.5, 30.0, 0.5, "suffix:s") var peck_interval_min: float = 2.5
 @export_range(0.5, 30.0, 0.5, "suffix:s") var peck_interval_max: float = 6.0
@@ -50,7 +54,7 @@ const NEST_HOP_TIME: float = 0.18
 var state: State = State.HUNGRY
 
 var _home: Vector2
-## Aç iken tepki gecikmesi, dinlenirken kalan süre.
+## Aç iken tepki gecikmesi, follukta yumurtlamaya kalan süre.
 var _wait_left: float = 0.0
 var _move_tween: Tween
 var _waddle_tween: Tween
@@ -84,11 +88,10 @@ func _process(delta: float) -> void:
 			if waterer.reserve():
 				_hide_water_bubble()
 				_drink()
-		State.RESTING:
+		State.NESTING:
 			_wait_left -= delta
 			if _wait_left <= 0.0:
-				state = State.GOING_TO_NEST
-				_walk_to(nest.global_position + NEST_SEAT, _sit_on_nest)
+				_lay()
 
 
 func _eat() -> void:
@@ -125,22 +128,34 @@ func _drink() -> void:
 	_head_tween.tween_property(_head, ^"rotation", 0.0, DRINK_DOWN_TIME)
 	_head_tween.tween_callback(func() -> void:
 		waterer.drink()
-		state = State.GOING_HOME
-		_walk_to(_home, _rest))
+		state = State.GOING_TO_NEST
+		_walk_to(nest.global_position + NEST_SEAT, _sit_on_nest))
 
 
-func _rest() -> void:
-	state = State.RESTING
-	_wait_left = lay_wait_time
-
-
-## Folluğa varınca küçük bir sıçrayışla üstüne yerleşir.
+## Folluğa varınca küçük bir sıçrayışla üstüne yerleşir; yumurtlama zamanı _process'te sayılır.
 func _sit_on_nest() -> void:
 	state = State.NESTING
+	_wait_left = lay_wait_time
 	var tween: Tween = create_tween().set_trans(Tween.TRANS_QUAD)
 	tween.tween_interval(SETTLE_TIME)
 	tween.tween_property(_body, ^"position:y", -NEST_HOP, NEST_HOP_TIME).set_ease(Tween.EASE_OUT)
 	tween.tween_property(_body, ^"position:y", 0.0, NEST_HOP_TIME).set_ease(Tween.EASE_IN)
+
+
+## Hafifçe çöküp yumurtlar, folluktan sıçrayıp kalkar ve avludaki yerine dönüp yeniden acıkır.
+func _lay() -> void:
+	state = State.GOING_HOME
+	var tween: Tween = create_tween().set_trans(Tween.TRANS_QUAD)
+	tween.tween_property(_body, ^"position:y", LAY_PUSH, LAY_PUSH_TIME).set_ease(Tween.EASE_OUT)
+	tween.tween_callback(nest.lay)
+	tween.tween_property(_body, ^"position:y", 0.0, LAY_PUSH_TIME).set_ease(Tween.EASE_IN)
+	tween.tween_property(_body, ^"position:y", -NEST_HOP, NEST_HOP_TIME).set_ease(Tween.EASE_OUT)
+	tween.tween_property(_body, ^"position:y", 0.0, NEST_HOP_TIME).set_ease(Tween.EASE_IN)
+	tween.tween_callback(_walk_to.bind(_home, _become_hungry))
+
+
+func _become_hungry() -> void:
+	state = State.HUNGRY
 
 
 ## Yürürken paytak paytak sallanıp her adımda hafifçe sekerek gider.
@@ -186,7 +201,7 @@ func _face_toward(x: float) -> void:
 
 
 func _on_peck_timer() -> void:
-	if state == State.HUNGRY or state == State.RESTING:
+	if state == State.HUNGRY:
 		_kill_head_tween()
 		_head_tween = create_tween().set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 		for i: int in PECK_COUNT:
