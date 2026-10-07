@@ -1,0 +1,76 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/coop/feeder.gd" id="1_feeder"]
+[ext_resource type="Texture2D" path="res://assets/art/coop/feeder.svg" id="2_feeder"]
+[ext_resource type="Texture2D" path="res://assets/art/coop/feeder_grain.svg" id="3_grain_heap"]
+[ext_resource type="Texture2D" path="res://assets/art/field/wheat_grain.svg" id="4_grain"]
+[ext_resource type="Texture2D" path="res://assets/art/field/thought_bubble.svg" id="5_bubble"]
+[ext_resource type="Texture2D" path="res://assets/art/field/wheat_bundle.svg" id="6_wheat_bundle"]
+[ext_resource type="PackedScene" path="res://scenes/ui/icons/field_icon.tscn" id="7_field_icon"]
+[ext_resource type="Script" path="res://scripts/input/tappable.gd" id="8_tappable"]
+[ext_resource type="PackedScene" path="res://scenes/field/effects/sparkle_burst.tscn" id="9_sparkle"]
+
+[sub_resource type="Gradient" id="Gradient_fade"]
+offsets = PackedFloat32Array(0, 0.8, 1)
+colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0)
+
+[node name="Feeder" type="Node2D"]
+script = ExtResource("1_feeder")
+sparkle_scene = ExtResource("9_sparkle")
+
+[node name="Body" type="Node2D" parent="."]
+
+[node name="Sprite" type="Sprite2D" parent="Body"]
+texture = ExtResource("2_feeder")
+centered = false
+offset = Vector2(-126, -90)
+
+[node name="Grain" type="Node2D" parent="Body"]
+position = Vector2(0, -70)
+
+[node name="Sprite" type="Sprite2D" parent="Body/Grain"]
+texture = ExtResource("3_grain_heap")
+centered = false
+offset = Vector2(-106, -30)
+
+[node name="Pour" type="CPUParticles2D" parent="."]
+position = Vector2(0, -130)
+emitting = false
+amount = 40
+lifetime = 0.3
+local_coords = false
+texture = ExtResource("4_grain")
+emission_shape = 3
+emission_rect_extents = Vector2(70, 6)
+direction = Vector2(0, 1)
+spread = 18.0
+gravity = Vector2(0, 1200)
+initial_velocity_min = 40.0
+initial_velocity_max = 110.0
+angle_min = -180.0
+angle_max = 180.0
+scale_amount_min = 1.0
+scale_amount_max = 1.5
+color_ramp = SubResource("Gradient_fade")
+
+[node name="Bubble" type="Node2D" parent="."]
+position = Vector2(-60, -190)
+scale = Vector2(1.6, 1.6)
+
+[node name="Cloud" type="Sprite2D" parent="Bubble"]
+texture = ExtResource("5_bubble")
+centered = false
+offset = Vector2(-46, -44)
+
+[node name="Wheat" type="Sprite2D" parent="Bubble"]
+scale = Vector2(0.42, 0.42)
+texture = ExtResource("6_wheat_bundle")
+
+[node name="Field" parent="Bubble" instance=ExtResource("7_field_icon")]
+position = Vector2(0, -2)
+scale = Vector2(0.28, 0.28)
+
+[node name="TapArea" type="Node2D" parent="Bubble"]
+script = ExtResource("8_tappable")
+area = Rect2(-46, -44, 96, 96)
+priority = 5

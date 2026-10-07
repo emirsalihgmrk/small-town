@@ -15,8 +15,6 @@
 [ext_resource type="Texture2D" path="res://assets/art/environment/flower_red.svg" id="13_flower_red"]
 [ext_resource type="PackedScene" path="res://scenes/field/plot.tscn" id="14_plot"]
 [ext_resource type="PackedScene" path="res://scenes/entities/girl.tscn" id="15_girl"]
-[ext_resource type="Texture2D" path="res://assets/art/field/basket_back.svg" id="16_basket_back"]
-[ext_resource type="Texture2D" path="res://assets/art/field/basket_front.svg" id="17_basket_front"]
 [ext_resource type="Texture2D" path="res://assets/art/ui/icons/home.svg" id="18_home"]
 [ext_resource type="Texture2D" path="res://assets/art/ui/icons/tools/hoe.svg" id="19_hoe"]
 [ext_resource type="PackedScene" path="res://scenes/ui/icons/tools/seed_bag_carrot_icon.tscn" id="20_seed_carrot"]
@@ -33,10 +31,8 @@
 [ext_resource type="PackedScene" path="res://scenes/field/held_bucket.tscn" id="held_bucket"]
 [ext_resource type="PackedScene" path="res://scenes/field/held_sickle.tscn" id="held_sickle"]
 [ext_resource type="Script" path="res://scripts/field/harvest_hand.gd" id="harvest_hand_script"]
-[ext_resource type="Script" path="res://scripts/field/basket_view.gd" id="basket_view_script"]
+[ext_resource type="PackedScene" path="res://scenes/entities/basket.tscn" id="basket_scene"]
 [ext_resource type="Texture2D" path="res://assets/art/ui/icons/field/carrot.svg" id="carrot_produce"]
-[ext_resource type="Texture2D" path="res://assets/art/field/wheat_bundle.svg" id="wheat_bundle"]
-[ext_resource type="PackedScene" path="res://scenes/field/effects/sparkle_burst.tscn" id="sparkle_burst"]
 [ext_resource type="Script" path="res://scripts/components/scene_ambience.gd" id="ambience_script"]
 [ext_resource type="Script" path="res://scripts/field/field_bird.gd" id="bird_script"]
 [ext_resource type="Script" path="res://scripts/field/field_bunny.gd" id="bunny_script"]
@@ -113,21 +109,6 @@ corner_radius_bottom_left = 40
 shadow_color = Color(0, 0, 0, 0.22)
 shadow_size = 8
 shadow_offset = Vector2(0, 6)
-
-[sub_resource type="StyleBoxFlat" id="tally"]
-bg_color = Color(1, 0.973, 0.906, 1)
-border_width_left = 5
-border_width_top = 5
-border_width_right = 5
-border_width_bottom = 5
-border_color = Color(1, 1, 1, 1)
-corner_radius_top_left = 27
-corner_radius_top_right = 27
-corner_radius_bottom_right = 27
-corner_radius_bottom_left = 27
-shadow_color = Color(0, 0, 0, 0.18)
-shadow_size = 5
-shadow_offset = Vector2(0, 4)
 
 [sub_resource type="StyleBoxFlat" id="slot"]
 bg_color = Color(1, 0.886, 0.659, 1)
@@ -432,188 +413,9 @@ priority = 5
 [node name="Girl" parent="World" instance=ExtResource("15_girl")]
 position = Vector2(230, 1000)
 
-[node name="Basket" type="Node2D" parent="World" node_paths=PackedStringArray("flights")]
+[node name="Basket" parent="World" node_paths=PackedStringArray("flights") instance=ExtResource("basket_scene")]
 position = Vector2(1700, 1000)
-script = ExtResource("basket_view_script")
-carrot_texture = ExtResource("carrot_produce")
-wheat_texture = ExtResource("wheat_bundle")
 flights = NodePath("../Flights")
-sparkle_scene = ExtResource("sparkle_burst")
-
-[node name="Body" type="Node2D" parent="World/Basket"]
-
-[node name="Back" type="Sprite2D" parent="World/Basket/Body"]
-texture = ExtResource("16_basket_back")
-centered = false
-offset = Vector2(-120, -196)
-
-[node name="Items" type="Node2D" parent="World/Basket/Body"]
-
-[node name="Slot1" type="Node2D" parent="World/Basket/Body/Items"]
-position = Vector2(-48, -112)
-rotation = -0.25
-
-[node name="Wheat" type="Sprite2D" parent="World/Basket/Body/Items/Slot1"]
-visible = false
-scale = Vector2(0.55, 0.55)
-texture = ExtResource("wheat_bundle")
-
-[node name="Carrot" type="Sprite2D" parent="World/Basket/Body/Items/Slot1"]
-visible = false
-scale = Vector2(0.45, 0.45)
-texture = ExtResource("carrot_produce")
-
-[node name="Slot2" type="Node2D" parent="World/Basket/Body/Items"]
-position = Vector2(0, -118)
-rotation = 0.0
-
-[node name="Wheat" type="Sprite2D" parent="World/Basket/Body/Items/Slot2"]
-visible = false
-scale = Vector2(0.55, 0.55)
-texture = ExtResource("wheat_bundle")
-
-[node name="Carrot" type="Sprite2D" parent="World/Basket/Body/Items/Slot2"]
-visible = false
-scale = Vector2(0.45, 0.45)
-texture = ExtResource("carrot_produce")
-
-[node name="Slot3" type="Node2D" parent="World/Basket/Body/Items"]
-position = Vector2(48, -112)
-rotation = 0.25
-
-[node name="Wheat" type="Sprite2D" parent="World/Basket/Body/Items/Slot3"]
-visible = false
-scale = Vector2(0.55, 0.55)
-texture = ExtResource("wheat_bundle")
-
-[node name="Carrot" type="Sprite2D" parent="World/Basket/Body/Items/Slot3"]
-visible = false
-scale = Vector2(0.45, 0.45)
-texture = ExtResource("carrot_produce")
-
-[node name="Slot4" type="Node2D" parent="World/Basket/Body/Items"]
-position = Vector2(-72, -104)
-rotation = -0.45
-
-[node name="Wheat" type="Sprite2D" parent="World/Basket/Body/Items/Slot4"]
-visible = false
-scale = Vector2(0.55, 0.55)
-texture = ExtResource("wheat_bundle")
-
-[node name="Carrot" type="Sprite2D" parent="World/Basket/Body/Items/Slot4"]
-visible = false
-scale = Vector2(0.45, 0.45)
-texture = ExtResource("carrot_produce")
-
-[node name="Slot5" type="Node2D" parent="World/Basket/Body/Items"]
-position = Vector2(72, -104)
-rotation = 0.45
-
-[node name="Wheat" type="Sprite2D" parent="World/Basket/Body/Items/Slot5"]
-visible = false
-scale = Vector2(0.55, 0.55)
-texture = ExtResource("wheat_bundle")
-
-[node name="Carrot" type="Sprite2D" parent="World/Basket/Body/Items/Slot5"]
-visible = false
-scale = Vector2(0.45, 0.45)
-texture = ExtResource("carrot_produce")
-
-[node name="Slot6" type="Node2D" parent="World/Basket/Body/Items"]
-position = Vector2(-24, -102)
-rotation = -0.15
-
-[node name="Wheat" type="Sprite2D" parent="World/Basket/Body/Items/Slot6"]
-visible = false
-scale = Vector2(0.55, 0.55)
-texture = ExtResource("wheat_bundle")
-
-[node name="Carrot" type="Sprite2D" parent="World/Basket/Body/Items/Slot6"]
-visible = false
-scale = Vector2(0.45, 0.45)
-texture = ExtResource("carrot_produce")
-
-[node name="Slot7" type="Node2D" parent="World/Basket/Body/Items"]
-position = Vector2(24, -102)
-rotation = 0.15
-
-[node name="Wheat" type="Sprite2D" parent="World/Basket/Body/Items/Slot7"]
-visible = false
-scale = Vector2(0.55, 0.55)
-texture = ExtResource("wheat_bundle")
-
-[node name="Carrot" type="Sprite2D" parent="World/Basket/Body/Items/Slot7"]
-visible = false
-scale = Vector2(0.45, 0.45)
-texture = ExtResource("carrot_produce")
-
-[node name="Slot8" type="Node2D" parent="World/Basket/Body/Items"]
-position = Vector2(0, -98)
-rotation = 0.05
-
-[node name="Wheat" type="Sprite2D" parent="World/Basket/Body/Items/Slot8"]
-visible = false
-scale = Vector2(0.55, 0.55)
-texture = ExtResource("wheat_bundle")
-
-[node name="Carrot" type="Sprite2D" parent="World/Basket/Body/Items/Slot8"]
-visible = false
-scale = Vector2(0.45, 0.45)
-texture = ExtResource("carrot_produce")
-
-[node name="Front" type="Sprite2D" parent="World/Basket/Body"]
-texture = ExtResource("17_basket_front")
-centered = false
-offset = Vector2(-120, -196)
-
-[node name="Tally" type="Node2D" parent="World/Basket"]
-
-[node name="Panel" type="Panel" parent="World/Basket/Tally"]
-offset_left = -112.0
-offset_top = 10.0
-offset_right = 112.0
-offset_bottom = 64.0
-mouse_filter = 2
-theme_override_styles/panel = SubResource("tally")
-
-[node name="CarrotIcon" type="Sprite2D" parent="World/Basket/Tally"]
-position = Vector2(-80, 37)
-rotation = 0.6
-scale = Vector2(0.3, 0.3)
-texture = ExtResource("carrot_produce")
-
-[node name="CarrotCount" type="Label" parent="World/Basket/Tally"]
-offset_left = -56.0
-offset_top = 10.0
-offset_right = -6.0
-offset_bottom = 64.0
-theme_override_colors/font_color = Color(0.36, 0.24, 0.13, 1)
-theme_override_colors/font_outline_color = Color(1, 1, 1, 1)
-theme_override_constants/outline_size = 8
-theme_override_font_sizes/font_size = 34
-text = "0"
-vertical_alignment = 1
-
-[node name="WheatIcon" type="Sprite2D" parent="World/Basket/Tally"]
-position = Vector2(22, 37)
-scale = Vector2(0.34, 0.34)
-texture = ExtResource("wheat_bundle")
-
-[node name="WheatCount" type="Label" parent="World/Basket/Tally"]
-offset_left = 46.0
-offset_top = 10.0
-offset_right = 104.0
-offset_bottom = 64.0
-theme_override_colors/font_color = Color(0.36, 0.24, 0.13, 1)
-theme_override_colors/font_outline_color = Color(1, 1, 1, 1)
-theme_override_constants/outline_size = 8
-theme_override_font_sizes/font_size = 34
-text = "0"
-vertical_alignment = 1
-
-[node name="TapArea" type="Node2D" parent="World/Basket"]
-script = ExtResource("tappable_script")
-area = Rect2(-120, -200, 240, 270)
 
 [node name="Flights" type="Node2D" parent="World"]
 

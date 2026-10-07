@@ -1,11 +1,14 @@
 class_name BasketView
 extends Node2D
-## Tarladaki sepet. Hasat edilen ürün topraktan havalanıp kavis çizerek sepete uçar ve içine düşer;
-## sepet esner. İçeride ürünlerden küçük bir yığın, altında havuç ve buğday sayıları görünür.
+## Sepet (tarlada ve kümeste aynı sahne: scenes/entities/basket.tscn). Hasat edilen ürün topraktan
+## havalanıp kavis çizerek sepete uçar ve içine düşer; sepet esner. İçeride ürünlerden küçük bir yığın,
+## altında havuç ve buğday sayıları görünür.
 ## Ürün ortak sepete (Basket) hasat anında zaten eklenmiştir: sahne aniden kapansa da kaybolmaz.
 ## Burada yalnızca görünüş vardır; yoldaki ürünler sepete varınca sayılır. Sepetten bir yere verilen
 ## ürün de (tavşana havuç) sepetin ağzından oraya uçar.
-## Sepete dokununca sepet esner ve tapped yayılır (tarla bunu sepet menüsünü açmak için kullanır).
+## Parmakla sepetten dışarı çıkarılan ürün (kümeste buğday demeti) take_out ile sepette görünmez olur ama
+## ortak sepetten ancak hand_over ile düşer; yarıda bırakılırsa put_back ile yerine döner.
+## Sepete dokununca sepet esner ve tapped yayılır (sepet menüsünü açmak için).
 
 signal tapped
 
@@ -36,6 +39,8 @@ const MAX_SOUND_PAN: float = 0.6
 @export_file("*.ogg", "*.wav") var land_sound_path: String = "res://assets/audio/sfx/basket_drop.ogg"
 
 var _in_flight: Dictionary[StringName, int] = {}
+## Parmakla dışarı çıkarılmış, henüz ortak sepetten düşmemiş ürünler.
+var _carried: Dictionary[StringName, int] = {}
 var _slots: Array[Node2D] = []
 var _land_sound: AudioStream
 
@@ -50,10 +55,52 @@ func _ready() -> void:
 	if ResourceLoader.exists(land_sound_path):
 		_land_sound = load(land_sound_path) as AudioStream
 	Basket.changed.connect(func(_item: StringName, _count: int) -> void: _refresh(false))
-	_tap_area.tapped.connect(func(_point: Vector2) -> void:
-		_squash()
-		tapped.emit())
+	_tap_area.tapped.connect(func(_point: Vector2) -> void: tap())
 	_refresh(false)
+
+
+func contains(global_point: Vector2) -> bool:
+	return _tap_area.contains(global_point)
+
+
+## Sepetin ağzı (dünya konumu); dışarı çıkan ürün buradan çıkar, buraya döner.
+func mouth() -> Vector2:
+	return to_global(MOUTH)
+
+
+## Dokunulmuş gibi esner ve tapped yayar (TapRouter yerine başka bir el dokunuşu yakaladığında).
+func tap() -> void:
+	_squash()
+	tapped.emit()
+
+
+## Sepette görünen bir ürün varsa onu dışarı çıkarır (yığından ve sayıdan düşer) ve true döner.
+func take_out(item: StringName) -> bool:
+	if _shown_count(item) <= 0:
+		return false
+	_carried[item] = _carried.get(item, 0) + 1
+	_squash()
+	_refresh(false)
+	return true
+
+
+## Dışarı çıkarılan ürün sepete geri düşer.
+func put_back(item: StringName) -> void:
+	_carried[item] = maxi(_carried.get(item, 0) - 1, 0)
+	_play_land_sound()
+	_squash()
+	_refresh(true)
+
+
+## Dışarı çıkarılan ürün verildi: ortak sepetten de düşer.
+func hand_over(item: StringName) -> void:
+	_carried[item] = maxi(_carried.get(item, 0) - 1, 0)
+	Basket.take(item)
+
+
+## Sepette şu an görünen sayı: yolda olanlar ve dışarı çıkarılanlar düşülür.
+func _shown_count(item: StringName) -> int:
+	return maxi(Basket.count(item) - _in_flight.get(item, 0) - _carried.get(item, 0), 0)
 
 
 ## Topraktan çıkan ürünü sepete uçurur (ürün ortak sepete önceden eklenmiş olmalı).
@@ -112,8 +159,7 @@ func _fly(t: float, produce: Node2D, start: Vector2, end: Vector2) -> void:
 func _land(item: StringName, produce: Node2D) -> void:
 	produce.queue_free()
 	_in_flight[item] = maxi(_in_flight.get(item, 0) - 1, 0)
-	var pan: float = clampf((global_position.x / SCREEN_WIDTH) * 2.0 - 1.0, -1.0, 1.0) * MAX_SOUND_PAN
-	AudioManager.play_sfx(_land_sound, AudioManager.BUS_SFX, 0.0, randf_range(0.92, 1.08), pan)
+	_play_land_sound()
 	if sparkle_scene != null:
 		var sparkle: CPUParticles2D = sparkle_scene.instantiate() as CPUParticles2D
 		add_child(sparkle)
@@ -124,17 +170,23 @@ func _land(item: StringName, produce: Node2D) -> void:
 	_refresh(true)
 
 
+func _play_land_sound() -> void:
+	var pan: float = clampf((global_position.x / SCREEN_WIDTH) * 2.0 - 1.0, -1.0, 1.0) * MAX_SOUND_PAN
+	AudioManager.play_sfx(_land_sound, AudioManager.BUS_SFX, 0.0, randf_range(0.92, 1.08), pan)
+
+
 func _squash() -> void:
 	var tween: Tween = create_tween()
 	tween.tween_property(_body, ^"scale", SQUASH, SQUASH_TIME).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 	tween.tween_property(_body, ^"scale", Vector2.ONE, SETTLE_TIME).set_trans(Tween.TRANS_ELASTIC).set_ease(Tween.EASE_OUT)
 
 
-## Sayılar ve yığın: sepettekilerden yolda olanlar düşülür. Yığında demetler arkaya, havuçlar öne
-## dizilir; slot sayısından fazlası sayıda görünür, yığında değil. Her iki üründen de varsa ikisi de görünür.
+## Sayılar ve yığın: sepettekilerden yolda olanlar ve dışarı çıkarılanlar düşülür. Yığında demetler
+## arkaya, havuçlar öne dizilir; slot sayısından fazlası sayıda görünür, yığında değil. Her iki üründen
+## de varsa ikisi de görünür.
 func _refresh(animate: bool) -> void:
-	var carrots: int = maxi(Basket.count(Items.CARROT) - _in_flight.get(Items.CARROT, 0), 0)
-	var wheat: int = maxi(Basket.count(Items.WHEAT) - _in_flight.get(Items.WHEAT, 0), 0)
+	var carrots: int = _shown_count(Items.CARROT)
+	var wheat: int = _shown_count(Items.WHEAT)
 	_carrot_count.text = str(carrots)
 	_wheat_count.text = str(wheat)
 	var shown: int = mini(carrots + wheat, _slots.size())
