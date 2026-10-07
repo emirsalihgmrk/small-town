@@ -1,7 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="320" height="320" viewBox="-160 -160 320 320">
-<g transform="rotate(45)"><rect x="-5" y="-152" width="10" height="140" rx="4" fill="#8a5a36"/><rect x="5" y="-148" width="32" height="112" rx="5" fill="#fffaf0" stroke="#b08a55" stroke-width="4"/><path d="M7 -120 L35 -120 M7 -92 L35 -92 M7 -64 L35 -64" stroke="#d9bf88" stroke-width="3"/></g>
-<g transform="rotate(135)"><rect x="-5" y="-152" width="10" height="140" rx="4" fill="#8a5a36"/><rect x="5" y="-148" width="32" height="112" rx="5" fill="#fffaf0" stroke="#b08a55" stroke-width="4"/><path d="M7 -120 L35 -120 M7 -92 L35 -92 M7 -64 L35 -64" stroke="#d9bf88" stroke-width="3"/></g>
-<g transform="rotate(225)"><rect x="-5" y="-152" width="10" height="140" rx="4" fill="#8a5a36"/><rect x="5" y="-148" width="32" height="112" rx="5" fill="#fffaf0" stroke="#b08a55" stroke-width="4"/><path d="M7 -120 L35 -120 M7 -92 L35 -92 M7 -64 L35 -64" stroke="#d9bf88" stroke-width="3"/></g>
-<g transform="rotate(315)"><rect x="-5" y="-152" width="10" height="140" rx="4" fill="#8a5a36"/><rect x="5" y="-148" width="32" height="112" rx="5" fill="#fffaf0" stroke="#b08a55" stroke-width="4"/><path d="M7 -120 L35 -120 M7 -92 L35 -92 M7 -64 L35 -64" stroke="#d9bf88" stroke-width="3"/></g>
-<circle cx="0" cy="0" r="16" fill="#8a5a36" stroke="#5e3a1f" stroke-width="4"/>
-</svg>
