@@ -1,0 +1,54 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/bakery/oven.gd" id="1_oven_script"]
+[ext_resource type="Texture2D" path="res://assets/art/bakery/bakery_oven.svg" id="2_oven"]
+[ext_resource type="Texture2D" path="res://assets/art/bakery/oven_glow.svg" id="3_glow"]
+[ext_resource type="Texture2D" path="res://assets/art/bakery/oven_door.svg" id="4_door"]
+[ext_resource type="Texture2D" path="res://assets/art/bakery/raw_bread.svg" id="5_raw_bread"]
+[ext_resource type="Texture2D" path="res://assets/art/bakery/raw_cookie.svg" id="6_raw_cookie"]
+[ext_resource type="Texture2D" path="res://assets/art/bakery/raw_cake.svg" id="7_raw_cake"]
+[ext_resource type="Texture2D" path="res://assets/art/ui/icons/bakery/bread.svg" id="8_bread"]
+[ext_resource type="Texture2D" path="res://assets/art/bakery/cookie.svg" id="9_cookie"]
+[ext_resource type="Texture2D" path="res://assets/art/bakery/carrot_cake.svg" id="10_cake"]
+[ext_resource type="PackedScene" path="res://scenes/field/effects/sparkle_burst.tscn" id="11_sparkle"]
+
+[node name="Oven" type="Node2D"]
+script = ExtResource("1_oven_script")
+raw_textures = Dictionary[StringName, Texture2D]({
+&"bread": ExtResource("5_raw_bread"),
+&"carrot_cake": ExtResource("7_raw_cake"),
+&"cookie": ExtResource("6_raw_cookie")
+})
+baked_textures = Dictionary[StringName, Texture2D]({
+&"bread": ExtResource("8_bread"),
+&"carrot_cake": ExtResource("10_cake"),
+&"cookie": ExtResource("9_cookie")
+})
+sparkle_scene = ExtResource("11_sparkle")
+
+[node name="Body" type="Node2D" parent="."]
+
+[node name="Sprite" type="Sprite2D" parent="Body"]
+texture = ExtResource("2_oven")
+centered = false
+offset = Vector2(-300, -808)
+
+[node name="Glow" type="Sprite2D" parent="Body"]
+position = Vector2(0, -380)
+scale = Vector2(1.1, 1.0)
+texture = ExtResource("3_glow")
+
+[node name="Product" type="Node2D" parent="Body"]
+position = Vector2(0, -313)
+
+[node name="Raw" type="Sprite2D" parent="Body/Product"]
+
+[node name="Baked" type="Sprite2D" parent="Body/Product"]
+
+[node name="Door" type="Node2D" parent="Body"]
+position = Vector2(-138, -300)
+
+[node name="Sprite" type="Sprite2D" parent="Body/Door"]
+texture = ExtResource("4_door")
+centered = false
+offset = Vector2(-8, -178)

@@ -7,6 +7,8 @@ extends Node2D
 ## Kase dolunca içinde tahta bir kaşık belirir ve karıştırılmayı beklerken hafifçe sallanır. Kaşık parmağı
 ## kasenin içinde izler (move_spoon). Karıştırdıkça (stir) malzemeler soluklaşıp sallanır, yerlerinde
 ## tarifin hamuru büyür; yeterince karıştırılınca kaşık kaybolur, hamur zıplar ve mixed yayılır.
+## Hamur parmakla kaseden kaldırılabilir (lift_dough); yerine konmazsa ve fırına girerse kase boşaltılır
+## (clear), tarif seçimi sıfırlanır ve cleared yayılır.
 ## Tarif seçiliyken ortak sepette eksik bir malzeme varsa kasenin yanında bir düşünce balonu durur ve
 ## o malzemenin nereden geldiğini gösterir (tarla ya da kümes). Balona dokununca bubble_tapped o bölümle
 ## yayılır. Kök noktası kasenin dibidir.
@@ -14,6 +16,7 @@ extends Node2D
 signal slot_filled(index: int)
 signal completed
 signal mixed
+signal cleared
 signal bubble_tapped(section_id: StringName)
 
 ## Malzemenin toplandığı bölüm (balonda gösterilir, balona dokununca oraya gidilir).
@@ -57,6 +60,9 @@ const STIR_WOBBLE_SPEED: float = 18.0
 const STIR_ENERGY_DECAY: float = 4.0
 const MIXED_POP_SCALE: float = 1.12
 const MIXED_POP_TIME: float = 0.12
+const DOUGH_LIFT_TIME: float = 0.12
+## Hamurun kasedeki ortası (kasenin iç ağzının ortasına göre); kaldırılan hamur buradan çıkar.
+const DOUGH_CENTER: Vector2 = Vector2(0.0, -20.0)
 const SCREEN_WIDTH: float = 1920.0
 const MAX_SOUND_PAN: float = 0.6
 
@@ -96,6 +102,8 @@ var _spoon_held: bool = false
 var _spoon_hint_tween: Tween
 var _stir_energy: float = 0.0
 var _stir_time: float = 0.0
+var _dough_lifted: bool = false
+var _dough_tween: Tween
 
 @onready var _body: Node2D = $Body
 @onready var _contents: Node2D = $Body/Contents
@@ -173,6 +181,54 @@ func can_stir() -> bool:
 
 func is_mixed() -> bool:
 	return has_recipe() and _mix >= mix_distance
+
+
+## Hamur kasede ve parmakla kaldırılabilir.
+func has_dough() -> bool:
+	return is_mixed() and not _dough_lifted
+
+
+## Hamurun kasedeki ortası (dünya konumu).
+func dough_point() -> Vector2:
+	return _contents.to_global(DOUGH_CENTER)
+
+
+## Hamur parmağa geçer: kasede görünmez olur. Hamur yoksa false döner.
+func lift_dough() -> bool:
+	if not has_dough():
+		return false
+	_dough_lifted = true
+	_tween_dough(Vector2.ZERO, Tween.EASE_IN)
+	return true
+
+
+## Kaldırılan hamur kaseye geri düşer.
+func put_back_dough() -> void:
+	if not _dough_lifted:
+		return
+	_dough_lifted = false
+	_tween_dough(Vector2.ONE, Tween.EASE_OUT)
+
+
+## Kase boşalır (hamur fırına girdi): tarif seçimi sıfırlanır.
+func clear() -> void:
+	recipe = &""
+	_items.clear()
+	_filled.clear()
+	_mix = 0.0
+	_dough_lifted = false
+	if _dough_tween != null:
+		_dough_tween.kill()
+	_stir_energy = 0.0
+	_contents.rotation = 0.0
+	for layer: Sprite2D in [_flour, _yolk, _carrot, _dough]:
+		layer.hide()
+		layer.modulate.a = 1.0
+	_dough.scale = Vector2.ONE
+	_flour.scale = _flour_scale
+	_spoon.hide()
+	_refresh_bubble()
+	cleared.emit()
 
 
 ## Kasede henüz malzeme yoksa tarifi değiştirir; malzeme varsa hiçbir şey yapmaz.
@@ -339,6 +395,13 @@ func _show_spoon() -> void:
 			deg_to_rad(SPOON_HINT_DEGREES), SPOON_HINT_PERIOD, 0.0, false)
 
 
+func _tween_dough(to_scale: Vector2, easing: Tween.EaseType) -> void:
+	if _dough_tween != null:
+		_dough_tween.kill()
+	_dough_tween = create_tween()
+	_dough_tween.tween_property(_dough, ^"scale", to_scale, DOUGH_LIFT_TIME).set_trans(Tween.TRANS_BACK).set_ease(easing)
+
+
 func _stop_spoon_hint() -> void:
 	if _spoon_hint_tween == null:
 		return
@@ -369,10 +432,12 @@ func _on_mixed() -> void:
 	spoon_tween.tween_property(_spoon, ^"scale", Vector2.ZERO, SPOON_POP_TIME) \
 			.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_IN)
 	spoon_tween.tween_callback(_spoon.hide)
-	var dough_tween: Tween = create_tween()
-	dough_tween.tween_property(_dough, ^"scale", Vector2.ONE * MIXED_POP_SCALE, MIXED_POP_TIME) \
+	if _dough_tween != null:
+		_dough_tween.kill()
+	_dough_tween = create_tween()
+	_dough_tween.tween_property(_dough, ^"scale", Vector2.ONE * MIXED_POP_SCALE, MIXED_POP_TIME) \
 			.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
-	dough_tween.tween_property(_dough, ^"scale", Vector2.ONE, SETTLE_TIME) \
+	_dough_tween.tween_property(_dough, ^"scale", Vector2.ONE, SETTLE_TIME) \
 			.set_trans(Tween.TRANS_ELASTIC).set_ease(Tween.EASE_OUT)
 	if sparkle_scene != null:
 		var sparkle: CPUParticles2D = sparkle_scene.instantiate() as CPUParticles2D
