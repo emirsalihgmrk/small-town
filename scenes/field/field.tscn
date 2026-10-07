@@ -23,8 +23,6 @@
 [ext_resource type="PackedScene" path="res://scenes/ui/icons/tools/seed_bag_wheat_icon.tscn" id="21_seed_wheat"]
 [ext_resource type="Texture2D" path="res://assets/art/ui/icons/tools/bucket.svg" id="22_bucket"]
 [ext_resource type="Texture2D" path="res://assets/art/ui/icons/tools/sickle.svg" id="23_sickle"]
-[ext_resource type="Texture2D" path="res://assets/art/field/windmill_tower.svg" id="24_windmill_tower"]
-[ext_resource type="Texture2D" path="res://assets/art/field/windmill_blades.svg" id="25_windmill_blades"]
 [ext_resource type="Script" path="res://scripts/input/tap_router.gd" id="tap_router_script"]
 [ext_resource type="Script" path="res://scripts/components/pause_when_inactive.gd" id="pause_script"]
 [ext_resource type="Script" path="res://scripts/field/field.gd" id="field_script"]
@@ -40,7 +38,6 @@
 [ext_resource type="Texture2D" path="res://assets/art/field/wheat_bundle.svg" id="wheat_bundle"]
 [ext_resource type="PackedScene" path="res://scenes/field/effects/sparkle_burst.tscn" id="sparkle_burst"]
 [ext_resource type="Script" path="res://scripts/components/scene_ambience.gd" id="ambience_script"]
-[ext_resource type="Script" path="res://scripts/components/spin_component.gd" id="spin_script"]
 [ext_resource type="Script" path="res://scripts/field/field_bird.gd" id="bird_script"]
 [ext_resource type="Script" path="res://scripts/field/field_bunny.gd" id="bunny_script"]
 [ext_resource type="Script" path="res://scripts/input/tappable.gd" id="tappable_script"]
@@ -222,23 +219,6 @@ scale = Vector2(0.55, 0.55)
 texture = ExtResource("6_tree_apple")
 centered = false
 offset = Vector2(-160, -400)
-
-[node name="Windmill" type="Node2D" parent="World"]
-position = Vector2(990, 600)
-scale = Vector2(0.8, 0.8)
-
-[node name="Tower" type="Sprite2D" parent="World/Windmill"]
-texture = ExtResource("24_windmill_tower")
-centered = false
-offset = Vector2(-62, -282)
-
-[node name="Blades" type="Sprite2D" parent="World/Windmill"]
-position = Vector2(0, -226)
-texture = ExtResource("25_windmill_blades")
-
-[node name="Spin" type="Node" parent="World/Windmill/Blades"]
-script = ExtResource("spin_script")
-degrees_per_second = 24.0
 
 [node name="Ground" type="Sprite2D" parent="World"]
 position = Vector2(0, 600)
