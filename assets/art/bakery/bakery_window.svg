@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="440" height="400" viewBox="-220 -200 440 400">
+<defs><linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7cc6f0"/><stop offset="1" stop-color="#d6f2ff"/></linearGradient></defs>
+<rect x="-150" y="-150" width="300" height="270" rx="14" fill="url(#sky)"/>
+<path d="M-150 60 C -80 10 0 20 60 45 C 100 60 130 40 150 35 L150 120 L-150 120 Z" fill="#b6e290"/>
+<path d="M-150 95 C -60 70 40 80 150 90 L150 120 L-150 120 Z" fill="#9bd474"/>
+<path d="M70 40 L70 -10" stroke="#8a5a3a" stroke-width="10" stroke-linecap="round"/>
+<circle cx="70" cy="-30" r="34" fill="#6cbf4f"/><circle cx="48" cy="-12" r="22" fill="#6cbf4f"/><circle cx="92" cy="-12" r="22" fill="#6cbf4f"/>
+<circle cx="-70" cy="-90" r="16" fill="#ffffff"/><circle cx="-50" cy="-96" r="20" fill="#ffffff"/><circle cx="-28" cy="-88" r="14" fill="#ffffff"/>
+<rect x="-150" y="-150" width="300" height="270" rx="14" fill="none" stroke="#fff3dc" stroke-width="18"/>
+<path d="M0 -150 L0 120 M-150 -15 L150 -15" stroke="#fff3dc" stroke-width="12"/>
+<rect x="-160" y="-160" width="320" height="290" rx="18" fill="none" stroke="#b9804a" stroke-width="8"/>
+<rect x="-185" y="124" width="370" height="28" rx="10" fill="#c99257" stroke="#7a4e28" stroke-width="5"/>
+<path d="M-200 -176 L-120 -176 Q-130 -40 -96 110 Q-150 118 -200 110 Z" fill="#e8785f" stroke="#b8503c" stroke-width="5" stroke-linejoin="round"/>
+<path d="M-180 -170 Q-178 -40 -168 104 M-150 -170 Q-142 -40 -128 108" fill="none" stroke="#d4573f" stroke-width="4" stroke-linecap="round"/>
+<path d="M200 -176 L120 -176 Q130 -40 96 110 Q150 118 200 110 Z" fill="#e8785f" stroke="#b8503c" stroke-width="5" stroke-linejoin="round"/>
+<path d="M180 -170 Q178 -40 168 104 M150 -170 Q142 -40 128 108" fill="none" stroke="#d4573f" stroke-width="4" stroke-linecap="round"/>
+<path d="M-210 -192 L210 -192 L210 -160 Q185 -140 158 -160 Q131 -140 105 -160 Q79 -140 52 -160 Q26 -140 0 -160 Q-26 -140 -52 -160 Q-79 -140 -105 -160 Q-131 -140 -158 -160 Q-185 -140 -210 -160 Z" fill="#f29884" stroke="#b8503c" stroke-width="5" stroke-linejoin="round"/>
+<rect x="-214" y="-198" width="428" height="14" rx="7" fill="#9c6b35"/>
+</svg>

@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="820" viewBox="-300 -808 600 820">
+<ellipse cx="0" cy="4" rx="300" ry="16" fill="#000000" opacity="0.15"/>
+<rect x="-62" y="-800" width="124" height="330" fill="#c8643f" stroke="#8a3424" stroke-width="7"/>
+<path d="M-58 -740 L58 -740" stroke="#a84e32" stroke-width="4"/>
+<path d="M-58 -700 L58 -700" stroke="#a84e32" stroke-width="4"/>
+<path d="M-58 -660 L58 -660" stroke="#a84e32" stroke-width="4"/>
+<path d="M-58 -620 L58 -620" stroke="#a84e32" stroke-width="4"/>
+<path d="M-58 -580 L58 -580" stroke="#a84e32" stroke-width="4"/>
+<path d="M-58 -540 L58 -540" stroke="#a84e32" stroke-width="4"/>
+<path d="M-58 -500 L58 -500" stroke="#a84e32" stroke-width="4"/>
+<rect x="-80" y="-806" width="160" height="34" rx="10" fill="#b5553a" stroke="#8a3424" stroke-width="6"/>
+<rect x="-285" y="-300" width="570" height="300" rx="16" fill="#e8d8bd" stroke="#a8906f" stroke-width="7"/>
+<rect x="-270" y="-280" width="118" height="64" rx="18" fill="#f1e4cc" stroke="#cdb894" stroke-width="4"/>
+<rect x="-130" y="-280" width="138" height="64" rx="18" fill="#f1e4cc" stroke="#cdb894" stroke-width="4"/>
+<rect x="30" y="-280" width="108" height="64" rx="18" fill="#f1e4cc" stroke="#cdb894" stroke-width="4"/>
+<rect x="160" y="-280" width="98" height="64" rx="18" fill="#f1e4cc" stroke="#cdb894" stroke-width="4"/>
+<rect x="-270" y="-200" width="78" height="64" rx="18" fill="#f1e4cc" stroke="#cdb894" stroke-width="4"/>
+<rect x="-170" y="-200" width="118" height="64" rx="18" fill="#f1e4cc" stroke="#cdb894" stroke-width="4"/>
+<rect x="110" y="-200" width="148" height="64" rx="18" fill="#f1e4cc" stroke="#cdb894" stroke-width="4"/>
+<rect x="-270" y="-120" width="138" height="64" rx="18" fill="#f1e4cc" stroke="#cdb894" stroke-width="4"/>
+<rect x="-110" y="-120" width="98" height="64" rx="18" fill="#f1e4cc" stroke="#cdb894" stroke-width="4"/>
+<rect x="10" y="-120" width="128" height="64" rx="18" fill="#f1e4cc" stroke="#cdb894" stroke-width="4"/>
+<rect x="160" y="-120" width="98" height="64" rx="18" fill="#f1e4cc" stroke="#cdb894" stroke-width="4"/>
+<rect x="-270" y="-50" width="98" height="64" rx="18" fill="#f1e4cc" stroke="#cdb894" stroke-width="4"/>
+<rect x="-150" y="-50" width="148" height="64" rx="18" fill="#f1e4cc" stroke="#cdb894" stroke-width="4"/>
+<rect x="20" y="-50" width="108" height="64" rx="18" fill="#f1e4cc" stroke="#cdb894" stroke-width="4"/>
+<rect x="150" y="-50" width="108" height="64" rx="18" fill="#f1e4cc" stroke="#cdb894" stroke-width="4"/>
+<path d="M-265 -296 C -265 -640 265 -640 265 -296 Z" fill="#d9774f" stroke="#8a3424" stroke-width="8" stroke-linejoin="round"/>
+<path d="M-230 -380 L-170 -372" stroke="#c0603c" stroke-width="6" stroke-linecap="round"/>
+<path d="M-120 -520 L-60 -516" stroke="#c0603c" stroke-width="6" stroke-linecap="round"/>
+<path d="M40 -530 L100 -522" stroke="#c0603c" stroke-width="6" stroke-linecap="round"/>
+<path d="M170 -450 L222 -430" stroke="#c0603c" stroke-width="6" stroke-linecap="round"/>
+<path d="M-200 -330 L-140 -326" stroke="#c0603c" stroke-width="6" stroke-linecap="round"/>
+<path d="M150 -340 L210 -336" stroke="#c0603c" stroke-width="6" stroke-linecap="round"/>
+<path d="M-200 -440 L-150 -444" stroke="#c0603c" stroke-width="6" stroke-linecap="round"/>
+<path d="M-226 -380 C -210 -500 -120 -540 -40 -540" fill="none" stroke="#e8946c" stroke-width="12" stroke-linecap="round"/>
+<path d="M-170 -300 L-170 -400 C -170 -510 170 -510 170 -400 L170 -300 Z" fill="#f1e4cc" stroke="#a8906f" stroke-width="6" stroke-linejoin="round"/>
+<path d="M-130 -300 L-130 -396 C -130 -472 130 -472 130 -396 L130 -300 Z" fill="#3b2418"/>
+<ellipse cx="0" cy="-334" rx="112" ry="30" fill="#f29a3a" opacity="0.55"/>
+<path d="M-84 -318 Q-72 -372 -56 -318 Z M-30 -318 Q-12 -392 6 -318 Z M38 -318 Q54 -366 72 -318 Z" fill="#f6c45a"/>
+<path d="M-100 -320 L100 -320" stroke="#7a3a22" stroke-width="10" stroke-linecap="round"/>
+<path d="M-150 -400 L-128 -398 M-138 -460 L-112 -440 M-70 -496 L-60 -470 M0 -506 L0 -478 M70 -496 L60 -470 M138 -460 L112 -440 M150 -400 L128 -398" stroke="#cdb894" stroke-width="5" stroke-linecap="round"/>
+<rect x="-196" y="-312" width="392" height="30" rx="10" fill="#b9804a" stroke="#7a4e28" stroke-width="6"/>
+</svg>
