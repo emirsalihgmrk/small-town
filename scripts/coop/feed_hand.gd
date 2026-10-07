@@ -1,10 +1,10 @@
 class_name FeedHand
 extends Node
 ## Sepetten buğday demetini parmakla çekip yemliğe götürme. Sepete basıp parmak biraz kayınca demet
-## sepetin ağzından çıkar ve parmağı izler. Boş yemliğin üstünde bırakılırsa yemliğe dökülür ve ortak
-## sepetten düşer; başka yerde (ya da dolu yemlikte) bırakılırsa sepete geri uçar. Kaydırmadan bırakılan
-## dokunuş sepete dokunmak sayılır (sepet menüsü açılır). Sepette buğday yoksa demet çıkmaz, no_wheat
-## yayılır. Tek parmak izlenir.
+## sepetin ağzından çıkar ve parmağı izler. Tam dolu olmayan yemliğin üstünde bırakılırsa yemliğe dökülür
+## ve ortak sepetten düşer; başka yerde (ya da tam dolu yemlikte) bırakılırsa sepete geri uçar.
+## Kaydırmadan bırakılan dokunuş sepete dokunmak sayılır (sepet menüsü açılır). Sepette buğday yoksa demet
+## çıkmaz, no_wheat yayılır. Tek parmak izlenir.
 ## Not: Sahnede kamera yok, dünya ve ekran koordinatları canvas dönüşümüyle çevrilir. Bu düğüm sahnede
 ## TapRouter'dan sonra gelmeli ki sepete basış önce buraya ulaşsın.
 
@@ -69,13 +69,23 @@ func _unhandled_input(event: InputEvent) -> void:
 		get_viewport().set_input_as_handled()
 
 
+## Uygulama arka plana giderse parmağın kalktığı haber gelmeyebilir: demeti sepete geri gönder.
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_APPLICATION_PAUSED or what == NOTIFICATION_APPLICATION_FOCUS_OUT:
+		if _touch_index != NO_TOUCH:
+			_touch_index = NO_TOUCH
+			if _bundle != null:
+				feeder.set_highlighted(false)
+				_return()
+
+
 func _move(point: Vector2) -> void:
 	if _bundle == null:
 		if not _refused and point.distance_to(_start) >= DRAG_START_DISTANCE:
 			_lift(point)
 		return
 	_target = _to_screen(point) + HOLD_OFFSET
-	feeder.set_highlighted(not feeder.full and feeder.contains(point))
+	feeder.set_highlighted(feeder.can_fill() and feeder.contains(point))
 
 
 func _release(point: Vector2) -> void:
@@ -83,7 +93,7 @@ func _release(point: Vector2) -> void:
 		if not _refused:
 			basket.tap()
 		return
-	if not feeder.full and feeder.contains(point):
+	if feeder.can_fill() and feeder.contains(point):
 		_pour()
 	else:
 		feeder.set_highlighted(false)

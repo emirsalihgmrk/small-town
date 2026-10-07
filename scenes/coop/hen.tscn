@@ -5,6 +5,7 @@
 [ext_resource type="Texture2D" path="res://assets/art/coop/hen_head.svg" id="3_head"]
 [ext_resource type="Script" path="res://scripts/components/pulse_component.gd" id="4_pulse"]
 [ext_resource type="Script" path="res://scripts/components/sway_component.gd" id="5_sway"]
+[ext_resource type="Texture2D" path="res://assets/art/field/water_bubble.svg" id="6_water_bubble"]
 
 [node name="Hen" type="Node2D"]
 script = ExtResource("1_hen")
@@ -37,6 +38,18 @@ script = ExtResource("4_pulse")
 scale_amount = Vector2(0.015, 0.03)
 period = 2.2
 period_randomness = 0.2
+
+[node name="WaterBubble" type="Node2D" parent="."]
+visible = false
+position = Vector2(40, -200)
+
+[node name="Icon" type="Sprite2D" parent="WaterBubble"]
+texture = ExtResource("6_water_bubble")
+
+[node name="Pulse" type="Node" parent="WaterBubble/Icon"]
+script = ExtResource("4_pulse")
+scale_amount = Vector2(0.1, 0.1)
+period = 1.1
 
 [node name="PeckTimer" type="Timer" parent="."]
 one_shot = true

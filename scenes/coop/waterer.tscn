@@ -1,0 +1,39 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/coop/waterer.gd" id="1_waterer"]
+[ext_resource type="Texture2D" path="res://assets/art/coop/waterer.svg" id="2_waterer"]
+[ext_resource type="Texture2D" path="res://assets/art/coop/waterer_water.svg" id="3_water"]
+[ext_resource type="Texture2D" path="res://assets/art/coop/waterer_dish_water.svg" id="4_dish_water"]
+[ext_resource type="PackedScene" path="res://scenes/field/effects/sparkle_burst.tscn" id="5_sparkle"]
+
+[node name="Waterer" type="Node2D"]
+script = ExtResource("1_waterer")
+sparkle_scene = ExtResource("5_sparkle")
+
+[node name="Body" type="Node2D" parent="."]
+
+[node name="Sprite" type="Sprite2D" parent="Body"]
+texture = ExtResource("2_waterer")
+centered = false
+offset = Vector2(-72, -160)
+
+[node name="DishWater" type="Sprite2D" parent="Body"]
+texture = ExtResource("4_dish_water")
+centered = false
+offset = Vector2(-52, -27)
+
+[node name="Water" type="Sprite2D" parent="Body"]
+texture = ExtResource("3_water")
+centered = false
+offset = Vector2(-40, -130)
+
+[node name="Spots" type="Node2D" parent="."]
+
+[node name="Spot0" type="Marker2D" parent="Spots"]
+position = Vector2(-125, -15)
+
+[node name="Spot1" type="Marker2D" parent="Spots"]
+position = Vector2(125, -15)
+
+[node name="Spot2" type="Marker2D" parent="Spots"]
+position = Vector2(-55, 85)

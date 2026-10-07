@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bceqmj08hcho1"
-path="res://.godot/imported/nest.svg-d5eff2f3a0da4d927cf1af8cf4acc330.ctex"
+uid="uid://dujxd4kdnt3vk"
+path="res://.godot/imported/waterer_water.svg-b2059e4c72f7f8e360d2618ca36f830e.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/art/coop/nest.svg"
-dest_files=["res://.godot/imported/nest.svg-d5eff2f3a0da4d927cf1af8cf4acc330.ctex"]
+source_file="res://assets/art/coop/waterer_water.svg"
+dest_files=["res://.godot/imported/waterer_water.svg-b2059e4c72f7f8e360d2618ca36f830e.ctex"]
 
 [params]
 

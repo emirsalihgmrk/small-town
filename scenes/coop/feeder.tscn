@@ -33,6 +33,17 @@ texture = ExtResource("3_grain_heap")
 centered = false
 offset = Vector2(-106, -30)
 
+[node name="Spots" type="Node2D" parent="."]
+
+[node name="Spot0" type="Marker2D" parent="Spots"]
+position = Vector2(-135, -15)
+
+[node name="Spot1" type="Marker2D" parent="Spots"]
+position = Vector2(135, -15)
+
+[node name="Spot2" type="Marker2D" parent="Spots"]
+position = Vector2(-30, 80)
+
 [node name="Pour" type="CPUParticles2D" parent="."]
 position = Vector2(0, -130)
 emitting = false

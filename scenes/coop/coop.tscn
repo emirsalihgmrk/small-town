@@ -15,9 +15,10 @@
 [ext_resource type="Texture2D" path="res://assets/art/environment/flower_red.svg" id="13_flower_red"]
 [ext_resource type="Texture2D" path="res://assets/art/coop/coop_yard.svg" id="14_yard"]
 [ext_resource type="Texture2D" path="res://assets/art/coop/coop_house.svg" id="15_house"]
-[ext_resource type="Texture2D" path="res://assets/art/coop/nest.svg" id="16_nest"]
+[ext_resource type="Texture2D" path="res://assets/art/coop/nest_back.svg" id="16_nest_back"]
+[ext_resource type="Texture2D" path="res://assets/art/coop/nest_front.svg" id="16_nest_front"]
 [ext_resource type="PackedScene" path="res://scenes/coop/feeder.tscn" id="17_feeder"]
-[ext_resource type="Texture2D" path="res://assets/art/coop/waterer.svg" id="18_waterer"]
+[ext_resource type="PackedScene" path="res://scenes/coop/waterer.tscn" id="18_waterer"]
 [ext_resource type="PackedScene" path="res://scenes/coop/hen.tscn" id="19_hen"]
 [ext_resource type="PackedScene" path="res://scenes/entities/girl.tscn" id="20_girl"]
 [ext_resource type="Texture2D" path="res://assets/art/ui/icons/home.svg" id="21_home"]
@@ -26,6 +27,9 @@
 [ext_resource type="Script" path="res://scripts/components/pause_when_inactive.gd" id="pause_script"]
 [ext_resource type="Script" path="res://scripts/components/scene_ambience.gd" id="ambience_script"]
 [ext_resource type="Script" path="res://scripts/coop/feed_hand.gd" id="feed_hand_script"]
+[ext_resource type="Script" path="res://scripts/coop/water_hand.gd" id="water_hand_script"]
+[ext_resource type="PackedScene" path="res://scenes/field/held_bucket.tscn" id="held_bucket"]
+[ext_resource type="Texture2D" path="res://assets/art/ui/icons/tools/bucket.svg" id="bucket_icon"]
 [ext_resource type="PackedScene" path="res://scenes/entities/basket.tscn" id="basket_scene"]
 [ext_resource type="PackedScene" path="res://scenes/ui/basket_menu.tscn" id="basket_menu"]
 [ext_resource type="Texture2D" path="res://assets/art/field/wheat_bundle.svg" id="wheat_bundle"]
@@ -255,43 +259,83 @@ offset = Vector2(-310, -484)
 [node name="Nests" type="Node2D" parent="World/House"]
 position = Vector2(0, -22)
 
-[node name="Nest1" type="Sprite2D" parent="World/House/Nests"]
+[node name="Nest1" type="Node2D" parent="World/House/Nests"]
 position = Vector2(-128, 0)
-texture = ExtResource("16_nest")
+
+[node name="Back" type="Sprite2D" parent="World/House/Nests/Nest1"]
+texture = ExtResource("16_nest_back")
 centered = false
 offset = Vector2(-66, -48)
 
-[node name="Nest2" type="Sprite2D" parent="World/House/Nests"]
-texture = ExtResource("16_nest")
+[node name="Front" type="Sprite2D" parent="World/House/Nests/Nest1"]
+z_index = 1
+texture = ExtResource("16_nest_front")
 centered = false
 offset = Vector2(-66, -48)
 
-[node name="Nest3" type="Sprite2D" parent="World/House/Nests"]
+[node name="Nest2" type="Node2D" parent="World/House/Nests"]
+
+[node name="Back" type="Sprite2D" parent="World/House/Nests/Nest2"]
+texture = ExtResource("16_nest_back")
+centered = false
+offset = Vector2(-66, -48)
+
+[node name="Front" type="Sprite2D" parent="World/House/Nests/Nest2"]
+z_index = 1
+texture = ExtResource("16_nest_front")
+centered = false
+offset = Vector2(-66, -48)
+
+[node name="Nest3" type="Node2D" parent="World/House/Nests"]
 position = Vector2(128, 0)
-texture = ExtResource("16_nest")
+
+[node name="Back" type="Sprite2D" parent="World/House/Nests/Nest3"]
+texture = ExtResource("16_nest_back")
 centered = false
 offset = Vector2(-66, -48)
 
-[node name="Feeder" parent="World" instance=ExtResource("17_feeder")]
+[node name="Front" type="Sprite2D" parent="World/House/Nests/Nest3"]
+z_index = 1
+texture = ExtResource("16_nest_front")
+centered = false
+offset = Vector2(-66, -48)
+
+[node name="Bucket" type="Node2D" parent="World"]
+position = Vector2(395, 728)
+
+[node name="Sprite" type="Sprite2D" parent="World/Bucket"]
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("bucket_icon")
+
+[node name="Farmyard" type="Node2D" parent="World"]
+y_sort_enabled = true
+
+[node name="Feeder" parent="World/Farmyard" instance=ExtResource("17_feeder")]
 position = Vector2(690, 765)
 
-[node name="Waterer" type="Sprite2D" parent="World"]
+[node name="Waterer" parent="World/Farmyard" instance=ExtResource("18_waterer")]
 position = Vector2(1010, 765)
-texture = ExtResource("18_waterer")
-centered = false
-offset = Vector2(-72, -160)
 
-[node name="Hens" type="Node2D" parent="World"]
+[node name="Hen1" parent="World/Farmyard" node_paths=PackedStringArray("feeder", "waterer", "nest") instance=ExtResource("19_hen")]
+position = Vector2(530, 895)
+feeder = NodePath("../Feeder")
+waterer = NodePath("../Waterer")
+nest = NodePath("../../House/Nests/Nest1")
 
-[node name="Hen1" parent="World/Hens" instance=ExtResource("19_hen")]
-position = Vector2(470, 885)
-
-[node name="Hen2" parent="World/Hens" instance=ExtResource("19_hen")]
+[node name="Hen2" parent="World/Farmyard" node_paths=PackedStringArray("feeder", "waterer", "nest") instance=ExtResource("19_hen")]
 position = Vector2(1180, 880)
 scale = Vector2(-1, 1)
+feeder = NodePath("../Feeder")
+waterer = NodePath("../Waterer")
+nest = NodePath("../../House/Nests/Nest3")
+spot_index = 1
 
-[node name="Hen3" parent="World/Hens" instance=ExtResource("19_hen")]
-position = Vector2(840, 905)
+[node name="Hen3" parent="World/Farmyard" node_paths=PackedStringArray("feeder", "waterer", "nest") instance=ExtResource("19_hen")]
+position = Vector2(850, 905)
+feeder = NodePath("../Feeder")
+waterer = NodePath("../Waterer")
+nest = NodePath("../../House/Nests/Nest2")
+spot_index = 2
 
 [node name="Girl" parent="World" instance=ExtResource("20_girl")]
 position = Vector2(230, 1000)
@@ -314,9 +358,16 @@ script = ExtResource("ambience_script")
 [node name="FeedHand" type="Node" parent="." node_paths=PackedStringArray("basket", "feeder", "drag_layer")]
 script = ExtResource("feed_hand_script")
 basket = NodePath("../World/Basket")
-feeder = NodePath("../World/Feeder")
+feeder = NodePath("../World/Farmyard/Feeder")
 drag_layer = NodePath("../DragLayer")
 wheat_texture = ExtResource("wheat_bundle")
+
+[node name="WaterHand" type="Node" parent="." node_paths=PackedStringArray("bucket", "waterer", "drag_layer")]
+script = ExtResource("water_hand_script")
+bucket = NodePath("../World/Bucket")
+waterer = NodePath("../World/Farmyard/Waterer")
+drag_layer = NodePath("../DragLayer")
+bucket_scene = ExtResource("held_bucket")
 
 [node name="UI" type="CanvasLayer" parent="."]
 
