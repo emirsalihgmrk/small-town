@@ -3,12 +3,17 @@ extends Node2D
 ## Taş fırın. Hamur getirilince (bake) çiğ ürün fırının ağzına oturur ve camlı kapak kapanır; camdan
 ## bakınca ürün bake_time boyunca yavaş yavaş kabarıp kızarır (çiğ resmin üstünde pişmiş resim belirir).
 ## Pişince zil çalar, kapak parlar ve baked yayılır. Fırın asla yakmaz: ürün çıkarılmazsa fırında sıcak
-## bekler. Fırında ürün varken yeni hamur girmez (nudge ile fırın "dolu" diye sallanır).
+## bekler, kapağın üstünden buhar tüter. Fırında ürün varken yeni hamur girmez (nudge ile fırın "dolu" diye
+## sallanır).
+## Pişmiş ürün varken fırına dokununca kapak açılır, ürün buharla öne çıkar ve fırın boşalır; ürün
+## çıkınca taken_out o ürünle ve bulunduğu yerle yayılır (sepete uçurmak için). Pişerken dokunulursa
+## fırın kısaca sallanır.
 ## Hamur hazırken ve fırın boşken fırının ağzı yavaşça parlayarak çağırır (set_inviting). Pişerken ışık
 ## daha hızlı titrer. Kök noktası fırının dibinin ortasıdır.
 
 signal door_closed
 signal baked
+signal taken_out(item: StringName, global_point: Vector2)
 
 ## Ürünün fırında oturduğu yer (altının ortası) ve sığdırıldığı kutu; ürün buradan yukarı kabarır.
 const PRODUCT_POINT: Vector2 = Vector2(0.0, -313.0)
@@ -33,6 +38,13 @@ const GLOW_BAKING_MAX: float = 0.7
 const GLOW_BAKING_PERIOD: float = 0.9
 const GLOW_WARM: float = 0.45
 const GLOW_FADE_TIME: float = 0.3
+const DOOR_OPEN_TIME: float = 0.25
+## Çıkarılan ürün fırının ağzından bu kadar öne (aşağı) kayar.
+const TAKE_OUT_SLIDE: Vector2 = Vector2(0.0, 40.0)
+const TAKE_OUT_TIME: float = 0.3
+## Ürün sepete uçmadan önce bu ölçeğe (resmin kendi boyuna göre) küçülür; sepete uçuş bu boydan başlar.
+const HANDOFF_SCALE: float = 0.6
+const HANDOFF_TIME: float = 0.08
 const SCREEN_WIDTH: float = 1920.0
 const MAX_SOUND_PAN: float = 0.6
 
@@ -46,6 +58,7 @@ const MAX_SOUND_PAN: float = 0.6
 @export var sparkle_scene: PackedScene
 @export_file("*.ogg", "*.wav") var door_sound_path: String = "res://assets/audio/sfx/basket_drop.ogg"
 @export_file("*.ogg", "*.wav") var ready_sound_path: String = "res://assets/audio/sfx/plot_ready.ogg"
+@export_file("*.ogg", "*.wav") var take_out_sound_path: String = "res://assets/audio/sfx/carrot_pop.ogg"
 
 ## Fırındaki tarif; fırın boşsa boş.
 var recipe: StringName = &""
@@ -54,6 +67,8 @@ var _time_left: float = 0.0
 var _inviting: bool = false
 var _door_sound: AudioStream
 var _ready_sound: AudioStream
+var _take_out_sound: AudioStream
+var _taking_out: bool = false
 var _highlighted: bool = false
 var _highlight_tween: Tween
 var _glow_tween: Tween
@@ -66,6 +81,8 @@ var _product_scale: Vector2 = Vector2.ONE
 @onready var _raw: Sprite2D = $Body/Product/Raw
 @onready var _baked: Sprite2D = $Body/Product/Baked
 @onready var _door: Node2D = $Body/Door
+@onready var _steam: CPUParticles2D = $Body/Steam
+@onready var _tap_area: Tappable = $TapArea
 
 
 func _ready() -> void:
@@ -73,6 +90,9 @@ func _ready() -> void:
 		_door_sound = load(door_sound_path) as AudioStream
 	if ResourceLoader.exists(ready_sound_path):
 		_ready_sound = load(ready_sound_path) as AudioStream
+	if ResourceLoader.exists(take_out_sound_path):
+		_take_out_sound = load(take_out_sound_path) as AudioStream
+	_tap_area.tapped.connect(_on_tapped)
 	_product.position = PRODUCT_POINT
 	_product.hide()
 	_door.hide()
@@ -99,8 +119,34 @@ func is_baking() -> bool:
 	return not recipe.is_empty() and _time_left > 0.0
 
 
+## Pişmiş ürün fırında bekliyor (çıkarılmakta olan sayılmaz).
 func is_baked() -> bool:
+	return has_baked_product() and not _taking_out
+
+
+## Fırında pişmiş bir ürün var (çıkarılmaktaysa da).
+func has_baked_product() -> bool:
 	return not recipe.is_empty() and _time_left <= 0.0
+
+
+## Pişmiş ürünü çıkarır: kapak açılır, ürün öne kayar, sonra fırın boşalır ve taken_out yayılır. Ürün
+## yoksa hiçbir şey olmaz.
+func take_out() -> void:
+	if not is_baked() or _taking_out:
+		return
+	var item: StringName = recipe
+	_taking_out = true
+	_steam.emitting = false
+	_steam.restart()
+	_steam.emitting = true
+	AudioManager.play_sfx(_take_out_sound, AudioManager.BUS_SFX, 0.0, 1.0, _pan())
+	var tween: Tween = create_tween()
+	tween.tween_property(_door, ^"scale:x", 0.0, DOOR_OPEN_TIME).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_IN)
+	tween.tween_callback(_door.hide)
+	tween.tween_property(_product, ^"position", PRODUCT_POINT + TAKE_OUT_SLIDE, TAKE_OUT_TIME) \
+			.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	tween.tween_property(_product, ^"scale", Vector2.ONE * HANDOFF_SCALE, HANDOFF_TIME)
+	tween.tween_callback(_on_taken_out.bind(item))
 
 
 func raw_texture(recipe_id: StringName) -> Texture2D:
@@ -200,7 +246,26 @@ func _on_baked() -> void:
 	var tween: Tween = create_tween()
 	tween.tween_property(_body, ^"scale", READY_SQUASH, READY_SQUASH_TIME).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 	tween.tween_property(_body, ^"scale", Vector2.ONE, SETTLE_TIME).set_trans(Tween.TRANS_ELASTIC).set_ease(Tween.EASE_OUT)
+	_steam.emitting = true
 	baked.emit()
+
+
+func _on_taken_out(item: StringName) -> void:
+	var point: Vector2 = product_point() + _body.global_transform.basis_xform(TAKE_OUT_SLIDE)
+	_product.hide()
+	_product.position = PRODUCT_POINT
+	_steam.emitting = false
+	recipe = &""
+	_taking_out = false
+	_refresh_glow()
+	taken_out.emit(item, point)
+
+
+func _on_tapped(_point: Vector2) -> void:
+	if is_baked():
+		take_out()
+	elif is_baking():
+		nudge()
 
 
 ## Işık: pişerken hızlı titrer, pişince sabit ve ılık kalır, boşken hamur hazırsa yavaşça çağırır.

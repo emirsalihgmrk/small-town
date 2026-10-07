@@ -30,8 +30,9 @@ const SETTLE_TIME: float = 0.4
 const PILE_POP_TIME: float = 0.3
 ## Yığındaki ürünler gerçek boylarının bu oranında çizilir.
 const PILE_SCALE: float = 0.5
-## Sayaçtaki simgeler bu yüksekliğe sığdırılır.
+## Sayaçtaki simgeler bu yüksekliğe ve (sayıyla çakışmasın diye) bu genişliğe sığdırılır.
 const TALLY_ICON_HEIGHT: float = 36.0
+const TALLY_ICON_MAX_WIDTH: float = 40.0
 const TALLY_ENTRY_WIDTH: float = 104.0
 const TALLY_PADDING: float = 10.0
 const SCREEN_WIDTH: float = 1920.0
@@ -202,7 +203,8 @@ func _build_tally() -> void:
 		entry.position.x = x
 		var icon: Sprite2D = entry.get_node(^"Icon") as Sprite2D
 		icon.texture = item_textures[item]
-		icon.scale = Vector2.ONE * (TALLY_ICON_HEIGHT / icon.texture.get_height())
+		icon.scale = Vector2.ONE * minf(TALLY_ICON_HEIGHT / icon.texture.get_height(),
+				TALLY_ICON_MAX_WIDTH / icon.texture.get_width())
 		$Tally.add_child(entry)
 		entry.show()
 		_counts[item] = entry.get_node(^"Count") as Label

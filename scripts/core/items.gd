@@ -7,3 +7,7 @@ const CARROT: StringName = &"carrot"
 const WHEAT: StringName = &"wheat"
 ## Kümesteki tavukların yumurtası.
 const EGG: StringName = &"egg"
+## Fırında pişen ürünler (her biri aynı adlı tarifin ürünü, bkz. Recipes).
+const BREAD: StringName = &"bread"
+const COOKIE: StringName = &"cookie"
+const CARROT_CAKE: StringName = &"carrot_cake"

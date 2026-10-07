@@ -4,6 +4,9 @@
 [ext_resource type="Texture2D" path="res://assets/art/ui/icons/field/carrot.svg" id="2_carrot"]
 [ext_resource type="Texture2D" path="res://assets/art/field/wheat_bundle.svg" id="3_wheat"]
 [ext_resource type="Texture2D" path="res://assets/art/coop/egg.svg" id="egg"]
+[ext_resource type="Texture2D" path="res://assets/art/ui/icons/bakery/bread.svg" id="bread"]
+[ext_resource type="Texture2D" path="res://assets/art/bakery/cookie.svg" id="cookie"]
+[ext_resource type="Texture2D" path="res://assets/art/bakery/carrot_cake.svg" id="carrot_cake"]
 [ext_resource type="Texture2D" path="res://assets/art/field/basket_back.svg" id="4_basket_back"]
 [ext_resource type="Texture2D" path="res://assets/art/field/basket_front.svg" id="5_basket_front"]
 [ext_resource type="Texture2D" path="res://assets/art/ui/icons/close.svg" id="6_close"]
@@ -87,7 +90,10 @@ script = ExtResource("1_menu")
 item_icons = Dictionary[StringName, Texture2D]({
 &"carrot": ExtResource("2_carrot"),
 &"wheat": ExtResource("3_wheat"),
-&"egg": ExtResource("egg")
+&"egg": ExtResource("egg"),
+&"bread": ExtResource("bread"),
+&"cookie": ExtResource("cookie"),
+&"carrot_cake": ExtResource("carrot_cake")
 })
 
 [node name="Root" type="Control" parent="."]
