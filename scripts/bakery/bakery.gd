@@ -1,9 +1,10 @@
 extends Node2D
 ## Fırın bölümü: eve dönüş, tarif panosundan tarif seçme, sepetten kaseye malzeme koyma ve kızın
-## tepkileri. Sepete dokununca sepetin içi açılır.
+## tepkileri; malzemeler tamamlanınca kaşıkla karıştırma (StirHand). Sepete dokununca sepetin içi açılır.
 ## Kase boşken başka bir karta dokununca tarif değişir; kaseye ilk malzeme konunca öteki kartlar kilitlenir.
 ## Tarif seçilmeden sepetten malzeme çekilmeye çalışılırsa kartlar sallanır; gereken malzeme sepette
-## yoksa kasenin balonu zıplar, balona dokununca malzemenin geldiği bölüme gidilir. Kase dolunca kız sevinir.
+## yoksa kasenin balonu zıplar, balona dokununca malzemenin geldiği bölüme gidilir. Kase dolunca ve
+## karışım hamur olunca kız sevinir.
 ## Kasedeki malzemeler henüz kayda geçmiyor: sahneden çıkarken ortak sepete geri konur.
 
 @onready var _home_button: Button = $UI/Root/HomeButton
@@ -25,6 +26,7 @@ func _ready() -> void:
 		card.tapped.connect(_on_card_tapped.bind(card))
 	_bowl.slot_filled.connect(_on_slot_filled)
 	_bowl.completed.connect(_girl.cheer)
+	_bowl.mixed.connect(_girl.cheer)
 	_bowl.bubble_tapped.connect(SceneRouter.go_to_section)
 	_ingredient_hand.no_recipe.connect(_nudge_cards)
 	_ingredient_hand.missing.connect(_bowl.nudge_bubble)

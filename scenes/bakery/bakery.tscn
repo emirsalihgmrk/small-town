@@ -13,6 +13,7 @@
 [ext_resource type="Texture2D" path="res://assets/art/bakery/cookie.svg" id="cookie"]
 [ext_resource type="Texture2D" path="res://assets/art/bakery/carrot_cake.svg" id="carrot_cake"]
 [ext_resource type="Script" path="res://scripts/bakery/ingredient_hand.gd" id="ingredient_hand_script"]
+[ext_resource type="Script" path="res://scripts/bakery/stir_hand.gd" id="stir_hand_script"]
 [ext_resource type="PackedScene" path="res://scenes/entities/girl.tscn" id="8_girl"]
 [ext_resource type="Texture2D" path="res://assets/art/ui/icons/home.svg" id="9_home"]
 [ext_resource type="PackedScene" path="res://scenes/entities/basket.tscn" id="basket_scene"]
@@ -160,6 +161,10 @@ script = ExtResource("ingredient_hand_script")
 basket = NodePath("../World/Basket")
 bowl = NodePath("../World/Bowl")
 drag_layer = NodePath("../DragLayer")
+
+[node name="StirHand" type="Node" parent="." node_paths=PackedStringArray("bowl")]
+script = ExtResource("stir_hand_script")
+bowl = NodePath("../World/Bowl")
 
 [node name="UI" type="CanvasLayer" parent="."]
 

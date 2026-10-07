@@ -11,6 +11,10 @@
 [ext_resource type="PackedScene" path="res://scenes/ui/icons/coop_icon.tscn" id="9_coop_icon"]
 [ext_resource type="Script" path="res://scripts/input/tappable.gd" id="10_tappable"]
 [ext_resource type="PackedScene" path="res://scenes/field/effects/sparkle_burst.tscn" id="11_sparkle"]
+[ext_resource type="Texture2D" path="res://assets/art/bakery/dough_bread.svg" id="12_dough_bread"]
+[ext_resource type="Texture2D" path="res://assets/art/bakery/dough_cookie.svg" id="13_dough_cookie"]
+[ext_resource type="Texture2D" path="res://assets/art/bakery/dough_cake.svg" id="14_dough_cake"]
+[ext_resource type="Texture2D" path="res://assets/art/bakery/spoon.svg" id="15_spoon"]
 
 [sub_resource type="Gradient" id="Gradient_puff"]
 offsets = PackedFloat32Array(0, 0.5, 1)
@@ -19,6 +23,11 @@ colors = PackedColorArray(1, 1, 1, 0.9, 1, 1, 1, 0.7, 1, 1, 1, 0)
 [node name="MixingBowl" type="Node2D"]
 script = ExtResource("1_bowl_script")
 sparkle_scene = ExtResource("11_sparkle")
+dough_textures = Dictionary[StringName, Texture2D]({
+&"bread": ExtResource("12_dough_bread"),
+&"carrot_cake": ExtResource("14_dough_cake"),
+&"cookie": ExtResource("13_dough_cookie")
+})
 
 [node name="Body" type="Node2D" parent="."]
 
@@ -46,6 +55,21 @@ position = Vector2(-6, -12)
 texture = ExtResource("5_carrot")
 centered = false
 offset = Vector2(-75, -44)
+
+[node name="Dough" type="Sprite2D" parent="Body/Contents"]
+centered = false
+offset = Vector2(-94, -50)
+
+[node name="SpoonAnchor" type="Node2D" parent="Body"]
+position = Vector2(0, -80)
+
+[node name="Spoon" type="Node2D" parent="Body/SpoonAnchor"]
+
+[node name="Sprite" type="Sprite2D" parent="Body/SpoonAnchor/Spoon"]
+scale = Vector2(0.75, 0.75)
+texture = ExtResource("15_spoon")
+centered = false
+offset = Vector2(-22, -220)
 
 [node name="Puff" type="CPUParticles2D" parent="."]
 position = Vector2(0, -110)
