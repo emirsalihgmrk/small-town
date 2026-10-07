@@ -1,0 +1,333 @@
+[gd_scene format=3]
+
+[ext_resource type="Texture2D" path="res://assets/art/environment/backdrop.svg" id="1_backdrop"]
+[ext_resource type="Texture2D" path="res://assets/art/environment/sun_glow.svg" id="2_sun_glow"]
+[ext_resource type="Texture2D" path="res://assets/art/environment/sun.svg" id="3_sun"]
+[ext_resource type="Texture2D" path="res://assets/art/environment/cloud.svg" id="4_cloud"]
+[ext_resource type="Texture2D" path="res://assets/art/environment/tree.svg" id="5_tree"]
+[ext_resource type="Texture2D" path="res://assets/art/environment/tree_apple.svg" id="6_tree_apple"]
+[ext_resource type="Texture2D" path="res://assets/art/field/field_ground.svg" id="7_ground"]
+[ext_resource type="Texture2D" path="res://assets/art/field/fence.svg" id="8_fence"]
+[ext_resource type="Texture2D" path="res://assets/art/environment/bush.svg" id="9_bush"]
+[ext_resource type="Texture2D" path="res://assets/art/environment/grass_tuft.svg" id="10_tuft"]
+[ext_resource type="Texture2D" path="res://assets/art/environment/flower_pink.svg" id="11_flower_pink"]
+[ext_resource type="Texture2D" path="res://assets/art/environment/flower_orange.svg" id="12_flower_orange"]
+[ext_resource type="Texture2D" path="res://assets/art/environment/flower_red.svg" id="13_flower_red"]
+[ext_resource type="Texture2D" path="res://assets/art/coop/coop_yard.svg" id="14_yard"]
+[ext_resource type="Texture2D" path="res://assets/art/coop/coop_house.svg" id="15_house"]
+[ext_resource type="Texture2D" path="res://assets/art/coop/nest.svg" id="16_nest"]
+[ext_resource type="Texture2D" path="res://assets/art/coop/feeder.svg" id="17_feeder"]
+[ext_resource type="Texture2D" path="res://assets/art/coop/waterer.svg" id="18_waterer"]
+[ext_resource type="PackedScene" path="res://scenes/coop/hen.tscn" id="19_hen"]
+[ext_resource type="PackedScene" path="res://scenes/entities/girl.tscn" id="20_girl"]
+[ext_resource type="Texture2D" path="res://assets/art/ui/icons/home.svg" id="21_home"]
+[ext_resource type="Script" path="res://scripts/coop/coop.gd" id="coop_script"]
+[ext_resource type="Script" path="res://scripts/input/tap_router.gd" id="tap_router_script"]
+[ext_resource type="Script" path="res://scripts/components/pause_when_inactive.gd" id="pause_script"]
+[ext_resource type="Script" path="res://scripts/components/scene_ambience.gd" id="ambience_script"]
+
+[sub_resource type="StyleBoxFlat" id="home_normal"]
+bg_color = Color(1, 0.945, 0.722, 1)
+border_width_left = 8
+border_width_top = 8
+border_width_right = 8
+border_width_bottom = 8
+border_color = Color(1, 1, 1, 1)
+corner_radius_top_left = 36
+corner_radius_top_right = 36
+corner_radius_bottom_right = 36
+corner_radius_bottom_left = 36
+shadow_color = Color(0, 0, 0, 0.22)
+shadow_size = 8
+shadow_offset = Vector2(0, 6)
+
+[sub_resource type="StyleBoxFlat" id="home_hover"]
+bg_color = Color(1, 0.952, 0.755, 1)
+border_width_left = 8
+border_width_top = 8
+border_width_right = 8
+border_width_bottom = 8
+border_color = Color(1, 1, 1, 1)
+corner_radius_top_left = 36
+corner_radius_top_right = 36
+corner_radius_bottom_right = 36
+corner_radius_bottom_left = 36
+shadow_color = Color(0, 0, 0, 0.22)
+shadow_size = 8
+shadow_offset = Vector2(0, 6)
+
+[sub_resource type="StyleBoxFlat" id="home_pressed"]
+bg_color = Color(0.9, 0.851, 0.65, 1)
+border_width_left = 8
+border_width_top = 8
+border_width_right = 8
+border_width_bottom = 8
+border_color = Color(1, 1, 1, 1)
+corner_radius_top_left = 36
+corner_radius_top_right = 36
+corner_radius_bottom_right = 36
+corner_radius_bottom_left = 36
+shadow_color = Color(0, 0, 0, 0.22)
+shadow_size = 8
+shadow_offset = Vector2(0, 6)
+
+[sub_resource type="StyleBoxEmpty" id="home_focus"]
+
+[node name="Coop" type="Node2D"]
+script = ExtResource("coop_script")
+
+[node name="World" type="Node2D" parent="."]
+
+[node name="Backdrop" type="Sprite2D" parent="World"]
+texture = ExtResource("1_backdrop")
+centered = false
+
+[node name="Sun" type="Node2D" parent="World"]
+position = Vector2(1560, 150)
+
+[node name="Glow" type="Sprite2D" parent="World/Sun"]
+texture = ExtResource("2_sun_glow")
+
+[node name="Disc" type="Sprite2D" parent="World/Sun"]
+texture = ExtResource("3_sun")
+
+[node name="Clouds" type="Node2D" parent="World"]
+
+[node name="Cloud1" type="Sprite2D" parent="World/Clouds"]
+position = Vector2(470, 140)
+scale = Vector2(0.9, 0.9)
+texture = ExtResource("4_cloud")
+
+[node name="Cloud2" type="Sprite2D" parent="World/Clouds"]
+position = Vector2(1060, 105)
+scale = Vector2(0.7, 0.7)
+texture = ExtResource("4_cloud")
+
+[node name="Cloud3" type="Sprite2D" parent="World/Clouds"]
+position = Vector2(1840, 250)
+scale = Vector2(0.6, 0.6)
+texture = ExtResource("4_cloud")
+
+[node name="Cloud4" type="Sprite2D" parent="World/Clouds"]
+position = Vector2(150, 270)
+scale = Vector2(0.55, 0.55)
+texture = ExtResource("4_cloud")
+
+[node name="Trees" type="Node2D" parent="World"]
+
+[node name="Tree1" type="Sprite2D" parent="World/Trees"]
+position = Vector2(110, 640)
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("5_tree")
+centered = false
+offset = Vector2(-160, -400)
+
+[node name="AppleTree1" type="Sprite2D" parent="World/Trees"]
+position = Vector2(400, 625)
+scale = Vector2(0.36, 0.36)
+texture = ExtResource("6_tree_apple")
+centered = false
+offset = Vector2(-160, -400)
+
+[node name="Tree2" type="Sprite2D" parent="World/Trees"]
+position = Vector2(760, 615)
+scale = Vector2(0.3, 0.3)
+texture = ExtResource("5_tree")
+centered = false
+offset = Vector2(-160, -400)
+
+[node name="AppleTree2" type="Sprite2D" parent="World/Trees"]
+position = Vector2(1030, 620)
+scale = Vector2(0.4, 0.4)
+texture = ExtResource("6_tree_apple")
+centered = false
+offset = Vector2(-160, -400)
+
+[node name="Tree3" type="Sprite2D" parent="World/Trees"]
+position = Vector2(1830, 640)
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("5_tree")
+centered = false
+offset = Vector2(-160, -400)
+
+[node name="Ground" type="Sprite2D" parent="World"]
+position = Vector2(0, 600)
+texture = ExtResource("7_ground")
+centered = false
+
+[node name="Fence" type="Sprite2D" parent="World"]
+position = Vector2(0, 552)
+texture = ExtResource("8_fence")
+centered = false
+
+[node name="Bushes" type="Node2D" parent="World"]
+
+[node name="Bush1" type="Sprite2D" parent="World/Bushes"]
+position = Vector2(110, 706)
+texture = ExtResource("9_bush")
+centered = false
+offset = Vector2(-68, -88)
+
+[node name="Bush2" type="Sprite2D" parent="World/Bushes"]
+position = Vector2(215, 714)
+texture = ExtResource("9_bush")
+centered = false
+offset = Vector2(-68, -88)
+
+[node name="Yard" type="Sprite2D" parent="World"]
+position = Vector2(860, 860)
+texture = ExtResource("14_yard")
+
+[node name="Decor" type="Node2D" parent="World"]
+
+[node name="Tuft01" type="Sprite2D" parent="World/Decor"]
+position = Vector2(70, 790)
+texture = ExtResource("10_tuft")
+centered = false
+offset = Vector2(-14, -28)
+
+[node name="Flower01" type="Sprite2D" parent="World/Decor"]
+position = Vector2(330, 760)
+texture = ExtResource("11_flower_pink")
+centered = false
+offset = Vector2(-15, -29)
+
+[node name="Flower02" type="Sprite2D" parent="World/Decor"]
+position = Vector2(60, 935)
+texture = ExtResource("13_flower_red")
+centered = false
+offset = Vector2(-15, -29)
+
+[node name="Flower03" type="Sprite2D" parent="World/Decor"]
+position = Vector2(390, 1040)
+texture = ExtResource("12_flower_orange")
+centered = false
+offset = Vector2(-15, -29)
+
+[node name="Tuft02" type="Sprite2D" parent="World/Decor"]
+position = Vector2(70, 1060)
+texture = ExtResource("10_tuft")
+centered = false
+offset = Vector2(-14, -28)
+
+[node name="Flower04" type="Sprite2D" parent="World/Decor"]
+position = Vector2(1300, 1010)
+texture = ExtResource("11_flower_pink")
+centered = false
+offset = Vector2(-15, -29)
+
+[node name="Tuft03" type="Sprite2D" parent="World/Decor"]
+position = Vector2(1400, 1050)
+texture = ExtResource("10_tuft")
+centered = false
+offset = Vector2(-14, -28)
+
+[node name="Flower05" type="Sprite2D" parent="World/Decor"]
+position = Vector2(1880, 1050)
+texture = ExtResource("12_flower_orange")
+centered = false
+offset = Vector2(-15, -29)
+
+[node name="Flower06" type="Sprite2D" parent="World/Decor"]
+position = Vector2(1110, 700)
+texture = ExtResource("13_flower_red")
+centered = false
+offset = Vector2(-15, -29)
+
+[node name="Tuft04" type="Sprite2D" parent="World/Decor"]
+position = Vector2(560, 700)
+texture = ExtResource("10_tuft")
+centered = false
+offset = Vector2(-14, -28)
+
+[node name="House" type="Node2D" parent="World"]
+position = Vector2(1500, 800)
+
+[node name="Building" type="Sprite2D" parent="World/House"]
+texture = ExtResource("15_house")
+centered = false
+offset = Vector2(-310, -484)
+
+[node name="Nests" type="Node2D" parent="World/House"]
+position = Vector2(0, -22)
+
+[node name="Nest1" type="Sprite2D" parent="World/House/Nests"]
+position = Vector2(-128, 0)
+texture = ExtResource("16_nest")
+centered = false
+offset = Vector2(-66, -48)
+
+[node name="Nest2" type="Sprite2D" parent="World/House/Nests"]
+texture = ExtResource("16_nest")
+centered = false
+offset = Vector2(-66, -48)
+
+[node name="Nest3" type="Sprite2D" parent="World/House/Nests"]
+position = Vector2(128, 0)
+texture = ExtResource("16_nest")
+centered = false
+offset = Vector2(-66, -48)
+
+[node name="Feeder" type="Sprite2D" parent="World"]
+position = Vector2(690, 765)
+texture = ExtResource("17_feeder")
+centered = false
+offset = Vector2(-126, -90)
+
+[node name="Waterer" type="Sprite2D" parent="World"]
+position = Vector2(1010, 765)
+texture = ExtResource("18_waterer")
+centered = false
+offset = Vector2(-72, -160)
+
+[node name="Hens" type="Node2D" parent="World"]
+
+[node name="Hen1" parent="World/Hens" instance=ExtResource("19_hen")]
+position = Vector2(470, 885)
+
+[node name="Hen2" parent="World/Hens" instance=ExtResource("19_hen")]
+position = Vector2(1180, 880)
+scale = Vector2(-1, 1)
+
+[node name="Hen3" parent="World/Hens" instance=ExtResource("19_hen")]
+position = Vector2(840, 905)
+
+[node name="Girl" parent="World" instance=ExtResource("20_girl")]
+position = Vector2(230, 1000)
+
+[node name="PauseWhenInactive" type="Node" parent="."]
+script = ExtResource("pause_script")
+
+[node name="TapRouter" type="Node" parent="."]
+script = ExtResource("tap_router_script")
+
+[node name="Ambience" type="Node" parent="."]
+script = ExtResource("ambience_script")
+
+[node name="UI" type="CanvasLayer" parent="."]
+
+[node name="Root" type="Control" parent="UI"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="HomeButton" type="Button" parent="UI/Root"]
+layout_mode = 0
+offset_left = 40.0
+offset_top = 40.0
+offset_right = 170.0
+offset_bottom = 170.0
+focus_mode = 0
+theme_override_styles/focus = SubResource("home_focus")
+theme_override_styles/hover = SubResource("home_hover")
+theme_override_styles/pressed = SubResource("home_pressed")
+theme_override_styles/normal = SubResource("home_normal")
+
+[node name="Icon" type="Sprite2D" parent="UI/Root/HomeButton"]
+position = Vector2(65, 65)
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("21_home")

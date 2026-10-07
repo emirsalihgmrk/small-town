@@ -7,6 +7,7 @@ const HOME_SCENE: String = "res://scenes/main/home.tscn"
 ## Henüz yapılmamış bölümler burada yoktur; kartları basılınca hiçbir şey olmaz.
 const SECTION_SCENES: Dictionary[StringName, String] = {
 	&"field": "res://scenes/field/field.tscn",
+	&"coop": "res://scenes/coop/coop.tscn",
 }
 ## Her şeyin, ana ekrandaki kartlar dahil, üstünde kalsın.
 const CURTAIN_LAYER: int = 100

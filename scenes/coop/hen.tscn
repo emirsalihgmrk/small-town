@@ -1,0 +1,42 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/coop/hen.gd" id="1_hen"]
+[ext_resource type="Texture2D" path="res://assets/art/coop/hen_body.svg" id="2_body"]
+[ext_resource type="Texture2D" path="res://assets/art/coop/hen_head.svg" id="3_head"]
+[ext_resource type="Script" path="res://scripts/components/pulse_component.gd" id="4_pulse"]
+[ext_resource type="Script" path="res://scripts/components/sway_component.gd" id="5_sway"]
+
+[node name="Hen" type="Node2D"]
+script = ExtResource("1_hen")
+
+[node name="Body" type="Node2D" parent="."]
+
+[node name="Sprite" type="Sprite2D" parent="Body"]
+texture = ExtResource("2_body")
+centered = false
+offset = Vector2(-86, -138)
+
+[node name="Neck" type="Node2D" parent="Body"]
+position = Vector2(38, -79)
+
+[node name="Head" type="Node2D" parent="Body/Neck"]
+
+[node name="Sprite" type="Sprite2D" parent="Body/Neck/Head"]
+texture = ExtResource("3_head")
+centered = false
+offset = Vector2(-36, -84)
+
+[node name="Sway" type="Node" parent="Body/Neck"]
+script = ExtResource("5_sway")
+amplitude_degrees = 5.0
+period = 1.8
+period_randomness = 0.2
+
+[node name="Pulse" type="Node" parent="Body"]
+script = ExtResource("4_pulse")
+scale_amount = Vector2(0.015, 0.03)
+period = 2.2
+period_randomness = 0.2
+
+[node name="PeckTimer" type="Timer" parent="."]
+one_shot = true
