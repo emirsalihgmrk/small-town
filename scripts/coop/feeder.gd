@@ -103,6 +103,25 @@ func eat() -> void:
 		_show_bubble()
 
 
+func save_state() -> Dictionary:
+	return {"portions": portions}
+
+
+## Kayıttan animasyonsuz kurar; ayrılmış paylar sıfırlanır (tavuklar kendi kayıtlarından yeniden kurulur).
+func load_state(data: Dictionary) -> void:
+	portions = clampi(int(data.get("portions", 0)), 0, PORTIONS)
+	_reserved = 0
+	if _grain_tween != null:
+		_grain_tween.kill()
+	_grain.visible = portions > 0
+	_grain.scale = Vector2(1.0, float(portions) / PORTIONS)
+	if _bubble_tween != null:
+		_bubble_tween.kill()
+	_bubble.visible = portions == 0
+	_bubble.scale = _bubble_scale
+	_refresh_bubble_content()
+
+
 ## Parmaktaki demet yemliğin üstündeyken yemlik hafifçe büyür.
 func set_highlighted(highlighted: bool) -> void:
 	if highlighted == _highlighted:

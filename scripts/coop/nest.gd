@@ -39,9 +39,12 @@ func egg_position() -> Vector2:
 	return _egg_sprites[0].global_position
 
 
-func lay() -> void:
+## animate kapalıysa (kayıttan ileri sararken) yumurta sessizce eklenir: parıltı, sinyal yok.
+func lay(animate: bool = true) -> void:
 	eggs += 1
-	_refresh(true)
+	_refresh(animate)
+	if not animate:
+		return
 	if sparkle_scene != null:
 		var sparkle: CPUParticles2D = sparkle_scene.instantiate() as CPUParticles2D
 		_body.add_child(sparkle)
@@ -49,6 +52,15 @@ func lay() -> void:
 		sparkle.finished.connect(sparkle.queue_free)
 		sparkle.emitting = true
 	laid.emit()
+
+
+func save_state() -> Dictionary:
+	return {"eggs": eggs}
+
+
+func load_state(data: Dictionary) -> void:
+	eggs = maxi(int(data.get("eggs", 0)), 0)
+	_refresh(false)
 
 
 func _collect() -> void:

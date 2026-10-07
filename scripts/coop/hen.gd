@@ -6,6 +6,9 @@ extends Node2D
 ## kadar orada bekler. Sonra yumurtlar, folluktan kalkıp avludaki yerine döner ve yeniden acıkır;
 ## yumurta folluğa kalır (toplanmasını beklemez).
 ## Her zaman nefes alır ve başını hafifçe sallar; avluda aç beklerken ara sıra yere gagalar.
+## Kayıtta tavuk üç durgun evreden biriyle tutulur (aç, susamış, follukta); yoldaki ya da işin ortasındaki
+## tavuk, işi henüz yapılmamış evreye sayılır. Kayıttan açılırken sahne kapalıyken geçen süre kadar
+## döngü ileri sarılır: yemlikte ve sulukta pay varsa yer, içer, follukta bekleyip yumurtlar.
 ## Kök noktası tavuğun ayaklarıdır; görsel sağa bakar, sola baksın diye kök aynalanır.
 
 enum State { HUNGRY, GOING_TO_FEEDER, EATING, GOING_TO_WATERER, THIRSTY, DRINKING, GOING_TO_NEST, NESTING,
@@ -39,6 +42,14 @@ const NEST_HOP_TIME: float = 0.18
 ## Yumurtlarken hafifçe çöküp kalkar.
 const LAY_PUSH: float = 6.0
 const LAY_PUSH_TIME: float = 0.15
+## İleri sararken yemliğe gidip yemenin ve suluğa gidip içmenin aldığı varsayılan süre.
+const EAT_SIM_TIME: float = 5.0
+const DRINK_SIM_TIME: float = 4.0
+## İleri sarmada bir tavuğun en fazla bu kadar adım atması (sonsuz döngüye karşı).
+const MAX_FAST_FORWARD_STEPS: int = 30
+const PHASE_HUNGRY: String = "hungry"
+const PHASE_THIRSTY: String = "thirsty"
+const PHASE_NESTING: String = "nesting"
 
 @export var feeder: Feeder
 @export var waterer: Waterer
@@ -94,6 +105,73 @@ func _process(delta: float) -> void:
 				_lay()
 
 
+func save_state() -> Dictionary:
+	match state:
+		State.GOING_TO_WATERER, State.THIRSTY, State.DRINKING:
+			return {"phase": PHASE_THIRSTY}
+		State.GOING_TO_NEST:
+			return {"phase": PHASE_NESTING, "wait_left": lay_wait_time}
+		State.NESTING:
+			return {"phase": PHASE_NESTING, "wait_left": _wait_left}
+	# Yemliğe giden ya da yiyen tavuğun payı henüz düşmedi; yumurtlayıp dönen tavuğun yumurtası folluğa
+	# kalktığı anda kondu. İkisi de aç sayılır.
+	return {"phase": PHASE_HUNGRY}
+
+
+## Kayıttan kurar ve elapsed saniye kadar ileri sarar. Yemlik, suluk ve folluk önceden yüklenmiş olmalı;
+## tavuklar sırayla yüklenir, paylar o sırayla paylaşılır.
+func load_state(data: Dictionary, elapsed: float) -> void:
+	var phase: String = str(data.get("phase", PHASE_HUNGRY))
+	var wait: float = clampf(float(data.get("wait_left", lay_wait_time)), 0.0, lay_wait_time)
+	var remaining: float = elapsed
+	for i: int in MAX_FAST_FORWARD_STEPS:
+		if phase == PHASE_NESTING:
+			if remaining < wait:
+				wait -= remaining
+				break
+			remaining -= wait
+			nest.lay(false)
+			phase = PHASE_HUNGRY
+		elif phase == PHASE_THIRSTY:
+			if remaining < DRINK_SIM_TIME or not waterer.reserve():
+				break
+			waterer.drink()
+			remaining -= DRINK_SIM_TIME
+			phase = PHASE_NESTING
+			wait = lay_wait_time
+		else:
+			if remaining < EAT_SIM_TIME or not feeder.reserve():
+				break
+			feeder.eat()
+			remaining -= EAT_SIM_TIME
+			phase = PHASE_THIRSTY
+	_place(phase, wait)
+
+
+## Tavuğu evresinin yerine animasyonsuz koyar.
+func _place(phase: String, wait: float) -> void:
+	for tween: Tween in [_move_tween, _waddle_tween, _head_tween, _bubble_tween]:
+		if tween != null:
+			tween.kill()
+	_body.rotation = 0.0
+	_body.position = Vector2.ZERO
+	_head.rotation = 0.0
+	_water_bubble.hide()
+	_water_bubble.scale = Vector2.ONE
+	if phase == PHASE_NESTING:
+		global_position = nest.global_position + NEST_SEAT
+		state = State.NESTING
+		_wait_left = wait
+	elif phase == PHASE_THIRSTY:
+		global_position = waterer.spot(spot_index)
+		_face_toward(waterer.global_position.x)
+		state = State.THIRSTY
+		_water_bubble.visible = not waterer.has_free_portion()
+	else:
+		global_position = _home
+		state = State.HUNGRY
+
+
 func _eat() -> void:
 	state = State.EATING
 	_face_toward(feeder.global_position.x)
@@ -142,12 +220,13 @@ func _sit_on_nest() -> void:
 	tween.tween_property(_body, ^"position:y", 0.0, NEST_HOP_TIME).set_ease(Tween.EASE_IN)
 
 
-## Hafifçe çöküp yumurtlar, folluktan sıçrayıp kalkar ve avludaki yerine dönüp yeniden acıkır.
+## Yumurtlar (yumurta hemen folluğa konur; tavuğun altında kalır), hafifçe çöküp kalkar, folluktan
+## sıçrayıp avludaki yerine döner ve yeniden acıkır.
 func _lay() -> void:
 	state = State.GOING_HOME
+	nest.lay()
 	var tween: Tween = create_tween().set_trans(Tween.TRANS_QUAD)
 	tween.tween_property(_body, ^"position:y", LAY_PUSH, LAY_PUSH_TIME).set_ease(Tween.EASE_OUT)
-	tween.tween_callback(nest.lay)
 	tween.tween_property(_body, ^"position:y", 0.0, LAY_PUSH_TIME).set_ease(Tween.EASE_IN)
 	tween.tween_property(_body, ^"position:y", -NEST_HOP, NEST_HOP_TIME).set_ease(Tween.EASE_OUT)
 	tween.tween_property(_body, ^"position:y", 0.0, NEST_HOP_TIME).set_ease(Tween.EASE_IN)

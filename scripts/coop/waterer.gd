@@ -68,9 +68,14 @@ func needs_water() -> bool:
 	return level < 1.0
 
 
+## Henüz bir tavuğa ayrılmamış pay var mı.
+func has_free_portion() -> bool:
+	return portions() - _reserved > 0
+
+
 ## Bir payı tavuk için ayırır; ayrılacak pay yoksa false döner.
 func reserve() -> bool:
-	if portions() - _reserved <= 0:
+	if not has_free_portion():
 		return false
 	_reserved += 1
 	return true
@@ -84,6 +89,19 @@ func drink() -> void:
 		_level_tween.kill()
 	_level_tween = create_tween().set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
 	_level_tween.tween_method(_show_level, _shown_level(), level, LEVEL_TIME)
+
+
+func save_state() -> Dictionary:
+	return {"level": level}
+
+
+## Kayıttan animasyonsuz kurar; ayrılmış paylar sıfırlanır (tavuklar kendi kayıtlarından yeniden kurulur).
+func load_state(data: Dictionary) -> void:
+	level = clampf(float(data.get("level", 0.0)), 0.0, 1.0)
+	_reserved = 0
+	if _level_tween != null:
+		_level_tween.kill()
+	_show_level(level)
 
 
 ## Kova bu suluğun üstünde delta saniye su döktü.
