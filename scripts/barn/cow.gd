@@ -7,6 +7,10 @@ extends Node2D
 ## basılır ve kovaya süt fışkırır; sağılınca (milked) balon kaybolur ve yeniden acıkır.
 ## Her zaman nefes alır, başı ve kuyruğu salınır; boşta dururken ara sıra başını silker. Yürürken
 ## bacaklarını çaprazlama sallayıp hafifçe sekerek gider.
+## Kayıtta inek dört durgun evreden biriyle tutulur (aç, susamış, süt yapıyor, süt hazır); yoldaki ya da
+## işin ortasındaki inek, işi yapılmış evreye sayılır (yiyen inek susamış, içen inek süt yapıyor). Kayıttan
+## açılırken sahne kapalıyken geçen süre kadar döngü ileri sarılır: yemlikte saman varsa yer, suluk doluysa
+## içer, süt zamanı geçtiyse süt hazır olur. İnek her zaman yerinde kurulur.
 ## Kök noktası ineğin ayaklarının ortasıdır; görsel sola (yemliğe ve suluğa) bakar, sağa yürürken kök
 ## aynalanır.
 
@@ -42,6 +46,15 @@ const SIP_PAUSE: float = 0.2
 const REACT_DELAY_MIN: float = 0.3
 const REACT_DELAY_MAX: float = 0.8
 const BUBBLE_POP_TIME: float = 0.25
+## İleri sararken yemliğe gidip yemenin ve suluktan içmenin aldığı varsayılan süre.
+const EAT_SIM_TIME: float = 6.0
+const DRINK_SIM_TIME: float = 4.0
+## İleri sarmada en fazla bu kadar adım atılır (sonsuz döngüye karşı).
+const MAX_FAST_FORWARD_STEPS: int = 10
+const PHASE_HUNGRY: String = "hungry"
+const PHASE_THIRSTY: String = "thirsty"
+const PHASE_MAKING_MILK: String = "making_milk"
+const PHASE_MILK_READY: String = "milk_ready"
 ## Sağarken kova, kök noktasına göre burada (memenin altında, biraz önde) durur.
 const PAIL_SPOT: Vector2 = Vector2(46.0, 50.0)
 ## Sağmak için dokunulabilecek alan (kök noktasına göre: meme ve altındaki kova); cömert.
@@ -136,6 +149,82 @@ func milked() -> void:
 	state = State.HUNGRY
 
 
+func save_state() -> Dictionary:
+	match state:
+		State.EATING, State.GOING_HOME, State.THIRSTY:
+			return {"phase": PHASE_THIRSTY}
+		State.DRINKING:
+			return {"phase": PHASE_MAKING_MILK, "wait_left": milk_time}
+		State.MAKING_MILK:
+			return {"phase": PHASE_MAKING_MILK, "wait_left": _wait_left}
+		State.MILK_READY:
+			return {"phase": PHASE_MILK_READY}
+	return {"phase": PHASE_HUNGRY}
+
+
+## Kayıttan kurar ve elapsed saniye kadar ileri sarar. Yemlik ve suluk önceden yüklenmiş olmalı.
+## milk_ready yayılmaz (kız el sallamaz); süt balonu doğrudan görünür.
+func load_state(data: Dictionary, elapsed: float) -> void:
+	var phase: String = str(data.get("phase", PHASE_HUNGRY))
+	var wait: float = clampf(float(data.get("wait_left", milk_time)), 0.0, milk_time)
+	var remaining: float = elapsed
+	for i: int in MAX_FAST_FORWARD_STEPS:
+		if phase == PHASE_MAKING_MILK:
+			if remaining < wait:
+				wait -= remaining
+				break
+			remaining -= wait
+			phase = PHASE_MILK_READY
+		elif phase == PHASE_THIRSTY:
+			if remaining < DRINK_SIM_TIME or not trough.drain_now():
+				break
+			remaining -= DRINK_SIM_TIME
+			phase = PHASE_MAKING_MILK
+			wait = milk_time
+		elif phase == PHASE_HUNGRY:
+			if remaining < EAT_SIM_TIME or not manger.has_hay():
+				break
+			manger.empty_now()
+			remaining -= EAT_SIM_TIME
+			phase = PHASE_THIRSTY
+		else:
+			break
+	_place(phase, wait)
+
+
+## İneği evresine göre yerinde, animasyonsuz kurar.
+func _place(phase: String, wait: float) -> void:
+	for tween: Tween in [_move_tween, _walk_tween, _head_tween]:
+		if tween != null:
+			tween.kill()
+	for tween: Tween in _bubble_tweens.values():
+		tween.kill()
+	global_position = _home
+	_face_left()
+	_body.position = Vector2.ZERO
+	for leg: Node2D in _legs:
+		leg.rotation = 0.0
+	_head.rotation = 0.0
+	_neck.position = _neck_rest
+	_water_bubble.hide()
+	_water_bubble.scale = Vector2.ONE
+	_milk_bubble.hide()
+	_milk_bubble.scale = Vector2.ONE
+	match phase:
+		PHASE_THIRSTY:
+			state = State.THIRSTY
+			_face_toward(trough.global_position.x)
+			_water_bubble.visible = not trough.is_full()
+		PHASE_MAKING_MILK:
+			state = State.MAKING_MILK
+			_wait_left = wait
+		PHASE_MILK_READY:
+			state = State.MILK_READY
+			_milk_bubble.show()
+		_:
+			state = State.HUNGRY
+
+
 func _process(delta: float) -> void:
 	match state:
 		State.HUNGRY:
@@ -159,6 +248,7 @@ func _process(delta: float) -> void:
 ## Başını eğip lokma lokma yer; her lokmada çiğner ve yemlikteki saman azalır. Bitince yerine döner.
 func _eat() -> void:
 	state = State.EATING
+	manger.reserve()
 	_face_left()
 	_kill_head_tween()
 	_head_tween = create_tween().set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)

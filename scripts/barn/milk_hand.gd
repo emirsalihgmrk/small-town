@@ -5,6 +5,7 @@ extends Node
 ## memeye (ya da kovaya) her dokunuşta süt fışkırır ve kova SQUIRTS'te biri kadar dolar. Kova dolunca
 ## içinden bir süt şişesi sepete uçar (süt ortak sepete hemen eklenir), kova boşalıp yerine döner,
 ## inek yeniden acıkır ve milked yayılır. İnek sağılmaya hazırken yerdeki kova hafifçe zıplar.
+## Kova kayda geçmez: sahne yarıda kapanırsa kova boş olarak yerine döner, inek sağılmaya hazır kalır.
 ## Tek parmak izlenir. Not: Sahnede kamera yok, dünya ve ekran koordinatları canvas dönüşümüyle çevrilir.
 ## Bu düğüm sahnede TapRouter'dan sonra gelmeli ki kovaya basış önce buraya ulaşsın.
 
@@ -40,8 +41,8 @@ var _squirts: int = 0
 
 func _ready() -> void:
 	_rest = pail.global_position
-	cow.milk_ready.connect(_refresh_invite)
-	_refresh_invite()
+	cow.milk_ready.connect(refresh_invite)
+	refresh_invite()
 
 
 func _process(delta: float) -> void:
@@ -110,7 +111,7 @@ func _return_to_rest() -> void:
 	tween.tween_callback(func() -> void:
 		_phase = Phase.RESTING
 		pail.squash()
-		_refresh_invite())
+		refresh_invite())
 
 
 func _squirt() -> void:
@@ -141,7 +142,8 @@ func _on_full() -> void:
 	_return_to_rest()
 
 
-func _refresh_invite() -> void:
+## Kova yerdeyken ve inek sağılmaya hazırken kova zıplayarak çağırır (kayıttan kurulunca da çağrılır).
+func refresh_invite() -> void:
 	pail.set_inviting(_phase == Phase.RESTING and cow.is_milk_ready())
 
 

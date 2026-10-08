@@ -3,7 +3,8 @@ extends Node2D
 ## Ahırdaki yemlik. Saman yığınından getirilen bir tutam bırakılınca dolar; içinde saman yığını belirir.
 ## Dolu yemlik ineğe BITES lokma yeter; her lokmada (eat_bite) yığın basıklaşır. Yalnızca boş yemlik
 ## doldurulabilir. Boşken üstünde bir düşünce balonu durur ve balonda saman tutamı görünür (ne yapılacağını
-## hatırlatır). Kök noktası ayakların ortasıdır.
+## hatırlatır). İnek yemeye başlarken yemliği ayırır (reserve); yemekte olan yemlik kayıtta boş sayılır
+## (inek yemiş sayılır). Kök noktası ayakların ortasıdır.
 
 signal filled
 
@@ -31,6 +32,8 @@ const MAX_SOUND_PAN: float = 0.6
 
 ## Yemlikte kalan lokma sayısı (0..BITES).
 var bites: int = 0
+
+var _reserved: bool = false
 
 var _fill_sound: AudioStream
 var _highlighted: bool = false
@@ -66,11 +69,18 @@ func has_hay() -> bool:
 	return bites > 0
 
 
+## İnek yemeye başlıyor.
+func reserve() -> void:
+	_reserved = true
+
+
 ## İnek bir lokma yedi; saman bitince balon geri gelir.
 func eat_bite() -> void:
 	if bites == 0:
 		return
 	bites -= 1
+	if bites == 0:
+		_reserved = false
 	if _hay_tween != null:
 		_hay_tween.kill()
 	_hay_tween = create_tween().set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
@@ -112,6 +122,34 @@ func fill() -> void:
 			.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 	_hay_tween.tween_interval(maxf(FALL_TIME - HAY_DELAY - HAY_RISE_TIME, 0.0))
 	_hay_tween.tween_callback(_on_filled)
+
+
+func save_state() -> Dictionary:
+	return {"bites": 0 if _reserved else bites}
+
+
+## Kayıttan animasyonsuz kurar.
+func load_state(data: Dictionary) -> void:
+	_reserved = false
+	_set_bites_now(clampi(int(data.get("bites", 0)), 0, BITES))
+
+
+## İleri sararken inek yemliği bir anda bitirdi.
+func empty_now() -> void:
+	_reserved = false
+	_set_bites_now(0)
+
+
+func _set_bites_now(value: int) -> void:
+	bites = value
+	if _hay_tween != null:
+		_hay_tween.kill()
+	_hay.visible = bites > 0
+	_hay.scale = Vector2(1.0, float(bites) / BITES)
+	if _bubble_tween != null:
+		_bubble_tween.kill()
+	_bubble.visible = bites == 0
+	_bubble.scale = _bubble_scale
 
 
 func _on_filled() -> void:

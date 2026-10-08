@@ -3,7 +3,7 @@ extends WaterTarget
 ## Ahırdaki suluk. Kova üstünde tutulup su döküldükçe dolar; su yüzeyi doldukça genişleyip belirginleşir.
 ## İnek yalnızca tam dolu suluktan içer: içmeye başlarken suluğu ayırır (reserve), her yudumda (sip) su
 ## SIPS'te biri kadar azalır. İnek içerken suluğa su dökülmez; su bitince suluk yeniden doldurulabilir.
-## Kök noktası ayakların ortasıdır.
+## İçilmekte olan suluk kayıtta boş sayılır (inek içmiş sayılır). Kök noktası ayakların ortasıdır.
 
 signal filled
 
@@ -80,6 +80,31 @@ func sip() -> void:
 		_level_tween.kill()
 	_level_tween = create_tween().set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
 	_level_tween.tween_method(_show_level, _shown_level(), level, LEVEL_TIME)
+
+
+func save_state() -> Dictionary:
+	return {"level": 0.0 if _reserved else level}
+
+
+## Kayıttan animasyonsuz kurar.
+func load_state(data: Dictionary) -> void:
+	_set_level_now(clampf(float(data.get("level", 0.0)), 0.0, 1.0))
+
+
+## İleri sararken inek suluğu bir anda içip bitirdi. Suluk tam dolu değilse false döner (içilmez).
+func drain_now() -> bool:
+	if not is_full() or _reserved:
+		return false
+	_set_level_now(0.0)
+	return true
+
+
+func _set_level_now(value: float) -> void:
+	level = value
+	_reserved = false
+	if _level_tween != null:
+		_level_tween.kill()
+	_show_level(level)
 
 
 ## Kova bu suluğun üstünde delta saniye su döktü.
