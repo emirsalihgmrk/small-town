@@ -15,6 +15,9 @@
 [ext_resource type="Texture2D" path="res://assets/art/bakery/dough_cookie.svg" id="13_dough_cookie"]
 [ext_resource type="Texture2D" path="res://assets/art/bakery/dough_cake.svg" id="14_dough_cake"]
 [ext_resource type="Texture2D" path="res://assets/art/bakery/spoon.svg" id="15_spoon"]
+[ext_resource type="Texture2D" path="res://assets/art/bakery/bowl_milk.svg" id="16_milk"]
+[ext_resource type="Texture2D" path="res://assets/art/bakery/dough_birthday_cake.svg" id="17_dough_birthday_cake"]
+[ext_resource type="PackedScene" path="res://scenes/ui/icons/barn_icon.tscn" id="18_barn_icon"]
 
 [sub_resource type="Gradient" id="Gradient_puff"]
 offsets = PackedFloat32Array(0, 0.5, 1)
@@ -24,6 +27,7 @@ colors = PackedColorArray(1, 1, 1, 0.9, 1, 1, 1, 0.7, 1, 1, 1, 0)
 script = ExtResource("1_bowl_script")
 sparkle_scene = ExtResource("11_sparkle")
 dough_textures = Dictionary[StringName, Texture2D]({
+&"birthday_cake": ExtResource("17_dough_birthday_cake"),
 &"bread": ExtResource("12_dough_bread"),
 &"carrot_cake": ExtResource("14_dough_cake"),
 &"cookie": ExtResource("13_dough_cookie")
@@ -38,6 +42,10 @@ offset = Vector2(-120, -114)
 
 [node name="Contents" type="Node2D" parent="Body"]
 position = Vector2(0, -80)
+
+[node name="Milk" type="Sprite2D" parent="Body/Contents"]
+position = Vector2(0, -8)
+texture = ExtResource("16_milk")
 
 [node name="Flour" type="Sprite2D" parent="Body/Contents"]
 texture = ExtResource("3_flour")
@@ -108,6 +116,10 @@ scale = Vector2(0.28, 0.28)
 
 [node name="Coop" parent="Bubble" instance=ExtResource("9_coop_icon")]
 position = Vector2(0, -6)
+scale = Vector2(0.3, 0.3)
+
+[node name="Barn" parent="Bubble" instance=ExtResource("18_barn_icon")]
+position = Vector2(0, -4)
 scale = Vector2(0.3, 0.3)
 
 [node name="TapArea" type="Node2D" parent="Bubble"]

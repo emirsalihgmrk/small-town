@@ -2,7 +2,8 @@ class_name MixingBowl
 extends Node2D
 ## Fırındaki karıştırma kasesi. Bir tarif seçilince (set_recipe) kasede o tarifin her malzemesi için bir
 ## yuva açılır; sepetten getirilen malzeme konunca (add) yuva dolar ve kasede görünür: buğday un yığını
-## olur (her demetle büyür, un tozu kalkar), yumurtanın sarısı, havucun rendesi çıkar. Bütün yuvalar
+## olur (her demetle büyür, un tozu kalkar), yumurtanın sarısı, havucun rendesi çıkar, süt kasenin dibine
+## yayılır. Bütün yuvalar
 ## dolunca completed yayılır.
 ## Kase dolunca içinde tahta bir kaşık belirir ve karıştırılmayı beklerken hafifçe sallanır. Kaşık parmağı
 ## kasenin içinde izler (move_spoon). Karıştırdıkça (stir) malzemeler soluklaşıp sallanır, yerlerinde
@@ -11,7 +12,7 @@ extends Node2D
 ## (clear), tarif seçimi sıfırlanır ve cleared yayılır.
 ## Durum kayda save_state ile yazılır, load_state ile animasyonsuz kurulur (kaldırılmış hamur kasede sayılır).
 ## Tarif seçiliyken ortak sepette eksik bir malzeme varsa kasenin yanında bir düşünce balonu durur ve
-## o malzemenin nereden geldiğini gösterir (tarla ya da kümes). Balona dokununca bubble_tapped o bölümle
+## o malzemenin nereden geldiğini gösterir (tarla, kümes ya da ahır). Balona dokununca bubble_tapped o bölümle
 ## yayılır. Kök noktası kasenin dibidir.
 
 signal slot_filled(index: int)
@@ -25,6 +26,7 @@ const SOURCE_SECTIONS: Dictionary[StringName, StringName] = {
 	Items.WHEAT: &"field",
 	Items.CARROT: &"field",
 	Items.EGG: &"coop",
+	Items.MILK: &"barn",
 }
 const HIGHLIGHT_SCALE: Vector2 = Vector2(1.06, 1.06)
 const HIGHLIGHT_TIME: float = 0.12
@@ -75,6 +77,7 @@ const MAX_SOUND_PAN: float = 0.6
 	Items.WHEAT: "res://assets/audio/sfx/seed_sprinkle.ogg",
 	Items.EGG: "res://assets/audio/sfx/egg_crack.ogg",
 	Items.CARROT: "res://assets/audio/sfx/seed_plop.ogg",
+	Items.MILK: "res://assets/audio/sfx/water_splash.ogg",
 }
 ## Hamur olana kadar kaşığın kasede gezmesi gereken toplam yol.
 @export_range(200.0, 10000.0, 50.0, "suffix:px") var mix_distance: float = 1600.0
@@ -114,6 +117,7 @@ var _dough_tween: Tween
 
 @onready var _body: Node2D = $Body
 @onready var _contents: Node2D = $Body/Contents
+@onready var _milk: Sprite2D = $Body/Contents/Milk
 @onready var _flour: Sprite2D = $Body/Contents/Flour
 @onready var _yolk: Sprite2D = $Body/Contents/Yolk
 @onready var _carrot: Sprite2D = $Body/Contents/Carrot
@@ -126,6 +130,7 @@ var _dough_tween: Tween
 @onready var _bubble: Node2D = $Bubble
 @onready var _bubble_field: Node2D = $Bubble/Field
 @onready var _bubble_coop: Node2D = $Bubble/Coop
+@onready var _bubble_barn: Node2D = $Bubble/Barn
 @onready var _bubble_tap: Tappable = $Bubble/TapArea
 
 
@@ -138,6 +143,7 @@ func _ready() -> void:
 	if ResourceLoader.exists(stir_sound_path):
 		_stir_sound = load(stir_sound_path) as AudioStream
 	_flour_scale = _flour.scale
+	_milk.hide()
 	_flour.hide()
 	_yolk.hide()
 	_carrot.hide()
@@ -230,7 +236,7 @@ func clear() -> void:
 		_dough_tween.kill()
 	_stir_energy = 0.0
 	_contents.rotation = 0.0
-	for layer: Sprite2D in [_flour, _yolk, _carrot, _dough]:
+	for layer: Sprite2D in [_milk, _flour, _yolk, _carrot, _dough]:
 		layer.hide()
 		layer.modulate.a = 1.0
 	_dough.scale = Vector2.ONE
@@ -331,7 +337,10 @@ func load_state(data: Dictionary) -> void:
 	_yolk.scale = Vector2.ONE
 	_carrot.visible = items.has(Items.CARROT)
 	_carrot.scale = Vector2.ONE
+	_milk.visible = items.has(Items.MILK)
+	_milk.scale = Vector2.ONE
 	if is_mixed():
+		_milk.hide()
 		_flour.hide()
 		_yolk.hide()
 		_carrot.hide()
@@ -412,6 +421,10 @@ func _show_content(item: StringName) -> void:
 			_carrot.scale = Vector2.ZERO
 			_carrot.show()
 			_pop(_carrot, Vector2.ONE)
+		Items.MILK:
+			_milk.scale = Vector2(0.3, 0.3)
+			_milk.show()
+			_pop(_milk, Vector2.ONE)
 
 
 ## Un yığını kasedeki buğday demeti sayısına göre büyür.
@@ -474,7 +487,7 @@ func _stop_spoon_hint() -> void:
 ## Malzemeler karıştıkça soluklaşır, hamur onların yerinde büyür.
 func _show_mix() -> void:
 	var progress: float = _mix / mix_distance
-	for layer: Sprite2D in [_flour, _yolk, _carrot]:
+	for layer: Sprite2D in [_milk, _flour, _yolk, _carrot]:
 		layer.modulate.a = 1.0 - progress
 	_dough.show()
 	_dough.modulate.a = minf(progress * 2.0, 1.0)
@@ -484,6 +497,7 @@ func _show_mix() -> void:
 func _on_mixed() -> void:
 	_stir_energy = 0.0
 	_contents.rotation = 0.0
+	_milk.hide()
 	_flour.hide()
 	_yolk.hide()
 	_carrot.hide()
@@ -526,6 +540,7 @@ func _refresh_bubble() -> void:
 	if not section.is_empty():
 		_bubble_field.visible = section == &"field"
 		_bubble_coop.visible = section == &"coop"
+		_bubble_barn.visible = section == &"barn"
 	var shown: bool = not section.is_empty()
 	_bubble_tap.enabled = shown
 	if shown == _bubble_shown:

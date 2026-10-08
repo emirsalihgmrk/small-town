@@ -12,6 +12,8 @@
 [ext_resource type="Texture2D" path="res://assets/art/ui/icons/bakery/bread.svg" id="bread"]
 [ext_resource type="Texture2D" path="res://assets/art/bakery/cookie.svg" id="cookie"]
 [ext_resource type="Texture2D" path="res://assets/art/bakery/carrot_cake.svg" id="carrot_cake"]
+[ext_resource type="Texture2D" path="res://assets/art/bakery/birthday_cake.svg" id="birthday_cake"]
+[ext_resource type="Texture2D" path="res://assets/art/barn/milk.svg" id="milk"]
 [ext_resource type="Script" path="res://scripts/bakery/ingredient_hand.gd" id="ingredient_hand_script"]
 [ext_resource type="Script" path="res://scripts/bakery/stir_hand.gd" id="stir_hand_script"]
 [ext_resource type="Script" path="res://scripts/bakery/dough_hand.gd" id="dough_hand_script"]
@@ -110,29 +112,39 @@ centered = false
 offset = Vector2(-330, -268)
 
 [node name="RecipeBoard" type="Node2D" parent="World"]
-position = Vector2(880, 320)
+position = Vector2(925, 320)
 
 [node name="Board" type="Sprite2D" parent="World/RecipeBoard"]
 texture = ExtResource("board")
 centered = false
-offset = Vector2(-320, -240)
+offset = Vector2(-380, -240)
 
 [node name="Cards" type="Node2D" parent="World/RecipeBoard"]
 position = Vector2(0, 2)
 
 [node name="Bread" parent="World/RecipeBoard/Cards" instance=ExtResource("card_scene")]
-position = Vector2(-190, 0)
+position = Vector2(-258, 0)
+scale = Vector2(0.88, 0.88)
 recipe = &"bread"
 product_texture = ExtResource("bread")
 
 [node name="Cookie" parent="World/RecipeBoard/Cards" instance=ExtResource("card_scene")]
+position = Vector2(-86, 0)
+scale = Vector2(0.88, 0.88)
 recipe = &"cookie"
 product_texture = ExtResource("cookie")
 
 [node name="CarrotCake" parent="World/RecipeBoard/Cards" instance=ExtResource("card_scene")]
-position = Vector2(190, 0)
+position = Vector2(86, 0)
+scale = Vector2(0.88, 0.88)
 recipe = &"carrot_cake"
 product_texture = ExtResource("carrot_cake")
+
+[node name="BirthdayCake" parent="World/RecipeBoard/Cards" instance=ExtResource("card_scene")]
+position = Vector2(258, 0)
+scale = Vector2(0.88, 0.88)
+recipe = &"birthday_cake"
+product_texture = ExtResource("birthday_cake")
 
 [node name="Bowl" parent="World" instance=ExtResource("7_bowl")]
 position = Vector2(820, 678)
@@ -146,9 +158,11 @@ item_textures = Dictionary[StringName, Texture2D]({
 &"carrot": ExtResource("carrot_icon"),
 &"wheat": ExtResource("wheat_bundle"),
 &"egg": ExtResource("egg"),
+&"milk": ExtResource("milk"),
 &"bread": ExtResource("bread"),
 &"cookie": ExtResource("cookie"),
-&"carrot_cake": ExtResource("carrot_cake")
+&"carrot_cake": ExtResource("carrot_cake"),
+&"birthday_cake": ExtResource("birthday_cake")
 })
 flights = NodePath("../Flights")
 

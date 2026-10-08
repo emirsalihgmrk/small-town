@@ -11,5 +11,6 @@ const EGG: StringName = &"egg"
 const BREAD: StringName = &"bread"
 const COOKIE: StringName = &"cookie"
 const CARROT_CAKE: StringName = &"carrot_cake"
+const BIRTHDAY_CAKE: StringName = &"birthday_cake"
 ## Ahırdaki ineğin sütü (şişede).
 const MILK: StringName = &"milk"

@@ -28,11 +28,13 @@ const RETURN_TIME: float = 0.3
 ## Dökerken malzeme kasenin bu kadar üstünde durur, eğilir ve silkelenir.
 const POUR_POINT: Vector2 = Vector2(0.0, -190.0)
 const POUR_MOVE_TIME: float = 0.18
-## Malzemenin dökülürken ne kadar eğildiği: demetin başakları, yumurtanın ağzı, havucun ucu kaseye baksın.
+## Malzemenin dökülürken ne kadar eğildiği: demetin başakları, yumurtanın ağzı, havucun ucu, şişenin ağzı
+## kaseye baksın.
 const POUR_TILT_DEGREES: Dictionary[StringName, float] = {
 	Items.WHEAT: 125.0,
 	Items.EGG: 180.0,
 	Items.CARROT: 150.0,
+	Items.MILK: 135.0,
 }
 const POUR_SHAKE_DEGREES: float = 12.0
 const POUR_SHAKE_TIME: float = 0.09

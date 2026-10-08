@@ -6,6 +6,7 @@
 [ext_resource type="Texture2D" path="res://assets/art/field/wheat_bundle.svg" id="4_wheat"]
 [ext_resource type="Texture2D" path="res://assets/art/coop/egg.svg" id="5_egg"]
 [ext_resource type="Texture2D" path="res://assets/art/ui/icons/field/carrot.svg" id="6_carrot"]
+[ext_resource type="Texture2D" path="res://assets/art/barn/milk.svg" id="8_milk"]
 [ext_resource type="Script" path="res://scripts/input/tappable.gd" id="7_tappable"]
 
 [node name="RecipeCard" type="Node2D"]
@@ -13,6 +14,7 @@ script = ExtResource("1_card_script")
 ingredient_textures = Dictionary[StringName, Texture2D]({
 &"carrot": ExtResource("6_carrot"),
 &"egg": ExtResource("5_egg"),
+&"milk": ExtResource("8_milk"),
 &"wheat": ExtResource("4_wheat")
 })
 

@@ -13,6 +13,8 @@
 [ext_resource type="PackedScene" path="res://scenes/field/effects/sparkle_burst.tscn" id="11_sparkle"]
 [ext_resource type="Texture2D" path="res://assets/art/environment/smoke_puff.svg" id="12_puff"]
 [ext_resource type="Script" path="res://scripts/input/tappable.gd" id="13_tappable"]
+[ext_resource type="Texture2D" path="res://assets/art/bakery/raw_birthday_cake.svg" id="raw_birthday_cake"]
+[ext_resource type="Texture2D" path="res://assets/art/bakery/birthday_cake.svg" id="birthday_cake"]
 
 [sub_resource type="Gradient" id="Gradient_steam"]
 offsets = PackedFloat32Array(0, 0.3, 1)
@@ -21,11 +23,13 @@ colors = PackedColorArray(1, 1, 1, 0, 1, 1, 1, 0.75, 1, 1, 1, 0)
 [node name="Oven" type="Node2D"]
 script = ExtResource("1_oven_script")
 raw_textures = Dictionary[StringName, Texture2D]({
+&"birthday_cake": ExtResource("raw_birthday_cake"),
 &"bread": ExtResource("5_raw_bread"),
 &"carrot_cake": ExtResource("7_raw_cake"),
 &"cookie": ExtResource("6_raw_cookie")
 })
 baked_textures = Dictionary[StringName, Texture2D]({
+&"birthday_cake": ExtResource("birthday_cake"),
 &"bread": ExtResource("8_bread"),
 &"carrot_cake": ExtResource("10_cake"),
 &"cookie": ExtResource("9_cookie")

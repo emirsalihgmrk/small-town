@@ -10,21 +10,6 @@
 [ext_resource type="PackedScene" path="res://scenes/field/effects/sparkle_burst.tscn" id="sparkle_burst"]
 [ext_resource type="Script" path="res://scripts/input/tappable.gd" id="tappable_script"]
 
-[sub_resource type="StyleBoxFlat" id="tally"]
-bg_color = Color(1, 0.973, 0.906, 1)
-border_width_left = 5
-border_width_top = 5
-border_width_right = 5
-border_width_bottom = 5
-border_color = Color(1, 1, 1, 1)
-corner_radius_top_left = 27
-corner_radius_top_right = 27
-corner_radius_bottom_right = 27
-corner_radius_bottom_left = 27
-shadow_color = Color(0, 0, 0, 0.18)
-shadow_size = 5
-shadow_offset = Vector2(0, 4)
-
 [node name="Basket" type="Node2D"]
 script = ExtResource("basket_view_script")
 item_textures = Dictionary[StringName, Texture2D]({
@@ -104,34 +89,6 @@ visible = false
 texture = ExtResource("17_basket_front")
 centered = false
 offset = Vector2(-120, -196)
-
-[node name="Tally" type="Node2D" parent="."]
-
-[node name="Panel" type="Panel" parent="Tally"]
-offset_left = -112.0
-offset_top = 10.0
-offset_right = 112.0
-offset_bottom = 64.0
-mouse_filter = 2
-theme_override_styles/panel = SubResource("tally")
-
-[node name="Entry" type="Node2D" parent="Tally"]
-visible = false
-
-[node name="Icon" type="Sprite2D" parent="Tally/Entry"]
-position = Vector2(28, 37)
-
-[node name="Count" type="Label" parent="Tally/Entry"]
-offset_left = 50.0
-offset_top = 10.0
-offset_right = 100.0
-offset_bottom = 64.0
-theme_override_colors/font_color = Color(0.36, 0.24, 0.13, 1)
-theme_override_colors/font_outline_color = Color(1, 1, 1, 1)
-theme_override_constants/outline_size = 8
-theme_override_font_sizes/font_size = 34
-text = "0"
-vertical_alignment = 1
 
 [node name="TapArea" type="Node2D" parent="."]
 script = ExtResource("tappable_script")

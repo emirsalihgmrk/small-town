@@ -8,6 +8,7 @@
 [ext_resource type="Texture2D" path="res://assets/art/ui/icons/bakery/bread.svg" id="bread"]
 [ext_resource type="Texture2D" path="res://assets/art/bakery/cookie.svg" id="cookie"]
 [ext_resource type="Texture2D" path="res://assets/art/bakery/carrot_cake.svg" id="carrot_cake"]
+[ext_resource type="Texture2D" path="res://assets/art/bakery/birthday_cake.svg" id="birthday_cake"]
 [ext_resource type="Texture2D" path="res://assets/art/field/basket_back.svg" id="4_basket_back"]
 [ext_resource type="Texture2D" path="res://assets/art/field/basket_front.svg" id="5_basket_front"]
 [ext_resource type="Texture2D" path="res://assets/art/ui/icons/close.svg" id="6_close"]
@@ -95,7 +96,8 @@ item_icons = Dictionary[StringName, Texture2D]({
 &"milk": ExtResource("milk"),
 &"bread": ExtResource("bread"),
 &"cookie": ExtResource("cookie"),
-&"carrot_cake": ExtResource("carrot_cake")
+&"carrot_cake": ExtResource("carrot_cake"),
+&"birthday_cake": ExtResource("birthday_cake")
 })
 
 [node name="Root" type="Control" parent="."]
@@ -200,12 +202,12 @@ texture = ExtResource("6_close")
 unique_name_in_owner = true
 layout_mode = 2
 mouse_filter = 2
-theme_override_constants/separation = 40
+theme_override_constants/separation = 28
 alignment = 1
 
 [node name="Template" type="Control" parent="Root/Panel/VBox/Items"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(200, 284)
+custom_minimum_size = Vector2(180, 264)
 layout_mode = 2
 mouse_filter = 2
 
@@ -222,7 +224,7 @@ mouse_filter = 2
 layout_mode = 1
 anchors_preset = 10
 anchor_right = 1.0
-offset_bottom = 200.0
+offset_bottom = 180.0
 grow_horizontal = 2
 mouse_filter = 2
 theme_override_styles/panel = SubResource("slot")
