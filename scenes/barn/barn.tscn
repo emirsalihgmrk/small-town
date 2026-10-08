@@ -3,7 +3,7 @@
 [ext_resource type="Texture2D" path="res://assets/art/barn/barn_room.svg" id="1_room"]
 [ext_resource type="PackedScene" path="res://scenes/barn/hay_pile.tscn" id="2_hay"]
 [ext_resource type="PackedScene" path="res://scenes/barn/manger.tscn" id="3_manger"]
-[ext_resource type="Texture2D" path="res://assets/art/barn/trough.svg" id="4_trough"]
+[ext_resource type="PackedScene" path="res://scenes/barn/trough.tscn" id="4_trough"]
 [ext_resource type="PackedScene" path="res://scenes/barn/cow.tscn" id="5_cow"]
 [ext_resource type="PackedScene" path="res://scenes/entities/girl.tscn" id="6_girl"]
 [ext_resource type="Texture2D" path="res://assets/art/ui/icons/home.svg" id="7_home"]
@@ -15,6 +15,9 @@
 [ext_resource type="Script" path="res://scripts/components/scene_ambience.gd" id="ambience_script"]
 [ext_resource type="Script" path="res://scripts/barn/hay_hand.gd" id="hay_hand_script"]
 [ext_resource type="Texture2D" path="res://assets/art/barn/hay_tuft.svg" id="hay_tuft"]
+[ext_resource type="Script" path="res://scripts/coop/water_hand.gd" id="water_hand_script"]
+[ext_resource type="PackedScene" path="res://scenes/field/held_bucket.tscn" id="held_bucket"]
+[ext_resource type="Texture2D" path="res://assets/art/ui/icons/tools/bucket.svg" id="bucket_icon"]
 
 [sub_resource type="StyleBoxFlat" id="home_normal"]
 bg_color = Color(1, 0.945, 0.722, 1)
@@ -78,14 +81,20 @@ position = Vector2(520, 860)
 [node name="Manger" parent="World" instance=ExtResource("3_manger")]
 position = Vector2(850, 830)
 
-[node name="Trough" type="Sprite2D" parent="World"]
-position = Vector2(1060, 940)
-texture = ExtResource("4_trough")
-centered = false
-offset = Vector2(-120, -100)
+[node name="Trough" parent="World" instance=ExtResource("4_trough")]
+position = Vector2(1080, 860)
 
-[node name="Cow" parent="World" instance=ExtResource("5_cow")]
+[node name="Bucket" type="Node2D" parent="World"]
+position = Vector2(760, 985)
+
+[node name="Sprite" type="Sprite2D" parent="World/Bucket"]
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("bucket_icon")
+
+[node name="Cow" parent="World" node_paths=PackedStringArray("manger", "trough") instance=ExtResource("5_cow")]
 position = Vector2(1340, 880)
+manger = NodePath("../Manger")
+trough = NodePath("../Trough")
 
 [node name="Girl" parent="World" instance=ExtResource("6_girl")]
 position = Vector2(230, 1000)
@@ -115,6 +124,13 @@ hay_pile = NodePath("../World/HayPile")
 manger = NodePath("../World/Manger")
 drag_layer = NodePath("../DragLayer")
 tuft_texture = ExtResource("hay_tuft")
+
+[node name="WaterHand" type="Node" parent="." node_paths=PackedStringArray("bucket", "waterer", "drag_layer")]
+script = ExtResource("water_hand_script")
+bucket = NodePath("../World/Bucket")
+waterer = NodePath("../World/Trough")
+drag_layer = NodePath("../DragLayer")
+bucket_scene = ExtResource("held_bucket")
 
 [node name="UI" type="CanvasLayer" parent="."]
 

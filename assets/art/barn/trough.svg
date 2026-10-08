@@ -1,11 +1,13 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="240" height="110" viewBox="-120 -100 240 110">
-<ellipse cx="0" cy="2" rx="108" ry="9" fill="#000000" opacity="0.15"/>
-<path d="M-82 -14 L-90 0 M82 -14 L90 0" stroke="#5f6f7c" stroke-width="10" stroke-linecap="round"/>
-<path d="M-108 -72 L108 -72 L90 -12 Q0 2 -90 -12 Z" fill="#a9bccb" stroke="#5f6f7c" stroke-width="5" stroke-linejoin="round"/>
-<path d="M-100 -50 Q0 -40 100 -50 M-94 -30 Q0 -20 94 -30" fill="none" stroke="#8ea3b4" stroke-width="4" stroke-linecap="round"/>
-<path d="M-84 -60 L-76 -22" stroke="#e1ebf2" stroke-width="7" stroke-linecap="round"/>
-<ellipse cx="0" cy="-72" rx="108" ry="14" fill="#c8d6e1" stroke="#5f6f7c" stroke-width="5"/>
-<ellipse cx="0" cy="-71" rx="94" ry="8" fill="#7e8f9c"/>
-<circle cx="-112" cy="-66" r="9" fill="none" stroke="#5f6f7c" stroke-width="5"/>
-<circle cx="112" cy="-66" r="9" fill="none" stroke="#5f6f7c" stroke-width="5"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="250" height="165" viewBox="-125 -151 250 165">
+<ellipse cx="0" cy="2" rx="108" ry="10" fill="#000000" opacity="0.15"/>
+<path d="M-70 -45 L-90 0 M70 -45 L90 0 M-50 -45 L-34 0 M50 -45 L34 0" stroke="#7a4e28" stroke-width="16" stroke-linecap="round"/>
+<path d="M-70 -45 L-90 0 M70 -45 L90 0 M-50 -45 L-34 0 M50 -45 L34 0" stroke="#b9804a" stroke-width="8" stroke-linecap="round"/>
+<rect x="-104" y="-57" width="208" height="20" rx="8" fill="#a8693d" stroke="#7a4e28" stroke-width="5"/>
+<path d="M-112 -121 L-96 -55 Q0 -41 96 -55 L112 -121 Z" fill="#a9bccb" stroke="#5f6f7c" stroke-width="5" stroke-linejoin="round"/>
+<path d="M-104 -99 Q0 -85 104 -99 M-100 -77 Q0 -63 100 -77" fill="none" stroke="#8ea3b4" stroke-width="4" stroke-linecap="round"/>
+<path d="M-88 -103 L-80 -65" stroke="#e1ebf2" stroke-width="7" stroke-linecap="round"/>
+<ellipse cx="0" cy="-121" rx="112" ry="22" fill="#c8d6e1" stroke="#5f6f7c" stroke-width="5"/>
+<ellipse cx="0" cy="-120" rx="98" ry="15" fill="#7e8f9c"/>
+<circle cx="-116" cy="-115" r="9" fill="none" stroke="#5f6f7c" stroke-width="5"/>
+<circle cx="116" cy="-115" r="9" fill="none" stroke="#5f6f7c" stroke-width="5"/>
 </svg>

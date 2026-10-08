@@ -1,7 +1,7 @@
 class_name WaterHand
 extends Node
-## Yerdeki kovayı parmakla tutup suluğa su dökme. Kovaya basınca kova yerden kalkıp parmağın hemen
-## üstünde belirir (tarladaki kovanın aynısı). Ucu dolu olmayan suluğun üstündeyken öne eğilip su döker
+## Yerdeki kovayı parmakla tutup suluğa (WaterTarget: kümeste ve ahırda) su dökme. Kovaya basınca kova
+## yerden kalkıp parmağın hemen üstünde belirir (tarladaki kovanın aynısı). Ucu dolu olmayan suluğun üstündeyken öne eğilip su döker
 ## ve suluk dolar; başka yerde dökmez. Parmak kalkınca kova yerine uçar. Tek parmak izlenir.
 ## Not: Sahnede kamera yok, dünya ve ekran koordinatları canvas dönüşümüyle çevrilir. Bu düğüm sahnede
 ## TapRouter'dan sonra gelmeli ki kovaya basış önce buraya ulaşsın.
@@ -12,7 +12,7 @@ const NO_TOUCH: int = -1
 @export var bucket: Node2D
 ## Kovaya basılabilecek alan (kovanın ortasına göre); küçük parmaklar için cömert.
 @export var bucket_area: Rect2 = Rect2(-65.0, -65.0, 130.0, 130.0)
-@export var waterer: Waterer
+@export var waterer: WaterTarget
 ## Tutulan kova bu katmanda, dünyanın üstünde çizilir.
 @export var drag_layer: CanvasLayer
 @export var bucket_scene: PackedScene

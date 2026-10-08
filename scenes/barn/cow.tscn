@@ -6,9 +6,31 @@
 [ext_resource type="Texture2D" path="res://assets/art/barn/cow_tail.svg" id="4_tail"]
 [ext_resource type="Script" path="res://scripts/components/pulse_component.gd" id="5_pulse"]
 [ext_resource type="Script" path="res://scripts/components/sway_component.gd" id="6_sway"]
+[ext_resource type="Texture2D" path="res://assets/art/barn/cow_leg_near.svg" id="7_leg_near"]
+[ext_resource type="Texture2D" path="res://assets/art/barn/cow_leg_far.svg" id="8_leg_far"]
+[ext_resource type="Texture2D" path="res://assets/art/field/water_bubble.svg" id="9_water_bubble"]
+[ext_resource type="Texture2D" path="res://assets/art/barn/milk_bubble.svg" id="10_milk_bubble"]
 
 [node name="Cow" type="Node2D"]
 script = ExtResource("1_cow")
+
+[node name="FarLegs" type="Node2D" parent="."]
+
+[node name="Front" type="Node2D" parent="FarLegs"]
+position = Vector2(-87, -155)
+
+[node name="Sprite" type="Sprite2D" parent="FarLegs/Front"]
+texture = ExtResource("8_leg_far")
+centered = false
+offset = Vector2(-26, -28)
+
+[node name="Back" type="Node2D" parent="FarLegs"]
+position = Vector2(83, -155)
+
+[node name="Sprite" type="Sprite2D" parent="FarLegs/Back"]
+texture = ExtResource("8_leg_far")
+centered = false
+offset = Vector2(-26, -28)
 
 [node name="Body" type="Node2D" parent="."]
 
@@ -52,6 +74,50 @@ script = ExtResource("5_pulse")
 scale_amount = Vector2(0.01, 0.02)
 period = 3.0
 period_randomness = 0.2
+
+[node name="NearLegs" type="Node2D" parent="."]
+
+[node name="Front" type="Node2D" parent="NearLegs"]
+position = Vector2(-124, -150)
+
+[node name="Sprite" type="Sprite2D" parent="NearLegs/Front"]
+texture = ExtResource("7_leg_near")
+centered = false
+offset = Vector2(-27, -28)
+
+[node name="Back" type="Node2D" parent="NearLegs"]
+position = Vector2(124, -150)
+
+[node name="Sprite" type="Sprite2D" parent="NearLegs/Back"]
+texture = ExtResource("7_leg_near")
+centered = false
+offset = Vector2(-27, -28)
+
+[node name="WaterBubble" type="Node2D" parent="."]
+visible = false
+position = Vector2(-330, -520)
+
+[node name="Icon" type="Sprite2D" parent="WaterBubble"]
+scale = Vector2(1.4, 1.4)
+texture = ExtResource("9_water_bubble")
+
+[node name="Pulse" type="Node" parent="WaterBubble/Icon"]
+script = ExtResource("5_pulse")
+scale_amount = Vector2(0.1, 0.1)
+period = 1.1
+
+[node name="MilkBubble" type="Node2D" parent="."]
+visible = false
+position = Vector2(60, -440)
+
+[node name="Icon" type="Sprite2D" parent="MilkBubble"]
+scale = Vector2(1.4, 1.4)
+texture = ExtResource("10_milk_bubble")
+
+[node name="Pulse" type="Node" parent="MilkBubble/Icon"]
+script = ExtResource("5_pulse")
+scale_amount = Vector2(0.1, 0.1)
+period = 1.1
 
 [node name="ShakeTimer" type="Timer" parent="."]
 one_shot = true

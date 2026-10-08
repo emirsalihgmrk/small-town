@@ -1,0 +1,21 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/barn/trough.gd" id="1_trough"]
+[ext_resource type="Texture2D" path="res://assets/art/barn/trough.svg" id="2_trough"]
+[ext_resource type="Texture2D" path="res://assets/art/barn/trough_water.svg" id="3_water"]
+[ext_resource type="PackedScene" path="res://scenes/field/effects/sparkle_burst.tscn" id="4_sparkle"]
+
+[node name="Trough" type="Node2D"]
+script = ExtResource("1_trough")
+sparkle_scene = ExtResource("4_sparkle")
+
+[node name="Body" type="Node2D" parent="."]
+
+[node name="Sprite" type="Sprite2D" parent="Body"]
+texture = ExtResource("2_trough")
+centered = false
+offset = Vector2(-125, -151)
+
+[node name="Water" type="Sprite2D" parent="Body"]
+position = Vector2(0, -120)
+texture = ExtResource("3_water")
