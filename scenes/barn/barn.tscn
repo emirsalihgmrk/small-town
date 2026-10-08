@@ -1,8 +1,8 @@
 [gd_scene format=3]
 
 [ext_resource type="Texture2D" path="res://assets/art/barn/barn_room.svg" id="1_room"]
-[ext_resource type="Texture2D" path="res://assets/art/barn/hay_pile.svg" id="2_hay"]
-[ext_resource type="Texture2D" path="res://assets/art/barn/manger.svg" id="3_manger"]
+[ext_resource type="PackedScene" path="res://scenes/barn/hay_pile.tscn" id="2_hay"]
+[ext_resource type="PackedScene" path="res://scenes/barn/manger.tscn" id="3_manger"]
 [ext_resource type="Texture2D" path="res://assets/art/barn/trough.svg" id="4_trough"]
 [ext_resource type="PackedScene" path="res://scenes/barn/cow.tscn" id="5_cow"]
 [ext_resource type="PackedScene" path="res://scenes/entities/girl.tscn" id="6_girl"]
@@ -13,6 +13,8 @@
 [ext_resource type="Script" path="res://scripts/input/tap_router.gd" id="tap_router_script"]
 [ext_resource type="Script" path="res://scripts/components/pause_when_inactive.gd" id="pause_script"]
 [ext_resource type="Script" path="res://scripts/components/scene_ambience.gd" id="ambience_script"]
+[ext_resource type="Script" path="res://scripts/barn/hay_hand.gd" id="hay_hand_script"]
+[ext_resource type="Texture2D" path="res://assets/art/barn/hay_tuft.svg" id="hay_tuft"]
 
 [sub_resource type="StyleBoxFlat" id="home_normal"]
 bg_color = Color(1, 0.945, 0.722, 1)
@@ -70,17 +72,11 @@ script = ExtResource("barn_script")
 texture = ExtResource("1_room")
 centered = false
 
-[node name="HayPile" type="Sprite2D" parent="World"]
+[node name="HayPile" parent="World" instance=ExtResource("2_hay")]
 position = Vector2(520, 860)
-texture = ExtResource("2_hay")
-centered = false
-offset = Vector2(-190, -296)
 
-[node name="Manger" type="Sprite2D" parent="World"]
+[node name="Manger" parent="World" instance=ExtResource("3_manger")]
 position = Vector2(850, 830)
-texture = ExtResource("3_manger")
-centered = false
-offset = Vector2(-150, -180)
 
 [node name="Trough" type="Sprite2D" parent="World"]
 position = Vector2(1060, 940)
@@ -113,6 +109,13 @@ wind_volume_db = -18.0
 bird_volume_db = -9.0
 distant_farm_volume_db = -16.0
 
+[node name="HayHand" type="Node" parent="." node_paths=PackedStringArray("hay_pile", "manger", "drag_layer")]
+script = ExtResource("hay_hand_script")
+hay_pile = NodePath("../World/HayPile")
+manger = NodePath("../World/Manger")
+drag_layer = NodePath("../DragLayer")
+tuft_texture = ExtResource("hay_tuft")
+
 [node name="UI" type="CanvasLayer" parent="."]
 
 [node name="Root" type="Control" parent="UI"]
@@ -140,5 +143,8 @@ theme_override_styles/normal = SubResource("home_normal")
 position = Vector2(65, 65)
 scale = Vector2(0.5, 0.5)
 texture = ExtResource("7_home")
+
+[node name="DragLayer" type="CanvasLayer" parent="."]
+layer = 2
 
 [node name="BasketMenu" parent="." instance=ExtResource("basket_menu")]

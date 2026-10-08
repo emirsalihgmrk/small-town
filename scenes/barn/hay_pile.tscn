@@ -1,0 +1,44 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/barn/hay_pile.gd" id="1_pile"]
+[ext_resource type="Texture2D" path="res://assets/art/barn/hay_pile.svg" id="2_hay"]
+[ext_resource type="Texture2D" path="res://assets/art/barn/straw.svg" id="3_straw"]
+
+[sub_resource type="Gradient" id="Gradient_fade"]
+offsets = PackedFloat32Array(0, 0.7, 1)
+colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0)
+
+[node name="HayPile" type="Node2D"]
+script = ExtResource("1_pile")
+
+[node name="Body" type="Node2D" parent="."]
+
+[node name="Sprite" type="Sprite2D" parent="Body"]
+texture = ExtResource("2_hay")
+centered = false
+offset = Vector2(-190, -296)
+
+[node name="Top" type="Marker2D" parent="."]
+position = Vector2(-10, -170)
+
+[node name="Straws" type="CPUParticles2D" parent="."]
+position = Vector2(-10, -160)
+emitting = false
+amount = 8
+lifetime = 0.7
+one_shot = true
+explosiveness = 0.9
+local_coords = false
+texture = ExtResource("3_straw")
+emission_shape = 3
+emission_rect_extents = Vector2(70, 10)
+direction = Vector2(0, -1)
+spread = 55.0
+gravity = Vector2(0, 900)
+initial_velocity_min = 180.0
+initial_velocity_max = 320.0
+angular_velocity_min = -360.0
+angular_velocity_max = 360.0
+angle_min = -180.0
+angle_max = 180.0
+color_ramp = SubResource("Gradient_fade")

@@ -34,6 +34,7 @@ Yeniden üretmek için proje kökünden: `python tools/audio/generate_audio.py`
 | `assets/audio/sfx/fire_crackle.ogg` | Fırındaki köz çıtırdar: birkaç minik, düzensiz "çıt" |
 | `assets/audio/sfx/oven_ding.ogg` | Ürün pişti: mutfak zilinin iki tatlı vuruşu ("di-ding") |
 | `assets/audio/sfx/steam_puff.ogg` | Fırın kapağı açılır: sıcak buharın yumuşak, kısa "fışş"ı |
+| `assets/audio/sfx/hay_rustle.ogg` | Saman tutamı: kuru sapların yumuşak, kısa bir "hışır hışır"ı |
 
 ## Görseller
 

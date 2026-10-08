@@ -530,6 +530,26 @@ def make_steam_puff() -> np.ndarray:
     return fade_edges(lowpass(hiss * env / np.max(np.abs(hiss)), 7000), fade_out=0.08)
 
 
+# ------------------------------------------------------------------ ahır
+def make_hay_rustle() -> np.ndarray:
+    """Saman tutamı: kuru sapların yumuşak, kısa bir "hışır hışır"ı (üst üste binen iki hışırtı ve çıtırtılar)."""
+    t = times(0.42)
+    out = np.zeros(len(t))
+    for start, lo, hi, gain in ((0.0, 1500, 5200, 1.0), (0.12, 1100, 4200, 0.7)):
+        k = int(start * SR)
+        n = len(t) - k
+        tt = t[:n]
+        swish = sosfilt(butter(2, [lo, hi], "band", fs=SR, output="sos"), rng.standard_normal(n))
+        swish *= np.clip(tt / 0.025, 0, 1) * np.exp(-tt / 0.09) / np.max(np.abs(swish))
+        out[k:] += gain * swish * (0.75 + 0.25 * np.sin(2 * np.pi * 37 * tt))
+    for start in np.sort(rng.uniform(0.01, 0.3, 9)):
+        n = int(0.004 * SR)
+        k = int(start * SR)
+        crackle = sosfilt(butter(2, 2500, "high", fs=SR, output="sos"), rng.standard_normal(n)) * np.hanning(n)
+        out[k: k + n] += crackle * rng.uniform(0.15, 0.35)
+    return fade_edges(lowpass(out, 7000), fade_in=0.004, fade_out=0.06)
+
+
 def main() -> None:
     write("music/home_theme.ogg", make_music())
     write("ambience/wind_loop.ogg", make_wind())
@@ -559,6 +579,7 @@ def main() -> None:
     write("sfx/fire_crackle.ogg", make_fire_crackle())
     write("sfx/oven_ding.ogg", make_oven_ding())
     write("sfx/steam_puff.ogg", make_steam_puff())
+    write("sfx/hay_rustle.ogg", make_hay_rustle())
 
 
 if __name__ == "__main__":

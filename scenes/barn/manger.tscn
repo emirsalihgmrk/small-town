@@ -1,0 +1,65 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/barn/manger.gd" id="1_manger"]
+[ext_resource type="Texture2D" path="res://assets/art/barn/manger.svg" id="2_manger"]
+[ext_resource type="Texture2D" path="res://assets/art/barn/manger_hay.svg" id="3_hay"]
+[ext_resource type="Texture2D" path="res://assets/art/barn/straw.svg" id="4_straw"]
+[ext_resource type="Texture2D" path="res://assets/art/field/thought_bubble.svg" id="5_bubble"]
+[ext_resource type="Texture2D" path="res://assets/art/barn/hay_tuft.svg" id="6_tuft"]
+[ext_resource type="PackedScene" path="res://scenes/field/effects/sparkle_burst.tscn" id="7_sparkle"]
+
+[sub_resource type="Gradient" id="Gradient_fade"]
+offsets = PackedFloat32Array(0, 0.8, 1)
+colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0)
+
+[node name="Manger" type="Node2D"]
+script = ExtResource("1_manger")
+sparkle_scene = ExtResource("7_sparkle")
+
+[node name="Body" type="Node2D" parent="."]
+
+[node name="Hay" type="Node2D" parent="Body"]
+position = Vector2(0, -112)
+
+[node name="Sprite" type="Sprite2D" parent="Body/Hay"]
+texture = ExtResource("3_hay")
+centered = false
+offset = Vector2(-125, -96)
+
+[node name="Sprite" type="Sprite2D" parent="Body"]
+texture = ExtResource("2_manger")
+centered = false
+offset = Vector2(-150, -180)
+
+[node name="Fall" type="CPUParticles2D" parent="."]
+position = Vector2(0, -200)
+emitting = false
+amount = 24
+lifetime = 0.35
+local_coords = false
+texture = ExtResource("4_straw")
+emission_shape = 3
+emission_rect_extents = Vector2(70, 6)
+direction = Vector2(0, 1)
+spread = 20.0
+gravity = Vector2(0, 1200)
+initial_velocity_min = 40.0
+initial_velocity_max = 120.0
+angular_velocity_min = -270.0
+angular_velocity_max = 270.0
+angle_min = -180.0
+angle_max = 180.0
+color_ramp = SubResource("Gradient_fade")
+
+[node name="Bubble" type="Node2D" parent="."]
+position = Vector2(-70, -250)
+scale = Vector2(1.6, 1.6)
+
+[node name="Cloud" type="Sprite2D" parent="Bubble"]
+texture = ExtResource("5_bubble")
+centered = false
+offset = Vector2(-46, -44)
+
+[node name="Hay" type="Sprite2D" parent="Bubble"]
+scale = Vector2(0.45, 0.45)
+texture = ExtResource("6_tuft")
