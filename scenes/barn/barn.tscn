@@ -82,13 +82,13 @@ position = Vector2(520, 860)
 position = Vector2(850, 830)
 
 [node name="Trough" parent="World" instance=ExtResource("4_trough")]
-position = Vector2(1080, 860)
+position = Vector2(1614, 860)
 
 [node name="Bucket" type="Node2D" parent="World"]
-position = Vector2(760, 985)
+position = Vector2(700, 975)
 
 [node name="Sprite" type="Sprite2D" parent="World/Bucket"]
-scale = Vector2(0.5, 0.5)
+scale = Vector2(0.8, 0.8)
 texture = ExtResource("bucket_icon")
 
 [node name="Cow" parent="World" node_paths=PackedStringArray("manger", "trough") instance=ExtResource("5_cow")]
@@ -100,7 +100,7 @@ trough = NodePath("../Trough")
 position = Vector2(230, 1000)
 
 [node name="Basket" parent="World" node_paths=PackedStringArray("flights") instance=ExtResource("basket_scene")]
-position = Vector2(1680, 1000)
+position = Vector2(1000, 1010)
 flights = NodePath("../Flights")
 
 [node name="Flights" type="Node2D" parent="World"]
@@ -128,6 +128,7 @@ tuft_texture = ExtResource("hay_tuft")
 [node name="WaterHand" type="Node" parent="." node_paths=PackedStringArray("bucket", "waterer", "drag_layer")]
 script = ExtResource("water_hand_script")
 bucket = NodePath("../World/Bucket")
+bucket_area = Rect2(-90, -90, 180, 180)
 waterer = NodePath("../World/Trough")
 drag_layer = NodePath("../DragLayer")
 bucket_scene = ExtResource("held_bucket")

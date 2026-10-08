@@ -1,7 +1,7 @@
 class_name Cow
 extends Node2D
-## Ahırdaki inek. Yemlikte saman varken yemliğe yürür ve BITES lokmada yer, sonra yerine döner ve sulukta
-## içer. Suluk tam dolu değilse başının üstünde su balonuyla bekler (susar); su gelince içer. İnek asla
+## Ahırdaki inek. Yemlikte saman varken yemliğe yürür ve BITES lokmada yer, sonra yerine döner ve sağındaki
+## suluktan içer (yemlikle yeri arasında yürürken suluğun üstünden geçmesin diye suluk arkasında durur). Suluk tam dolu değilse başının üstünde su balonuyla bekler (susar); su gelince içer. İnek asla
 ## üzülüp kaybolmaz: aç ya da susuzsa yalnızca süt vermez. İçtikten sonra milk_time kadar bekler, sonra
 ## sırtının üstünde süt balonu belirir ve milk_ready yayılır (sağma sonraki adımda).
 ## Her zaman nefes alır, başı ve kuyruğu salınır; boşta dururken ara sıra başını silker. Yürürken
@@ -126,7 +126,7 @@ func _eat() -> void:
 
 
 func _arrive_home() -> void:
-	_face_left()
+	_face_toward(trough.global_position.x)
 	if trough.reserve():
 		_drink()
 	else:
@@ -147,6 +147,7 @@ func _drink() -> void:
 		_head_tween.tween_interval(SIP_PAUSE)
 	_tween_head_up(_head_tween)
 	_head_tween.tween_callback(func() -> void:
+		_face_left()
 		state = State.MAKING_MILK
 		_wait_left = milk_time)
 
@@ -169,9 +170,7 @@ func _tween_head_up(tween: Tween) -> void:
 
 ## Bacaklarını çaprazlama sallayıp hafifçe sekerek target'a yürür; varınca on_arrived çağrılır.
 func _walk_to(target: Vector2, on_arrived: Callable) -> void:
-	var dx: float = target.x - global_position.x
-	if absf(dx) >= 1.0:
-		scale.x = absf(scale.x) * (1.0 if dx < 0.0 else -1.0)
+	_face_toward(target.x)
 	_kill_head_tween()
 	_head.rotation = 0.0
 	_neck.position = _neck_rest
@@ -185,9 +184,16 @@ func _walk_to(target: Vector2, on_arrived: Callable) -> void:
 		on_arrived.call())
 
 
-## Görsel sola bakar; sağa yürürken aynalanan kök yeniden sola döner.
+## Görsel sola bakar; sağa dönmek için kök aynalanır.
 func _face_left() -> void:
 	scale.x = absf(scale.x)
+
+
+## İnek x'e doğru döner; tam önündeyse yönünü değiştirmez.
+func _face_toward(x: float) -> void:
+	var dx: float = x - global_position.x
+	if absf(dx) >= 1.0:
+		scale.x = absf(scale.x) * (1.0 if dx < 0.0 else -1.0)
 
 
 ## Çaprazdaki bacaklar (ön yakın + arka uzak, arka yakın + ön uzak) birlikte öne, öbür çift arkaya
