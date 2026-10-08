@@ -1,0 +1,57 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/barn/cow.gd" id="1_cow"]
+[ext_resource type="Texture2D" path="res://assets/art/barn/cow_body.svg" id="2_body"]
+[ext_resource type="Texture2D" path="res://assets/art/barn/cow_head.svg" id="3_head"]
+[ext_resource type="Texture2D" path="res://assets/art/barn/cow_tail.svg" id="4_tail"]
+[ext_resource type="Script" path="res://scripts/components/pulse_component.gd" id="5_pulse"]
+[ext_resource type="Script" path="res://scripts/components/sway_component.gd" id="6_sway"]
+
+[node name="Cow" type="Node2D"]
+script = ExtResource("1_cow")
+
+[node name="Body" type="Node2D" parent="."]
+
+[node name="Tail" type="Node2D" parent="Body"]
+position = Vector2(196, -296)
+
+[node name="Sprite" type="Sprite2D" parent="Body/Tail"]
+texture = ExtResource("4_tail")
+centered = false
+offset = Vector2(-12, -10)
+
+[node name="Sway" type="Node" parent="Body/Tail"]
+script = ExtResource("6_sway")
+amplitude_degrees = 9.0
+period = 2.6
+period_randomness = 0.2
+
+[node name="Sprite" type="Sprite2D" parent="Body"]
+texture = ExtResource("2_body")
+centered = false
+offset = Vector2(-276, -376)
+
+[node name="Neck" type="Node2D" parent="Body"]
+position = Vector2(-215, -320)
+
+[node name="Head" type="Node2D" parent="Body/Neck"]
+
+[node name="Sprite" type="Sprite2D" parent="Body/Neck/Head"]
+texture = ExtResource("3_head")
+centered = false
+offset = Vector2(-200, -126)
+
+[node name="Sway" type="Node" parent="Body/Neck"]
+script = ExtResource("6_sway")
+amplitude_degrees = 3.0
+period = 3.2
+period_randomness = 0.2
+
+[node name="Pulse" type="Node" parent="Body"]
+script = ExtResource("5_pulse")
+scale_amount = Vector2(0.01, 0.02)
+period = 3.0
+period_randomness = 0.2
+
+[node name="ShakeTimer" type="Timer" parent="."]
+one_shot = true

@@ -1,0 +1,144 @@
+[gd_scene format=3]
+
+[ext_resource type="Texture2D" path="res://assets/art/barn/barn_room.svg" id="1_room"]
+[ext_resource type="Texture2D" path="res://assets/art/barn/hay_pile.svg" id="2_hay"]
+[ext_resource type="Texture2D" path="res://assets/art/barn/manger.svg" id="3_manger"]
+[ext_resource type="Texture2D" path="res://assets/art/barn/trough.svg" id="4_trough"]
+[ext_resource type="PackedScene" path="res://scenes/barn/cow.tscn" id="5_cow"]
+[ext_resource type="PackedScene" path="res://scenes/entities/girl.tscn" id="6_girl"]
+[ext_resource type="Texture2D" path="res://assets/art/ui/icons/home.svg" id="7_home"]
+[ext_resource type="PackedScene" path="res://scenes/entities/basket.tscn" id="basket_scene"]
+[ext_resource type="PackedScene" path="res://scenes/ui/basket_menu.tscn" id="basket_menu"]
+[ext_resource type="Script" path="res://scripts/barn/barn.gd" id="barn_script"]
+[ext_resource type="Script" path="res://scripts/input/tap_router.gd" id="tap_router_script"]
+[ext_resource type="Script" path="res://scripts/components/pause_when_inactive.gd" id="pause_script"]
+[ext_resource type="Script" path="res://scripts/components/scene_ambience.gd" id="ambience_script"]
+
+[sub_resource type="StyleBoxFlat" id="home_normal"]
+bg_color = Color(1, 0.945, 0.722, 1)
+border_width_left = 8
+border_width_top = 8
+border_width_right = 8
+border_width_bottom = 8
+border_color = Color(1, 1, 1, 1)
+corner_radius_top_left = 36
+corner_radius_top_right = 36
+corner_radius_bottom_right = 36
+corner_radius_bottom_left = 36
+shadow_color = Color(0, 0, 0, 0.22)
+shadow_size = 8
+shadow_offset = Vector2(0, 6)
+
+[sub_resource type="StyleBoxFlat" id="home_hover"]
+bg_color = Color(1, 0.952, 0.755, 1)
+border_width_left = 8
+border_width_top = 8
+border_width_right = 8
+border_width_bottom = 8
+border_color = Color(1, 1, 1, 1)
+corner_radius_top_left = 36
+corner_radius_top_right = 36
+corner_radius_bottom_right = 36
+corner_radius_bottom_left = 36
+shadow_color = Color(0, 0, 0, 0.22)
+shadow_size = 8
+shadow_offset = Vector2(0, 6)
+
+[sub_resource type="StyleBoxFlat" id="home_pressed"]
+bg_color = Color(0.9, 0.851, 0.65, 1)
+border_width_left = 8
+border_width_top = 8
+border_width_right = 8
+border_width_bottom = 8
+border_color = Color(1, 1, 1, 1)
+corner_radius_top_left = 36
+corner_radius_top_right = 36
+corner_radius_bottom_right = 36
+corner_radius_bottom_left = 36
+shadow_color = Color(0, 0, 0, 0.22)
+shadow_size = 8
+shadow_offset = Vector2(0, 6)
+
+[sub_resource type="StyleBoxEmpty" id="home_focus"]
+
+[node name="Barn" type="Node2D"]
+script = ExtResource("barn_script")
+
+[node name="World" type="Node2D" parent="."]
+
+[node name="Room" type="Sprite2D" parent="World"]
+texture = ExtResource("1_room")
+centered = false
+
+[node name="HayPile" type="Sprite2D" parent="World"]
+position = Vector2(520, 860)
+texture = ExtResource("2_hay")
+centered = false
+offset = Vector2(-190, -296)
+
+[node name="Manger" type="Sprite2D" parent="World"]
+position = Vector2(850, 830)
+texture = ExtResource("3_manger")
+centered = false
+offset = Vector2(-150, -180)
+
+[node name="Trough" type="Sprite2D" parent="World"]
+position = Vector2(1060, 940)
+texture = ExtResource("4_trough")
+centered = false
+offset = Vector2(-120, -100)
+
+[node name="Cow" parent="World" instance=ExtResource("5_cow")]
+position = Vector2(1340, 880)
+
+[node name="Girl" parent="World" instance=ExtResource("6_girl")]
+position = Vector2(230, 1000)
+
+[node name="Basket" parent="World" node_paths=PackedStringArray("flights") instance=ExtResource("basket_scene")]
+position = Vector2(1680, 1000)
+flights = NodePath("../Flights")
+
+[node name="Flights" type="Node2D" parent="World"]
+z_index = 2
+
+[node name="PauseWhenInactive" type="Node" parent="."]
+script = ExtResource("pause_script")
+
+[node name="TapRouter" type="Node" parent="."]
+script = ExtResource("tap_router_script")
+
+[node name="Ambience" type="Node" parent="."]
+script = ExtResource("ambience_script")
+wind_volume_db = -18.0
+bird_volume_db = -9.0
+distant_farm_volume_db = -16.0
+
+[node name="UI" type="CanvasLayer" parent="."]
+
+[node name="Root" type="Control" parent="UI"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="HomeButton" type="Button" parent="UI/Root"]
+layout_mode = 0
+offset_left = 40.0
+offset_top = 40.0
+offset_right = 170.0
+offset_bottom = 170.0
+focus_mode = 0
+theme_override_styles/focus = SubResource("home_focus")
+theme_override_styles/hover = SubResource("home_hover")
+theme_override_styles/pressed = SubResource("home_pressed")
+theme_override_styles/normal = SubResource("home_normal")
+
+[node name="Icon" type="Sprite2D" parent="UI/Root/HomeButton"]
+position = Vector2(65, 65)
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("7_home")
+
+[node name="BasketMenu" parent="." instance=ExtResource("basket_menu")]
