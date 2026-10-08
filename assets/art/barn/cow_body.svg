@@ -12,9 +12,4 @@
 <rect x="-215" y="-330" width="430" height="200" rx="96" fill="none" stroke="#b9ae9f" stroke-width="5"/>
 <path d="M-262 -306 Q-212 -268 -152 -296" fill="none" stroke="#c4372f" stroke-width="16" stroke-linecap="round"/>
 <path d="M-262 -306 Q-212 -268 -152 -296" fill="none" stroke="#e8453c" stroke-width="9" stroke-linecap="round"/>
-<path d="M-216 -282 L-216 -270" stroke="#7a4e28" stroke-width="5" stroke-linecap="round"/>
-<path d="M-238 -224 Q-238 -268 -216 -270 Q-194 -268 -194 -224 Z" fill="#f6c343" stroke="#c98a0d" stroke-width="5" stroke-linejoin="round"/>
-<rect x="-244" y="-232" width="56" height="12" rx="6" fill="#f6b21a" stroke="#c98a0d" stroke-width="4"/>
-<circle cx="-216" cy="-216" r="7" fill="#c98a0d"/>
-<path d="M-226 -258 Q-228 -244 -226 -236" stroke="#fff3c4" stroke-width="5" stroke-linecap="round" fill="none"/>
 </svg>

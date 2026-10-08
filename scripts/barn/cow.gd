@@ -1,12 +1,14 @@
 class_name Cow
 extends Node2D
 ## Ahırdaki inek. Yemlikte saman varken yemliğe yürür ve BITES lokmada yer, sonra yerine döner ve sağındaki
-## suluktan içer (yemlikle yeri arasında yürürken suluğun üstünden geçmesin diye suluk arkasında durur). Suluk tam dolu değilse başının üstünde su balonuyla bekler (susar); su gelince içer. İnek asla
+## suluktan içer (yemlikle yeri arasında yürürken suluğun üstünden geçmesin diye suluk arkasında durur).
+## Suluk tam dolu değilse başının üstünde su balonuyla bekler (susar); su gelince içer. İnek asla
 ## üzülüp kaybolmaz: aç ya da susuzsa yalnızca süt vermez. İçtikten sonra milk_time kadar bekler, sonra
 ## sırtının üstünde süt balonu belirir ve milk_ready yayılır. Sağılırken (MilkHand) her squirt'te memesi
 ## basılır ve kovaya süt fışkırır; sağılınca (milked) balon kaybolur ve yeniden acıkır.
 ## Her zaman nefes alır, başı ve kuyruğu salınır; boşta dururken ara sıra başını silker. Yürürken
-## bacaklarını çaprazlama sallayıp hafifçe sekerek gider.
+## bacaklarını çaprazlama sallayıp hafifçe sekerek gider, boynundaki çan sallanır. Dokununca çanı çalar,
+## kuyruğunu iki kez sallar ve başından kalpler çıkar; o an yaptığı işi bölmez.
 ## Kayıtta inek dört durgun evreden biriyle tutulur (aç, susamış, süt yapıyor, süt hazır); yoldaki ya da
 ## işin ortasındaki inek, işi yapılmış evreye sayılır (yiyen inek susamış, içen inek süt yapıyor). Kayıttan
 ## açılırken sahne kapalıyken geçen süre kadar döngü ileri sarılır: yemlikte saman varsa yer, suluk doluysa
@@ -62,6 +64,17 @@ const UDDER_AREA: Rect2 = Rect2(-60.0, -190.0, 210.0, 260.0)
 const UDDER_SQUASH: Vector2 = Vector2(1.12, 0.82)
 const UDDER_SQUASH_TIME: float = 0.07
 const UDDER_SETTLE_TIME: float = 0.35
+## Çan, salınım gücüyle orantılı açıyla sallanır; güç dokununca 1 olur ve söner, yürürken en az
+## BELL_WALK_ENERGY kalır.
+const BELL_DEGREES: float = 22.0
+const BELL_SPEED: float = 11.0
+const BELL_DECAY: float = 0.9
+const BELL_WALK_ENERGY: float = 0.35
+const TAIL_FLICK_DEGREES: float = 30.0
+const TAIL_FLICK_TIME: float = 0.12
+const TAIL_FLICKS: int = 2
+## Kalpler başın üstünden çıkar (kök noktasına göre).
+const HEART_OFFSET: Vector2 = Vector2(-290.0, -470.0)
 const SCREEN_WIDTH: float = 1920.0
 const MAX_SOUND_PAN: float = 0.6
 
@@ -75,6 +88,8 @@ const MAX_SOUND_PAN: float = 0.6
 @export_range(0.5, 30.0, 0.5, "suffix:s") var shake_interval_max: float = 9.0
 @export_file("*.ogg", "*.wav") var munch_sound_path: String = "res://assets/audio/sfx/bunny_munch.ogg"
 @export_file("*.ogg", "*.wav") var squirt_sound_path: String = "res://assets/audio/sfx/milk_squirt.ogg"
+@export_file("*.ogg", "*.wav") var bell_sound_path: String = "res://assets/audio/sfx/cow_bell.ogg"
+@export var heart_scene: PackedScene
 
 var state: State = State.HUNGRY
 
@@ -88,6 +103,11 @@ var _bubble_tweens: Dictionary[Node2D, Tween] = {}
 var _munch_sound: AudioStream
 var _squirt_sound: AudioStream
 var _udder_tween: Tween
+var _bell_sound: AudioStream
+var _bell_energy: float = 0.0
+var _bell_time: float = 0.0
+var _walking: bool = false
+var _tap_tween: Tween
 
 @onready var _body: Node2D = $Body
 @onready var _neck: Node2D = $Body/Neck
@@ -95,6 +115,8 @@ var _udder_tween: Tween
 @onready var _neck_rest: Vector2 = _neck.position
 @onready var _udder: Node2D = $Body/Udder
 @onready var _squirt: CPUParticles2D = $Squirt
+@onready var _bell: Node2D = $Body/Bell
+@onready var _tail_sprite: Node2D = $Body/Tail/Sprite
 @onready var _legs: Array[Node2D] = [$NearLegs/Front, $FarLegs/Back, $NearLegs/Back, $FarLegs/Front]
 @onready var _water_bubble: Node2D = $WaterBubble
 @onready var _milk_bubble: Node2D = $MilkBubble
@@ -109,6 +131,9 @@ func _ready() -> void:
 		_munch_sound = load(munch_sound_path) as AudioStream
 	if ResourceLoader.exists(squirt_sound_path):
 		_squirt_sound = load(squirt_sound_path) as AudioStream
+	if ResourceLoader.exists(bell_sound_path):
+		_bell_sound = load(bell_sound_path) as AudioStream
+	($TapArea as Tappable).tapped.connect(func(_point: Vector2) -> void: _on_tapped())
 	_shake_timer.timeout.connect(_on_shake_timer)
 	_shake_timer.start(randf_range(shake_interval_min, shake_interval_max))
 
@@ -226,6 +251,7 @@ func _place(phase: String, wait: float) -> void:
 
 
 func _process(delta: float) -> void:
+	_swing_bell(delta)
 	match state:
 		State.HUNGRY:
 			if not manger.has_hay():
@@ -340,6 +366,7 @@ func _face_toward(x: float) -> void:
 ## Çaprazdaki bacaklar (ön yakın + arka uzak, arka yakın + ön uzak) birlikte öne, öbür çift arkaya
 ## sallanır; her adımda gövde hafifçe seker.
 func _start_walk() -> void:
+	_walking = true
 	if _walk_tween != null:
 		_walk_tween.kill()
 	_walk_tween = create_tween().set_loops().set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
@@ -353,6 +380,7 @@ func _start_walk() -> void:
 
 
 func _stop_walk() -> void:
+	_walking = false
 	if _walk_tween != null:
 		_walk_tween.kill()
 		_walk_tween = null
@@ -360,6 +388,36 @@ func _stop_walk() -> void:
 	for leg: Node2D in _legs:
 		tween.tween_property(leg, ^"rotation", 0.0, SETTLE_TIME)
 	tween.tween_property(_body, ^"position:y", 0.0, SETTLE_TIME)
+
+
+## Çanı çalar, kuyruğunu sallar, kalpler çıkar. Önceki dokunuşun kuyruk sallaması bitmeden gelen
+## dokunuş yok sayılır.
+func _on_tapped() -> void:
+	if _tap_tween != null and _tap_tween.is_running():
+		return
+	_bell_energy = 1.0
+	var pan: float = clampf((global_position.x / SCREEN_WIDTH) * 2.0 - 1.0, -1.0, 1.0) * MAX_SOUND_PAN
+	AudioManager.play_sfx(_bell_sound, AudioManager.BUS_SFX, -2.0, randf_range(0.95, 1.05), pan)
+	if heart_scene != null:
+		var hearts: CPUParticles2D = heart_scene.instantiate() as CPUParticles2D
+		add_child(hearts)
+		hearts.position = HEART_OFFSET
+		hearts.finished.connect(hearts.queue_free)
+		hearts.emitting = true
+	_tap_tween = create_tween().set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	for i: int in TAIL_FLICKS:
+		_tap_tween.tween_property(_tail_sprite, ^"rotation", deg_to_rad(-TAIL_FLICK_DEGREES), TAIL_FLICK_TIME)
+		_tap_tween.tween_property(_tail_sprite, ^"rotation", deg_to_rad(TAIL_FLICK_DEGREES * 0.5), TAIL_FLICK_TIME)
+	_tap_tween.tween_property(_tail_sprite, ^"rotation", 0.0, TAIL_FLICK_TIME)
+
+
+func _swing_bell(delta: float) -> void:
+	_bell_energy = maxf(_bell_energy - BELL_DECAY * delta, BELL_WALK_ENERGY if _walking else 0.0)
+	if _bell_energy <= 0.0:
+		_bell.rotation = lerpf(_bell.rotation, 0.0, 1.0 - exp(-8.0 * delta))
+		return
+	_bell_time += delta
+	_bell.rotation = sin(_bell_time * BELL_SPEED) * deg_to_rad(BELL_DEGREES) * _bell_energy
 
 
 func _play_munch() -> void:

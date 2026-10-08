@@ -563,6 +563,21 @@ def make_milk_squirt() -> np.ndarray:
     return fade_edges(linear_reverb(lowpass(0.8 * hiss + ping, 8000), wet=0.15, seconds=0.3), fade_out=0.08)
 
 
+def make_cow_bell() -> np.ndarray:
+    """İneğin boynundaki çan sallanır: tok, yumuşak iki "dıng" (çanın dili iki kez vurur)."""
+    first = bell(midi_hz(74), 1.0)
+    second = bell(midi_hz(74), 1.1)
+    gap = int(0.22 * SR)
+    buf = np.zeros(gap + len(second))
+    buf[: len(first)] += first
+    buf[gap: gap + len(second)] += 0.75 * second
+    clank = sosfilt(butter(2, [900, 3000], "band", fs=SR, output="sos"), rng.standard_normal(int(0.02 * SR)))
+    clank *= np.hanning(len(clank)) * 0.25 / np.max(np.abs(clank))
+    buf[: len(clank)] += clank
+    buf[gap: gap + len(clank)] += clank * 0.8
+    return fade_edges(linear_reverb(lowpass(buf, 6000), wet=0.2, seconds=0.6), fade_out=0.3)
+
+
 def main() -> None:
     write("music/home_theme.ogg", make_music())
     write("ambience/wind_loop.ogg", make_wind())
@@ -594,6 +609,7 @@ def main() -> None:
     write("sfx/steam_puff.ogg", make_steam_puff())
     write("sfx/hay_rustle.ogg", make_hay_rustle())
     write("sfx/milk_squirt.ogg", make_milk_squirt())
+    write("sfx/cow_bell.ogg", make_cow_bell())
 
 
 if __name__ == "__main__":

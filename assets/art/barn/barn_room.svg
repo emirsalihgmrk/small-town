@@ -127,12 +127,6 @@
 <path d="M84 260 L190 160 M1836 260 L1730 160" stroke="#6e3f22" stroke-width="4" stroke-linecap="round" opacity="0.4"/>
 <path d="M300 164 Q308 186 302 200 M314 164 Q318 180 316 192 M328 164 Q324 184 330 196" fill="none" stroke="#f2c94c" stroke-width="5" stroke-linecap="round"/>
 <path d="M1300 164 Q1308 186 1302 200 M1314 164 Q1318 180 1316 192 M1328 164 Q1324 184 1330 196" fill="none" stroke="#f2c94c" stroke-width="5" stroke-linecap="round"/>
-<path d="M1300 164 L1300 210" stroke="#5a4636" stroke-width="5"/>
-<circle cx="1300" cy="214" r="10" fill="none" stroke="#5a4636" stroke-width="5"/>
-<ellipse cx="1300" cy="268" rx="46" ry="46" fill="#ffe9a6" opacity="0.35"/>
-<rect x="1276" y="226" width="48" height="74" rx="12" fill="#fff1b8" stroke="#5a4636" stroke-width="6"/>
-<path d="M1300 250 Q1312 266 1300 282 Q1288 266 1300 250 Z" fill="#f6a91a"/>
-<rect x="1270" y="220" width="60" height="12" rx="5" fill="#5a4636"/><rect x="1270" y="296" width="60" height="12" rx="5" fill="#5a4636"/>
 <circle cx="1820" cy="560" r="6" fill="#5a4636"/>
 <ellipse cx="1820" cy="610" rx="36" ry="46" fill="none" stroke="#d7b27a" stroke-width="10"/><ellipse cx="1820" cy="612" rx="26" ry="36" fill="none" stroke="#c49a5f" stroke-width="6"/>
 <rect x="0" y="736" width="1920" height="40" fill="#8a5a3a"/>

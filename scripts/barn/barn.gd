@@ -2,7 +2,8 @@ extends Node2D
 ## Ahır bölümü: eve dönüş, sepete dokununca sepetin içini açma, saman yığınından yemliğe saman (HayHand),
 ## kovayla suluğa su (WaterHand), süt kovasıyla sağma (MilkHand) ve kızın tepkileri. İnek yemliği ve
 ## suluğu kendisi kullanır (Cow). Yemlik ya da suluk dolunca ve inek sağılınca kız sevinir; ineğin sütü
-## hazır olunca ahıra el sallar.
+## hazır olunca ahıra el sallar; uzun süre dokunulmazsa esner. İneğe ve köşedeki kuzuya dokunulabilir
+## (Cow, Lamb); ikisi de ekonomiye karışmaz.
 ## Yemlik, suluk ve inek açılışta kayıttan geri yüklenir; sahne kapalıyken geçen oyun süresi kadar ineğin
 ## döngüsü ileri sarılır (Cow.load_state). Yemlik ya da suluk dolunca, süt hazır olunca, inek sağılınca,
 ## sahneden çıkarken ve SaveGame diske yazmadan hemen önce durum kayda geçer.
@@ -10,6 +11,11 @@ extends Node2D
 const SECTION: String = "barn"
 ## Kızın ahıra (sağa) bakan kolu.
 const GIRL_BARN_ARM: int = 1
+## Esneme zamanı geldiğinde kız başka bir hareketteyse bu kadar sonra yeniden denenir.
+const YAWN_RETRY_TIME: float = 2.0
+
+## Bu kadar süre hiç dokunulmazsa kız esner (sonra yine aynı süre beklenir).
+@export_range(5.0, 120.0, 1.0, "suffix:s") var idle_yawn_time: float = 25.0
 
 @onready var _home_button: Button = $UI/Root/HomeButton
 @onready var _basket: BasketView = $World/Basket
@@ -19,6 +25,8 @@ const GIRL_BARN_ARM: int = 1
 @onready var _cow: Cow = $World/Cow
 @onready var _girl: Girl = $World/Girl
 @onready var _milk_hand: MilkHand = $MilkHand
+
+var _idle_time: float = 0.0
 
 
 func _ready() -> void:
@@ -34,6 +42,17 @@ func _ready() -> void:
 	_cow.milk_ready.connect(SaveGame.request_save)
 	_milk_hand.milked.connect(SaveGame.request_save)
 	SaveGame.before_save.connect(_store)
+
+
+func _process(delta: float) -> void:
+	_idle_time += delta
+	if _idle_time >= idle_yawn_time:
+		_idle_time = 0.0 if _girl.yawn() else idle_yawn_time - YAWN_RETRY_TIME
+
+
+func _input(event: InputEvent) -> void:
+	if event is InputEventScreenTouch or event is InputEventScreenDrag:
+		_idle_time = 0.0
 
 
 func _exit_tree() -> void:
