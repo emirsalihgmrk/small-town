@@ -550,6 +550,19 @@ def make_hay_rustle() -> np.ndarray:
     return fade_edges(lowpass(out, 7000), fade_in=0.004, fade_out=0.06)
 
 
+def make_milk_squirt() -> np.ndarray:
+    """Süt kovaya fışkırır: kısa, yumuşak bir "fış" ve metal kovanın hafif, tatlı bir tını."""
+    t = times(0.45)
+    hiss = sosfilt(butter(2, [1800, 6500], "band", fs=SR, output="sos"), rng.standard_normal(len(t)))
+    hiss *= np.clip(t / 0.01, 0, 1) * np.exp(-t / 0.06) / np.max(np.abs(hiss))
+    ping_t = np.maximum(t - 0.05, 0)
+    ping = np.zeros(len(t))
+    for ratio, gain in ((1.0, 1.0), (2.4, 0.3)):
+        ping += gain * np.sin(2 * np.pi * 1180 * ratio * ping_t) * np.exp(-ping_t / 0.12)
+    ping *= (t >= 0.05) * 0.18
+    return fade_edges(linear_reverb(lowpass(0.8 * hiss + ping, 8000), wet=0.15, seconds=0.3), fade_out=0.08)
+
+
 def main() -> None:
     write("music/home_theme.ogg", make_music())
     write("ambience/wind_loop.ogg", make_wind())
@@ -580,6 +593,7 @@ def main() -> None:
     write("sfx/oven_ding.ogg", make_oven_ding())
     write("sfx/steam_puff.ogg", make_steam_puff())
     write("sfx/hay_rustle.ogg", make_hay_rustle())
+    write("sfx/milk_squirt.ogg", make_milk_squirt())
 
 
 if __name__ == "__main__":

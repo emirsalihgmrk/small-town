@@ -3,7 +3,8 @@ extends Node2D
 ## Ahırdaki inek. Yemlikte saman varken yemliğe yürür ve BITES lokmada yer, sonra yerine döner ve sağındaki
 ## suluktan içer (yemlikle yeri arasında yürürken suluğun üstünden geçmesin diye suluk arkasında durur). Suluk tam dolu değilse başının üstünde su balonuyla bekler (susar); su gelince içer. İnek asla
 ## üzülüp kaybolmaz: aç ya da susuzsa yalnızca süt vermez. İçtikten sonra milk_time kadar bekler, sonra
-## sırtının üstünde süt balonu belirir ve milk_ready yayılır (sağma sonraki adımda).
+## sırtının üstünde süt balonu belirir ve milk_ready yayılır. Sağılırken (MilkHand) her squirt'te memesi
+## basılır ve kovaya süt fışkırır; sağılınca (milked) balon kaybolur ve yeniden acıkır.
 ## Her zaman nefes alır, başı ve kuyruğu salınır; boşta dururken ara sıra başını silker. Yürürken
 ## bacaklarını çaprazlama sallayıp hafifçe sekerek gider.
 ## Kök noktası ineğin ayaklarının ortasıdır; görsel sola (yemliğe ve suluğa) bakar, sağa yürürken kök
@@ -41,6 +42,13 @@ const SIP_PAUSE: float = 0.2
 const REACT_DELAY_MIN: float = 0.3
 const REACT_DELAY_MAX: float = 0.8
 const BUBBLE_POP_TIME: float = 0.25
+## Sağarken kova, kök noktasına göre burada (memenin altında, biraz önde) durur.
+const PAIL_SPOT: Vector2 = Vector2(46.0, 50.0)
+## Sağmak için dokunulabilecek alan (kök noktasına göre: meme ve altındaki kova); cömert.
+const UDDER_AREA: Rect2 = Rect2(-60.0, -190.0, 210.0, 260.0)
+const UDDER_SQUASH: Vector2 = Vector2(1.12, 0.82)
+const UDDER_SQUASH_TIME: float = 0.07
+const UDDER_SETTLE_TIME: float = 0.35
 const SCREEN_WIDTH: float = 1920.0
 const MAX_SOUND_PAN: float = 0.6
 
@@ -53,6 +61,7 @@ const MAX_SOUND_PAN: float = 0.6
 @export_range(0.5, 30.0, 0.5, "suffix:s") var shake_interval_min: float = 4.0
 @export_range(0.5, 30.0, 0.5, "suffix:s") var shake_interval_max: float = 9.0
 @export_file("*.ogg", "*.wav") var munch_sound_path: String = "res://assets/audio/sfx/bunny_munch.ogg"
+@export_file("*.ogg", "*.wav") var squirt_sound_path: String = "res://assets/audio/sfx/milk_squirt.ogg"
 
 var state: State = State.HUNGRY
 
@@ -64,11 +73,15 @@ var _walk_tween: Tween
 var _head_tween: Tween
 var _bubble_tweens: Dictionary[Node2D, Tween] = {}
 var _munch_sound: AudioStream
+var _squirt_sound: AudioStream
+var _udder_tween: Tween
 
 @onready var _body: Node2D = $Body
 @onready var _neck: Node2D = $Body/Neck
 @onready var _head: Node2D = $Body/Neck/Head
 @onready var _neck_rest: Vector2 = _neck.position
+@onready var _udder: Node2D = $Body/Udder
+@onready var _squirt: CPUParticles2D = $Squirt
 @onready var _legs: Array[Node2D] = [$NearLegs/Front, $FarLegs/Back, $NearLegs/Back, $FarLegs/Front]
 @onready var _water_bubble: Node2D = $WaterBubble
 @onready var _milk_bubble: Node2D = $MilkBubble
@@ -81,8 +94,46 @@ func _ready() -> void:
 	_milk_bubble.hide()
 	if ResourceLoader.exists(munch_sound_path):
 		_munch_sound = load(munch_sound_path) as AudioStream
+	if ResourceLoader.exists(squirt_sound_path):
+		_squirt_sound = load(squirt_sound_path) as AudioStream
 	_shake_timer.timeout.connect(_on_shake_timer)
 	_shake_timer.start(randf_range(shake_interval_min, shake_interval_max))
+
+
+func is_milk_ready() -> bool:
+	return state == State.MILK_READY
+
+
+## Sağarken kovanın duracağı yer (dünya konumu).
+func pail_spot() -> Vector2:
+	return to_global(PAIL_SPOT)
+
+
+func udder_contains(global_point: Vector2) -> bool:
+	return UDDER_AREA.has_point(to_local(global_point))
+
+
+## Bir kez sağılır: memesi basılıp esner, kovaya süt fışkırır.
+func squirt() -> void:
+	if _udder_tween != null:
+		_udder_tween.kill()
+	_udder.scale = Vector2.ONE
+	_udder_tween = create_tween()
+	_udder_tween.tween_property(_udder, ^"scale", UDDER_SQUASH, UDDER_SQUASH_TIME) \
+			.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	_udder_tween.tween_property(_udder, ^"scale", Vector2.ONE, UDDER_SETTLE_TIME) \
+			.set_trans(Tween.TRANS_ELASTIC).set_ease(Tween.EASE_OUT)
+	_squirt.restart()
+	var pan: float = clampf((global_position.x / SCREEN_WIDTH) * 2.0 - 1.0, -1.0, 1.0) * MAX_SOUND_PAN
+	AudioManager.play_sfx(_squirt_sound, AudioManager.BUS_SFX, 0.0, randf_range(0.95, 1.08), pan)
+
+
+## Sütü alındı: balon kaybolur, inek yeniden acıkır.
+func milked() -> void:
+	if state != State.MILK_READY:
+		return
+	_hide_bubble(_milk_bubble)
+	state = State.HUNGRY
 
 
 func _process(delta: float) -> void:

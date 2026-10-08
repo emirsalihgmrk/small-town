@@ -10,8 +10,6 @@
 <path d="M-140 -210 C -110 -224 -70 -206 -78 -176 C -84 -150 -124 -146 -140 -162 C -160 -172 -160 -200 -140 -210 Z"/>
 </g>
 <rect x="-215" y="-330" width="430" height="200" rx="96" fill="none" stroke="#b9ae9f" stroke-width="5"/>
-<path d="M4 -136 Q46 -112 88 -136 Q80 -104 46 -102 Q12 -104 4 -136 Z" fill="#f7c1bb" stroke="#d98a86" stroke-width="4" stroke-linejoin="round"/>
-<path d="M26 -108 L26 -92 M46 -104 L46 -88 M66 -108 L66 -92" stroke="#f0a59e" stroke-width="9" stroke-linecap="round"/>
 <path d="M-262 -306 Q-212 -268 -152 -296" fill="none" stroke="#c4372f" stroke-width="16" stroke-linecap="round"/>
 <path d="M-262 -306 Q-212 -268 -152 -296" fill="none" stroke="#e8453c" stroke-width="9" stroke-linecap="round"/>
 <path d="M-216 -282 L-216 -270" stroke="#7a4e28" stroke-width="5" stroke-linecap="round"/>

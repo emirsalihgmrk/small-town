@@ -1,0 +1,24 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/barn/milk_pail.gd" id="1_pail"]
+[ext_resource type="Texture2D" path="res://assets/art/barn/milk_pail.svg" id="2_pail"]
+[ext_resource type="Texture2D" path="res://assets/art/barn/milk_pail_milk.svg" id="3_milk"]
+[ext_resource type="PackedScene" path="res://scenes/field/effects/sparkle_burst.tscn" id="4_sparkle"]
+
+[node name="MilkPail" type="Node2D"]
+script = ExtResource("1_pail")
+sparkle_scene = ExtResource("4_sparkle")
+
+[node name="Body" type="Node2D" parent="."]
+
+[node name="Sprite" type="Sprite2D" parent="Body"]
+texture = ExtResource("2_pail")
+centered = false
+offset = Vector2(-72, -114)
+
+[node name="Milk" type="Sprite2D" parent="Body"]
+position = Vector2(0, -87)
+texture = ExtResource("3_milk")
+
+[node name="Top" type="Marker2D" parent="."]
+position = Vector2(0, -90)

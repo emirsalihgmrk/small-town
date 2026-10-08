@@ -10,6 +10,12 @@
 [ext_resource type="Texture2D" path="res://assets/art/barn/cow_leg_far.svg" id="8_leg_far"]
 [ext_resource type="Texture2D" path="res://assets/art/field/water_bubble.svg" id="9_water_bubble"]
 [ext_resource type="Texture2D" path="res://assets/art/barn/milk_bubble.svg" id="10_milk_bubble"]
+[ext_resource type="Texture2D" path="res://assets/art/barn/cow_udder.svg" id="11_udder"]
+[ext_resource type="Texture2D" path="res://assets/art/barn/milk_drop.svg" id="12_drop"]
+
+[sub_resource type="Gradient" id="Gradient_fade"]
+offsets = PackedFloat32Array(0, 0.8, 1)
+colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0)
 
 [node name="Cow" type="Node2D"]
 script = ExtResource("1_cow")
@@ -53,6 +59,14 @@ texture = ExtResource("2_body")
 centered = false
 offset = Vector2(-276, -376)
 
+[node name="Udder" type="Node2D" parent="Body"]
+position = Vector2(46, -136)
+
+[node name="Sprite" type="Sprite2D" parent="Body/Udder"]
+texture = ExtResource("11_udder")
+centered = false
+offset = Vector2(-48, -6)
+
 [node name="Neck" type="Node2D" parent="Body"]
 position = Vector2(-215, -320)
 
@@ -92,6 +106,24 @@ position = Vector2(124, -150)
 texture = ExtResource("7_leg_near")
 centered = false
 offset = Vector2(-27, -28)
+
+[node name="Squirt" type="CPUParticles2D" parent="."]
+position = Vector2(46, -92)
+emitting = false
+amount = 10
+lifetime = 0.2
+one_shot = true
+explosiveness = 0.5
+local_coords = false
+texture = ExtResource("12_drop")
+emission_shape = 3
+emission_rect_extents = Vector2(20, 2)
+direction = Vector2(0, 1)
+spread = 6.0
+gravity = Vector2(0, 1500)
+initial_velocity_min = 220.0
+initial_velocity_max = 320.0
+color_ramp = SubResource("Gradient_fade")
 
 [node name="WaterBubble" type="Node2D" parent="."]
 visible = false

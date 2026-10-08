@@ -18,6 +18,8 @@
 [ext_resource type="Script" path="res://scripts/coop/water_hand.gd" id="water_hand_script"]
 [ext_resource type="PackedScene" path="res://scenes/field/held_bucket.tscn" id="held_bucket"]
 [ext_resource type="Texture2D" path="res://assets/art/ui/icons/tools/bucket.svg" id="bucket_icon"]
+[ext_resource type="PackedScene" path="res://scenes/barn/milk_pail.tscn" id="milk_pail"]
+[ext_resource type="Script" path="res://scripts/barn/milk_hand.gd" id="milk_hand_script"]
 
 [sub_resource type="StyleBoxFlat" id="home_normal"]
 bg_color = Color(1, 0.945, 0.722, 1)
@@ -103,6 +105,9 @@ position = Vector2(230, 1000)
 position = Vector2(1000, 1010)
 flights = NodePath("../Flights")
 
+[node name="MilkPail" parent="World" instance=ExtResource("milk_pail")]
+position = Vector2(1240, 1010)
+
 [node name="Flights" type="Node2D" parent="World"]
 z_index = 2
 
@@ -132,6 +137,12 @@ bucket_area = Rect2(-90, -90, 180, 180)
 waterer = NodePath("../World/Trough")
 drag_layer = NodePath("../DragLayer")
 bucket_scene = ExtResource("held_bucket")
+
+[node name="MilkHand" type="Node" parent="." node_paths=PackedStringArray("pail", "cow", "basket")]
+script = ExtResource("milk_hand_script")
+pail = NodePath("../World/MilkPail")
+cow = NodePath("../World/Cow")
+basket = NodePath("../World/Basket")
 
 [node name="UI" type="CanvasLayer" parent="."]
 
