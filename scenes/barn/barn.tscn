@@ -20,7 +20,6 @@
 [ext_resource type="Texture2D" path="res://assets/art/ui/icons/tools/bucket.svg" id="bucket_icon"]
 [ext_resource type="PackedScene" path="res://scenes/barn/milk_pail.tscn" id="milk_pail"]
 [ext_resource type="Script" path="res://scripts/barn/milk_hand.gd" id="milk_hand_script"]
-[ext_resource type="PackedScene" path="res://scenes/barn/lamb.tscn" id="lamb_scene"]
 [ext_resource type="Texture2D" path="res://assets/art/barn/lantern.svg" id="lantern"]
 [ext_resource type="Texture2D" path="res://assets/art/barn/lantern_glow.svg" id="lantern_glow"]
 [ext_resource type="Texture2D" path="res://assets/art/barn/dust_mote.svg" id="dust_mote"]
@@ -149,18 +148,15 @@ position = Vector2(1340, 880)
 manger = NodePath("../Manger")
 trough = NodePath("../Trough")
 
-[node name="Lamb" parent="World" instance=ExtResource("lamb_scene")]
-position = Vector2(1800, 1005)
-
 [node name="Girl" parent="World" instance=ExtResource("6_girl")]
 position = Vector2(230, 1000)
 
 [node name="Basket" parent="World" node_paths=PackedStringArray("flights") instance=ExtResource("basket_scene")]
-position = Vector2(1000, 1010)
+position = Vector2(440, 1025)
 flights = NodePath("../Flights")
 
 [node name="MilkPail" parent="World" instance=ExtResource("milk_pail")]
-position = Vector2(1240, 1010)
+position = Vector2(1800, 1000)
 
 [node name="Flights" type="Node2D" parent="World"]
 z_index = 2

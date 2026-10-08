@@ -2,8 +2,7 @@ extends Node2D
 ## Ahır bölümü: eve dönüş, sepete dokununca sepetin içini açma, saman yığınından yemliğe saman (HayHand),
 ## kovayla suluğa su (WaterHand), süt kovasıyla sağma (MilkHand) ve kızın tepkileri. İnek yemliği ve
 ## suluğu kendisi kullanır (Cow). Yemlik ya da suluk dolunca ve inek sağılınca kız sevinir; ineğin sütü
-## hazır olunca ahıra el sallar; uzun süre dokunulmazsa esner. İneğe ve köşedeki kuzuya dokunulabilir
-## (Cow, Lamb); ikisi de ekonomiye karışmaz.
+## hazır olunca ahıra el sallar; uzun süre dokunulmazsa esner. İneğe dokunulabilir (Cow).
 ## Yemlik, suluk ve inek açılışta kayıttan geri yüklenir; sahne kapalıyken geçen oyun süresi kadar ineğin
 ## döngüsü ileri sarılır (Cow.load_state). Yemlik ya da suluk dolunca, süt hazır olunca, inek sağılınca,
 ## sahneden çıkarken ve SaveGame diske yazmadan hemen önce durum kayda geçer.

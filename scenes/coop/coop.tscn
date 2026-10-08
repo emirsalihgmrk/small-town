@@ -287,7 +287,7 @@ position = Vector2(690, 765)
 position = Vector2(1010, 765)
 
 [node name="Hen1" parent="World/Farmyard" node_paths=PackedStringArray("feeder", "waterer", "nest") instance=ExtResource("19_hen")]
-position = Vector2(530, 895)
+position = Vector2(650, 905)
 feeder = NodePath("../Feeder")
 waterer = NodePath("../Waterer")
 nest = NodePath("../../House/Nests/Nest1")
@@ -311,7 +311,7 @@ spot_index = 2
 position = Vector2(230, 1000)
 
 [node name="Basket" parent="World" node_paths=PackedStringArray("flights") instance=ExtResource("basket_scene")]
-position = Vector2(1700, 1000)
+position = Vector2(450, 1005)
 flights = NodePath("../Flights")
 
 [node name="Flights" type="Node2D" parent="World"]

@@ -153,7 +153,7 @@ position = Vector2(820, 678)
 position = Vector2(230, 1000)
 
 [node name="Basket" parent="World" node_paths=PackedStringArray("flights") instance=ExtResource("basket_scene")]
-position = Vector2(1570, 1000)
+position = Vector2(450, 1005)
 item_textures = Dictionary[StringName, Texture2D]({
 &"carrot": ExtResource("carrot_icon"),
 &"wheat": ExtResource("wheat_bundle"),

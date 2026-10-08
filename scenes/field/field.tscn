@@ -414,7 +414,7 @@ priority = 5
 position = Vector2(230, 1000)
 
 [node name="Basket" parent="World" node_paths=PackedStringArray("flights") instance=ExtResource("basket_scene")]
-position = Vector2(1700, 1000)
+position = Vector2(430, 1030)
 flights = NodePath("../Flights")
 
 [node name="Flights" type="Node2D" parent="World"]
