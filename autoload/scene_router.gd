@@ -10,6 +10,7 @@ const SECTION_SCENES: Dictionary[StringName, String] = {
 	&"coop": "res://scenes/coop/coop.tscn",
 	&"bakery": "res://scenes/bakery/bakery.tscn",
 	&"barn": "res://scenes/barn/barn.tscn",
+	&"market": "res://scenes/market/market.tscn",
 }
 ## Her şeyin, ana ekrandaki kartlar dahil, üstünde kalsın.
 const CURTAIN_LAYER: int = 100
