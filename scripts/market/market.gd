@@ -5,16 +5,16 @@ extends Node2D
 ## sırayla gelir (tavşan, ayıcık, kirpi), ilk gelen rastgeledir. İstenen ürünler sepetten parmakla
 ## müşteriye götürülür (SellHand); her verilen üründe kız sevinir.
 ## İstek tamamlanınca müşteri teşekkür eder (balonu kapanır, kalpler çıkar) ve istediği her ürün için bir
-## bozuk parayı tezgâhtaki kumbaraya (CoinJar) atar; sonra sağa yürüyüp gider, kız arkasından el sallar.
+## bozuk parayı tezgâhtaki kumbaraya (CoinJar) atar; paralar ortak paraya (Wallet) ödeme başlarken hemen
+## geçer. Sonra müşteri sağa yürüyüp gider, kız arkasından el sallar.
 ## Biraz sonra sıradaki müşteri gelir.
 ## Uzun süre dokunulmazsa kız esner. Tente rüzgârda dalgalanır, tentenin üstüne arada bir kuş konar
 ## (FieldBird), meydanda kelebekler gezinir (Butterfly); müşteriye dokunulabilir (Customer).
 ## Sepet boşsa müşteri gelmez; tezgâhın üstünde tarlayı gösteren bir balon durur, balona dokununca
 ## tarlaya gidilir. Sepete ürün girince balon kapanır ve müşteri yola çıkar.
-## Kumbaradaki para sayısı, sıradaki müşterinin kim olduğu ve isteği tamamlanmamış müşteri (görünüşü,
-## isteği, verilmiş yuvaları) kayda geçer: müşteri gelince, ona ürün verilince, müşteri gidince, sahneden
-## çıkarken ve SaveGame diske yazmadan hemen önce. Ödeme sürerken henüz atılmamış paralar da kumbaraya
-## sayılır. Açılışta müşteri yürümeden tezgâhın önünde, balonu verilmiş yuvalarıyla belirir. Sepette artık
+## Sıradaki müşterinin kim olduğu ve isteği tamamlanmamış müşteri (görünüşü, isteği, verilmiş yuvaları)
+## kayda geçer: müşteri gelince, ona ürün verilince, müşteri gidince, sahneden çıkarken ve SaveGame diske
+## yazmadan hemen önce. Paralar Pazar'ın değil Wallet'ın kaydındadır. Açılışta müşteri yürümeden tezgâhın önünde, balonu verilmiş yuvalarıyla belirir. Sepette artık
 ## bulunmayan istekler (ör. arada fırında kullanıldıysa) istekten çıkarılır; geriye yalnızca verilmişler
 ## kaldıysa müşteri hemen öder ve gider.
 
@@ -44,8 +44,6 @@ const LEAVE_DELAY: float = 0.7
 @export_range(5.0, 120.0, 1.0, "suffix:s") var idle_yawn_time: float = 25.0
 
 var _next_kind: int = 0
-## Ödeme sürerken müşterinin henüz kumbaraya atmadığı paralar.
-var _unpaid: int = 0
 var _idle_time: float = 0.0
 var _empty_bubble_scale: Vector2
 var _empty_bubble_tween: Tween
@@ -103,7 +101,6 @@ func _exit_tree() -> void:
 
 func _store() -> void:
 	SaveGame.set_section(SECTION, {
-		"coins": _coin_jar.count + _unpaid,
 		"next_kind": _next_kind,
 		"customer": _customer.save_state(),
 	})
@@ -113,7 +110,6 @@ func _restore() -> void:
 	var data: Dictionary = SaveGame.get_section(SECTION)
 	if data.is_empty():
 		return
-	_coin_jar.set_count(int(data.get("coins", 0)))
 	_next_kind = posmod(int(data.get("next_kind", _next_kind)), _customer.look_count())
 	var customer_data: Variant = data.get("customer")
 	if customer_data is Dictionary:
@@ -161,15 +157,13 @@ func _refresh(delay: float = customer_delay) -> void:
 
 ## Müşteri teşekkür eder, istediği her ürün için kumbaraya bir para atar ve gider.
 func _pay() -> void:
-	_unpaid = _customer.order.size()
+	_coin_jar.deposit(_customer.order.size())
 	var tween: Tween = create_tween()
 	tween.tween_interval(THANK_DELAY)
 	tween.tween_callback(_customer.thank)
 	for i: int in _customer.order.size():
 		tween.tween_interval(COIN_INTERVAL)
-		tween.tween_callback(func() -> void:
-			_unpaid -= 1
-			_coin_jar.receive(_customer.hand_point()))
+		tween.tween_callback(func() -> void: _coin_jar.receive(_customer.hand_point()))
 	tween.tween_interval(LEAVE_DELAY)
 	tween.tween_callback(func() -> void:
 		_customer.leave(Vector2(ENTRY_X, _customer.global_position.y))

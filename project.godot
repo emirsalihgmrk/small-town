@@ -21,6 +21,7 @@ AudioManager="*res://autoload/audio_manager.gd"
 SceneRouter="*res://autoload/scene_router.gd"
 SaveGame="*res://autoload/save_game.gd"
 Basket="*res://autoload/basket.gd"
+Wallet="*res://autoload/wallet.gd"
 
 [display]
 

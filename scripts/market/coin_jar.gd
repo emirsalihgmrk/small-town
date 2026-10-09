@@ -1,11 +1,12 @@
 class_name CoinJar
 extends Node2D
-## Tezgâhtaki cam kumbara. Müşterinin bıraktığı bozuk para kavis çizerek kumbaranın kapağındaki deliğe uçar,
-## içine düşer; tın sesi çalar, kumbara esner ve içindeki para yığını bir para büyür. Sayı gösterilmez,
-## kumbaranın dolması yeter. Yığında en fazla capacity() kadar para görünür; fazlası sayılır ama kumbara
-## dolu görünür.
-## Para, havalandığı anda sayılır (count); sahne aniden kapansa da kaybolmaz. Yığında yalnızca yere
-## inmiş paralar görünür. Paralar camın arkası (Back) ile önü (Front) arasında çizilir.
+## Tezgâhtaki cam kumbara: ortak paranın (Wallet) görüntüsü. Müşterinin bıraktığı bozuk para kavis çizerek
+## kumbaranın kapağındaki deliğe uçar, içine düşer; tın sesi çalar, kumbara esner ve içindeki para yığını bir
+## para büyür. Sayı gösterilmez, kumbaranın dolması yeter. Yığında en fazla capacity() kadar para görünür;
+## fazlası sayılır ama kumbara dolu görünür.
+## Gelecek paralar deposit ile hemen Wallet'a geçer (sahne aniden kapansa da kaybolmaz), ama yığında ancak
+## receive ile uçup içine düştüklerinde görünür. Wallet başka yerden değişirse yığın hemen ona uyar.
+## Paralar camın arkası (Back) ile önü (Front) arasında çizilir.
 ## Kök noktası kumbaranın tabanının ortasıdır.
 
 signal coin_landed
@@ -41,9 +42,7 @@ const MAX_SOUND_PAN: float = 0.6
 @export var flights: Node2D
 @export_file("*.ogg", "*.wav") var clink_sound_path: String = "res://assets/audio/sfx/coin_clink.ogg"
 
-## Kumbaradaki bütün paralar (yoldakiler dahil).
-var count: int = 0
-
+## Henüz kumbaraya düşmemiş, ama Wallet'a geçmiş paralar.
 var _in_flight: int = 0
 var _clink_sound: AudioStream
 var _pile: Array[Sprite2D] = []
@@ -68,6 +67,7 @@ func _ready() -> void:
 			coin.hide()
 			_coins.add_child(coin)
 			_pile.append(coin)
+	Wallet.changed.connect(func(_count: int) -> void: _refresh())
 	_refresh()
 
 
@@ -75,17 +75,14 @@ func capacity() -> int:
 	return _pile.size()
 
 
-## Kayıttan animasyonsuz kurar.
-func set_count(value: int) -> void:
-	count = maxi(value, 0)
-	_in_flight = 0
-	_refresh()
+## amount kadar parayı hemen Wallet'a ekler; her biri ayrıca receive ile kumbaraya uçurulmalıdır.
+func deposit(amount: int) -> void:
+	_in_flight += amount
+	Wallet.add(amount)
 
 
-## Bir para from_global'den (dünya konumu) havalanıp kumbaraya uçar; hemen sayılır.
+## deposit edilmiş bir para from_global'den (dünya konumu) havalanıp kumbaraya uçar.
 func receive(from_global: Vector2) -> void:
-	count += 1
-	_in_flight += 1
 	var coin: Sprite2D = Sprite2D.new()
 	coin.texture = coin_texture
 	flights.add_child(coin)
@@ -129,6 +126,6 @@ func _land(coin: Node2D) -> void:
 
 
 func _refresh() -> void:
-	var shown: int = count - _in_flight
+	var shown: int = Wallet.count() - _in_flight
 	for i: int in _pile.size():
 		_pile[i].visible = i < shown

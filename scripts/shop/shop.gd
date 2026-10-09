@@ -1,5 +1,6 @@
 extends Node2D
-## Dükkân bölümü: şimdilik yalnızca sahne, eve dönüş ve sepete dokununca sepetin içini açma.
+## Dükkân bölümü: şimdilik yalnızca sahne, eve dönüş ve sepete dokununca sepetin içini açma. Tezgâhtaki
+## kumbara (CoinJar) Pazar'da kazanılan ortak parayı (Wallet) gösterir.
 
 @onready var _home_button: Button = $UI/Root/HomeButton
 @onready var _basket: BasketView = $World/Basket
