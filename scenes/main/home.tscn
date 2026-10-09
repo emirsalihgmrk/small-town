@@ -30,9 +30,15 @@
 [ext_resource type="Script" path="res://scripts/input/tap_router.gd" id="tap_router_script"]
 [ext_resource type="Script" path="res://scripts/components/pause_when_inactive.gd" id="pause_script"]
 [ext_resource type="Script" path="res://scripts/home/home.gd" id="home_script"]
+[ext_resource type="Texture2D" path="res://assets/art/shop/birdhouse.svg" id="decor_birdhouse"]
+[ext_resource type="Texture2D" path="res://assets/art/shop/kite.svg" id="decor_kite"]
+[ext_resource type="Texture2D" path="res://assets/art/shop/swing.svg" id="decor_swing"]
+[ext_resource type="Texture2D" path="res://assets/art/shop/pond.svg" id="decor_pond"]
+[ext_resource type="Script" path="res://scripts/components/sway_component.gd" id="sway_script"]
 
-[node name="Home" type="Node2D"]
+[node name="Home" type="Node2D" node_paths=PackedStringArray("decorations")]
 script = ExtResource("home_script")
+decorations = [NodePath("World/Kite"), NodePath("World/Decorations/Birdhouse"), NodePath("World/Decorations/Pond"), NodePath("World/Decorations/Swing")]
 
 [node name="World" type="Node2D" parent="."]
 
@@ -69,6 +75,28 @@ texture = ExtResource("4_cloud")
 position = Vector2(236, 249.5)
 scale = Vector2(0.6, 0.6)
 texture = ExtResource("4_cloud")
+
+[node name="Kite" type="Node2D" parent="World"]
+visible = false
+position = Vector2(1200, 300)
+
+[node name="String" type="Line2D" parent="World/Kite"]
+points = PackedVector2Array(0, 0, 40, 90, 95, 200, 170, 330)
+width = 3.0
+default_color = Color(0.541, 0.353, 0.212, 0.85)
+
+[node name="Body" type="Node2D" parent="World/Kite"]
+
+[node name="Sprite" type="Sprite2D" parent="World/Kite/Body"]
+scale = Vector2(0.8, 0.8)
+texture = ExtResource("decor_kite")
+centered = false
+offset = Vector2(-70, -160)
+
+[node name="Sway" type="Node" parent="World/Kite/Body"]
+script = ExtResource("sway_script")
+amplitude_degrees = 6.0
+period = 4.0
 
 [node name="Trees" type="Node2D" parent="World"]
 
@@ -418,6 +446,32 @@ offset = Vector2(-65, -210)
 texture = ExtResource("18_porch")
 centered = false
 offset = Vector2(-257, -25)
+
+[node name="Decorations" type="Node2D" parent="World"]
+
+[node name="Birdhouse" type="Sprite2D" parent="World/Decorations"]
+visible = false
+position = Vector2(340, 905)
+scale = Vector2(0.85, 0.85)
+texture = ExtResource("decor_birdhouse")
+centered = false
+offset = Vector2(-56, -226)
+
+[node name="Pond" type="Sprite2D" parent="World/Decorations"]
+visible = false
+position = Vector2(525, 1000)
+scale = Vector2(0.9, 0.9)
+texture = ExtResource("decor_pond")
+centered = false
+offset = Vector2(-136, -126)
+
+[node name="Swing" type="Sprite2D" parent="World/Decorations"]
+visible = false
+position = Vector2(1440, 1000)
+scale = Vector2(0.85, 0.85)
+texture = ExtResource("decor_swing")
+centered = false
+offset = Vector2(-116, -234)
 
 [node name="Girl" parent="World" instance=ExtResource("19_girl")]
 position = Vector2(1110, 1000)
