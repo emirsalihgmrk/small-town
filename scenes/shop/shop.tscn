@@ -37,6 +37,9 @@
 [ext_resource type="Texture2D" path="res://assets/art/shop/gift.svg" id="gift"]
 [ext_resource type="Texture2D" path="res://assets/art/shop/hat_hook.svg" id="hat_hook"]
 [ext_resource type="Texture2D" path="res://assets/art/character/girl/hat.svg" id="straw_hat"]
+[ext_resource type="Script" path="res://scripts/shop/shop_bell.gd" id="bell_script"]
+[ext_resource type="Script" path="res://scripts/components/sway_component.gd" id="sway_script"]
+[ext_resource type="PackedScene" path="res://scenes/field/effects/heart_burst.tscn" id="heart_burst"]
 
 [sub_resource type="StyleBoxFlat" id="home_normal"]
 bg_color = Color(0.894, 0.851, 1, 1)
@@ -101,11 +104,24 @@ texture = ExtResource("2_sign")
 centered = false
 offset = Vector2(-150, -10)
 
-[node name="Bell" type="Sprite2D" parent="World"]
+[node name="Sway" type="Node" parent="World/Sign"]
+script = ExtResource("sway_script")
+amplitude_degrees = 1.2
+period = 4.5
+
+[node name="Bell" type="Node2D" parent="World"]
 position = Vector2(458, 244)
+script = ExtResource("bell_script")
+
+[node name="Sprite" type="Sprite2D" parent="World/Bell"]
 texture = ExtResource("3_bell")
 centered = false
 offset = Vector2(-30, -4)
+
+[node name="TapArea" type="Node2D" parent="World/Bell"]
+script = ExtResource("tappable_script")
+area = Rect2(-50, -10, 100, 110)
+priority = 5
 
 [node name="Shelf" type="Sprite2D" parent="World"]
 position = Vector2(1500, 890)
@@ -189,6 +205,7 @@ art_scale = 0.55
 [node name="Shopkeeper" type="Node2D" parent="World"]
 position = Vector2(860, 860)
 script = ExtResource("shopkeeper_script")
+heart_scene = ExtResource("heart_burst")
 
 [node name="Body" type="Sprite2D" parent="World/Shopkeeper"]
 texture = ExtResource("5_fox_body")
@@ -202,6 +219,11 @@ position = Vector2(0, -146)
 texture = ExtResource("6_fox_head")
 centered = false
 offset = Vector2(-100, -178)
+
+[node name="TapArea" type="Node2D" parent="World/Shopkeeper"]
+script = ExtResource("tappable_script")
+area = Rect2(-95, -330, 190, 220)
+priority = 4
 
 [node name="Counter" type="Sprite2D" parent="World"]
 position = Vector2(830, 790)

@@ -14,8 +14,12 @@ extends Node2D
 ## paraların yerini gösterir); yetmiyorsa etiketi sallanır ve kumbaranın üstünde Pazar'ı gösteren balon bir
 ## süre açılır. Boş kumbaradan para çekilmeye çalışılınca da balon açılır. Alınmamış hiçbir ürüne para
 ## yetmiyorsa balon sürekli açık durur. Balona dokununca Pazar'a gidilir.
+## Canlılık: dükkâna girilince kapının zili çalar, zile dokununca yine çalar (ShopBell); tilkiye dokununca
+## tüy sesiyle zıplar ve kalpler çıkar; tabela hafifçe sallanır; uzun süre dokunulmazsa kız esner.
 
 const MARKET_SECTION: StringName = &"market"
+## Esneme zamanı geldiğinde kız başka bir hareketteyse bu kadar sonra yeniden denenir.
+const YAWN_RETRY_TIME: float = 2.0
 const BUBBLE_POP_TIME: float = 0.25
 const BUBBLE_BOB: float = 8.0
 const BUBBLE_BOB_PERIOD: float = 1.8
@@ -38,12 +42,15 @@ const MAX_SOUND_PAN: float = 0.6
 
 ## Parası yetmeyen ürüne dokununca Pazar balonu en az bu kadar açık kalır.
 @export_range(1.0, 20.0, 0.5, "suffix:s") var hint_time: float = 4.0
+## Bu kadar süre hiç dokunulmazsa kız esner (sonra yine aynı süre beklenir).
+@export_range(5.0, 120.0, 1.0, "suffix:s") var idle_yawn_time: float = 25.0
 @export var gift_texture: Texture2D
 @export_file("*.ogg", "*.wav") var gift_sound_path: String = "res://assets/audio/sfx/card_flip.ogg"
 
 var _bubble_scale: Vector2
 var _bubble_tween: Tween
 var _gift_sound: AudioStream
+var _idle_time: float = 0.0
 
 @onready var _home_button: Button = $UI/Root/HomeButton
 @onready var _basket: BasketView = $World/Basket
@@ -85,6 +92,17 @@ func _ready() -> void:
 	Wallet.changed.connect(func(_count: int) -> void: _refresh_bubble())
 	Owned.purchased.connect(func(_item: StringName) -> void: _refresh_bubble())
 	_refresh_bubble()
+
+
+func _process(delta: float) -> void:
+	_idle_time += delta
+	if _idle_time >= idle_yawn_time:
+		_idle_time = 0.0 if _girl.yawn() else idle_yawn_time - YAWN_RETRY_TIME
+
+
+func _input(event: InputEvent) -> void:
+	if event is InputEventScreenTouch or event is InputEventScreenDrag:
+		_idle_time = 0.0
 
 
 func _on_item_tapped(item: ShelfItem) -> void:
