@@ -29,6 +29,15 @@
 [ext_resource type="Texture2D" path="res://assets/art/field/thought_bubble.svg" id="thought_bubble"]
 [ext_resource type="PackedScene" path="res://scenes/ui/icons/field_icon.tscn" id="field_icon"]
 [ext_resource type="Script" path="res://scripts/input/tappable.gd" id="tappable_script"]
+[ext_resource type="Script" path="res://scripts/market/sell_hand.gd" id="sell_hand_script"]
+[ext_resource type="Texture2D" path="res://assets/art/ui/icons/field/carrot.svg" id="item_carrot"]
+[ext_resource type="Texture2D" path="res://assets/art/field/wheat_bundle.svg" id="item_wheat"]
+[ext_resource type="Texture2D" path="res://assets/art/coop/egg.svg" id="item_egg"]
+[ext_resource type="Texture2D" path="res://assets/art/barn/milk.svg" id="item_milk"]
+[ext_resource type="Texture2D" path="res://assets/art/ui/icons/bakery/bread.svg" id="item_bread"]
+[ext_resource type="Texture2D" path="res://assets/art/bakery/cookie.svg" id="item_cookie"]
+[ext_resource type="Texture2D" path="res://assets/art/bakery/carrot_cake.svg" id="item_carrot_cake"]
+[ext_resource type="Texture2D" path="res://assets/art/bakery/birthday_cake.svg" id="item_birthday_cake"]
 
 [sub_resource type="StyleBoxFlat" id="home_normal"]
 bg_color = Color(1, 0.945, 0.722, 1)
@@ -292,6 +301,22 @@ script = ExtResource("tap_router_script")
 script = ExtResource("ambience_script")
 distant_farm_path = ""
 
+[node name="SellHand" type="Node" parent="." node_paths=PackedStringArray("basket", "customer", "drag_layer")]
+script = ExtResource("sell_hand_script")
+basket = NodePath("../World/Basket")
+customer = NodePath("../World/Customer")
+drag_layer = NodePath("../DragLayer")
+item_textures = Dictionary[StringName, Texture2D]({
+&"carrot": ExtResource("item_carrot"),
+&"wheat": ExtResource("item_wheat"),
+&"egg": ExtResource("item_egg"),
+&"milk": ExtResource("item_milk"),
+&"bread": ExtResource("item_bread"),
+&"cookie": ExtResource("item_cookie"),
+&"carrot_cake": ExtResource("item_carrot_cake"),
+&"birthday_cake": ExtResource("item_birthday_cake")
+})
+
 [node name="CustomerTimer" type="Timer" parent="."]
 one_shot = true
 
@@ -322,5 +347,8 @@ theme_override_styles/normal = SubResource("home_normal")
 position = Vector2(65, 65)
 scale = Vector2(0.5, 0.5)
 texture = ExtResource("20_home")
+
+[node name="DragLayer" type="CanvasLayer" parent="."]
+layer = 2
 
 [node name="BasketMenu" parent="." instance=ExtResource("basket_menu")]

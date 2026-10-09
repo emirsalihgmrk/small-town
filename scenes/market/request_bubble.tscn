@@ -5,6 +5,9 @@
 [ext_resource type="Texture2D" path="res://assets/art/market/request_bubble_2.svg" id="3_bubble_2"]
 [ext_resource type="Texture2D" path="res://assets/art/market/request_bubble_3.svg" id="4_bubble_3"]
 [ext_resource type="Texture2D" path="res://assets/art/market/request_slot.svg" id="5_slot"]
+[ext_resource type="Texture2D" path="res://assets/art/market/request_slot_filled.svg" id="6_slot_filled"]
+[ext_resource type="Texture2D" path="res://assets/art/market/request_tick.svg" id="7_tick"]
+[ext_resource type="PackedScene" path="res://scenes/field/effects/sparkle_burst.tscn" id="8_sparkle"]
 [ext_resource type="Texture2D" path="res://assets/art/ui/icons/field/carrot.svg" id="carrot"]
 [ext_resource type="Texture2D" path="res://assets/art/field/wheat_bundle.svg" id="wheat"]
 [ext_resource type="Texture2D" path="res://assets/art/coop/egg.svg" id="egg"]
@@ -28,6 +31,9 @@ item_icons = Dictionary[StringName, Texture2D]({
 })
 bubble_textures = Array[Texture2D]([ExtResource("2_bubble_1"), ExtResource("3_bubble_2"), ExtResource("4_bubble_3")])
 slot_texture = ExtResource("5_slot")
+filled_slot_texture = ExtResource("6_slot_filled")
+tick_texture = ExtResource("7_tick")
+sparkle_scene = ExtResource("8_sparkle")
 
 [node name="Float" type="Node2D" parent="."]
 

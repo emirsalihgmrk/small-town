@@ -2,7 +2,8 @@ extends Node2D
 ## Pazar bölümü: eve dönüş, sepete dokununca sepetin içini açma, müşterilerin gelişi ve kızın tepkileri.
 ## Sepette ürün varsa kısa bir süre sonra bir hayvan dost (Customer) sağdan yürüyerek tezgâhın önüne gelir
 ## ve başının üstünde isteği (MarketOrders) görünür; müşteri gelince kız ona el sallar. Müşteriler
-## sırayla gelir (tavşan, ayıcık, kirpi), ilk gelen rastgeledir.
+## sırayla gelir (tavşan, ayıcık, kirpi), ilk gelen rastgeledir. İstenen ürünler sepetten parmakla
+## müşteriye götürülür (SellHand); her verilen üründe kız sevinir.
 ## Sepet boşsa müşteri gelmez; tezgâhın üstünde tarlayı gösteren bir balon durur, balona dokununca
 ## tarlaya gidilir. Sepete ürün girince balon kapanır ve müşteri yola çıkar.
 
@@ -38,6 +39,7 @@ func _ready() -> void:
 	_basket.tapped.connect(_basket_menu.open)
 	_next_kind = randi_range(0, _customer.look_count() - 1)
 	_customer.arrived.connect(_girl.wave.bind(GIRL_STALL_ARM))
+	_customer.item_received.connect(func(_slot: int) -> void: _girl.cheer())
 	_customer_timer.timeout.connect(_send_customer)
 	_empty_bubble_scale = _empty_bubble.scale
 	_empty_bubble.hide()
