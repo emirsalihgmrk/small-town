@@ -20,6 +20,18 @@
 [ext_resource type="Script" path="res://scripts/input/tap_router.gd" id="tap_router_script"]
 [ext_resource type="Script" path="res://scripts/components/pause_when_inactive.gd" id="pause_script"]
 [ext_resource type="Script" path="res://scripts/components/scene_ambience.gd" id="ambience_script"]
+[ext_resource type="PackedScene" path="res://scenes/shop/shelf_item.tscn" id="shelf_item"]
+[ext_resource type="Texture2D" path="res://assets/art/shop/flower_crown.svg" id="art_flower_crown"]
+[ext_resource type="Texture2D" path="res://assets/art/shop/bow.svg" id="art_bow"]
+[ext_resource type="Texture2D" path="res://assets/art/shop/bunny_ears.svg" id="art_bunny_ears"]
+[ext_resource type="Texture2D" path="res://assets/art/shop/crown.svg" id="art_crown"]
+[ext_resource type="Texture2D" path="res://assets/art/shop/birdhouse.svg" id="art_birdhouse"]
+[ext_resource type="Texture2D" path="res://assets/art/shop/kite.svg" id="art_kite"]
+[ext_resource type="Texture2D" path="res://assets/art/shop/swing.svg" id="art_swing"]
+[ext_resource type="Texture2D" path="res://assets/art/shop/pond.svg" id="art_pond"]
+[ext_resource type="Texture2D" path="res://assets/art/field/thought_bubble.svg" id="thought_bubble"]
+[ext_resource type="PackedScene" path="res://scenes/ui/icons/market_icon.tscn" id="market_icon"]
+[ext_resource type="Script" path="res://scripts/input/tappable.gd" id="tappable_script"]
 
 [sub_resource type="StyleBoxFlat" id="home_normal"]
 bg_color = Color(0.894, 0.851, 1, 1)
@@ -95,6 +107,60 @@ texture = ExtResource("4_shelf")
 centered = false
 offset = Vector2(-370, -730)
 
+[node name="ShelfItems" type="Node2D" parent="World"]
+
+[node name="FlowerCrown" parent="World/ShelfItems" instance=ExtResource("shelf_item")]
+position = Vector2(1268, 466)
+item = &"flower_crown"
+texture = ExtResource("art_flower_crown")
+art_scale = 0.8
+on_cushion = true
+
+[node name="Bow" parent="World/ShelfItems" instance=ExtResource("shelf_item")]
+position = Vector2(1423, 466)
+item = &"bow"
+texture = ExtResource("art_bow")
+art_scale = 0.85
+on_cushion = true
+
+[node name="BunnyEars" parent="World/ShelfItems" instance=ExtResource("shelf_item")]
+position = Vector2(1577, 466)
+item = &"bunny_ears"
+texture = ExtResource("art_bunny_ears")
+art_scale = 0.85
+on_cushion = true
+
+[node name="Crown" parent="World/ShelfItems" instance=ExtResource("shelf_item")]
+position = Vector2(1732, 466)
+item = &"crown"
+texture = ExtResource("art_crown")
+art_scale = 0.95
+on_cushion = true
+
+[node name="Birdhouse" parent="World/ShelfItems" instance=ExtResource("shelf_item")]
+position = Vector2(1268, 716)
+item = &"birdhouse"
+texture = ExtResource("art_birdhouse")
+art_scale = 0.78
+
+[node name="Kite" parent="World/ShelfItems" instance=ExtResource("shelf_item")]
+position = Vector2(1423, 716)
+item = &"kite"
+texture = ExtResource("art_kite")
+art_scale = 0.72
+
+[node name="Swing" parent="World/ShelfItems" instance=ExtResource("shelf_item")]
+position = Vector2(1577, 716)
+item = &"swing"
+texture = ExtResource("art_swing")
+art_scale = 0.64
+
+[node name="Pond" parent="World/ShelfItems" instance=ExtResource("shelf_item")]
+position = Vector2(1732, 716)
+item = &"pond"
+texture = ExtResource("art_pond")
+art_scale = 0.55
+
 [node name="Shopkeeper" type="Node2D" parent="World"]
 position = Vector2(860, 860)
 
@@ -138,6 +204,25 @@ texture = ExtResource("jar_front")
 centered = false
 offset = Vector2(-60, -150)
 
+[node name="MarketBubble" type="Node2D" parent="World"]
+position = Vector2(560, 500)
+scale = Vector2(1.6, 1.6)
+
+[node name="Cloud" type="Sprite2D" parent="World/MarketBubble"]
+texture = ExtResource("thought_bubble")
+centered = false
+offset = Vector2(-46, -44)
+
+[node name="Market" parent="World/MarketBubble" instance=ExtResource("market_icon")]
+position = Vector2(0, -2)
+scale = Vector2(0.28, 0.28)
+
+[node name="TapArea" type="Node2D" parent="World/MarketBubble"]
+script = ExtResource("tappable_script")
+area = Rect2(-46, -44, 96, 96)
+priority = 5
+enabled = false
+
 [node name="Girl" parent="World" instance=ExtResource("9_girl")]
 position = Vector2(230, 1000)
 
@@ -159,6 +244,9 @@ script = ExtResource("ambience_script")
 wind_volume_db = -22.0
 bird_volume_db = -12.0
 distant_farm_path = ""
+
+[node name="HintTimer" type="Timer" parent="."]
+one_shot = true
 
 [node name="UI" type="CanvasLayer" parent="."]
 

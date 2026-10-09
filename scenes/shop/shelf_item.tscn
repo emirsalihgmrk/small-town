@@ -1,0 +1,24 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/shop/shelf_item.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://assets/art/shop/cushion.svg" id="2_cushion"]
+[ext_resource type="PackedScene" path="res://scenes/shop/price_tag.tscn" id="3_tag"]
+[ext_resource type="Script" path="res://scripts/input/tappable.gd" id="4_tappable"]
+
+[node name="ShelfItem" type="Node2D"]
+script = ExtResource("1_script")
+
+[node name="Body" type="Node2D" parent="."]
+
+[node name="Cushion" type="Sprite2D" parent="Body"]
+texture = ExtResource("2_cushion")
+centered = false
+offset = Vector2(-66, -40)
+
+[node name="Art" type="Sprite2D" parent="Body"]
+
+[node name="Tag" parent="." instance=ExtResource("3_tag")]
+
+[node name="TapArea" type="Node2D" parent="."]
+script = ExtResource("4_tappable")
+priority = 4
