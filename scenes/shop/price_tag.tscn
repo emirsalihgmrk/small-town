@@ -2,9 +2,13 @@
 
 [ext_resource type="Script" path="res://scripts/shop/price_tag.gd" id="1_script"]
 [ext_resource type="Texture2D" path="res://assets/art/shop/coin_slot.svg" id="2_slot"]
+[ext_resource type="Texture2D" path="res://assets/art/market/coin.svg" id="3_coin"]
+[ext_resource type="Texture2D" path="res://assets/art/shop/owned_badge.svg" id="4_badge"]
 
 [node name="PriceTag" type="Node2D"]
 script = ExtResource("1_script")
 slot_texture = ExtResource("2_slot")
+coin_texture = ExtResource("3_coin")
+owned_texture = ExtResource("4_badge")
 
 [node name="Body" type="Node2D" parent="."]

@@ -32,6 +32,9 @@
 [ext_resource type="Texture2D" path="res://assets/art/field/thought_bubble.svg" id="thought_bubble"]
 [ext_resource type="PackedScene" path="res://scenes/ui/icons/market_icon.tscn" id="market_icon"]
 [ext_resource type="Script" path="res://scripts/input/tappable.gd" id="tappable_script"]
+[ext_resource type="Script" path="res://scripts/shop/shopkeeper.gd" id="shopkeeper_script"]
+[ext_resource type="Script" path="res://scripts/shop/coin_hand.gd" id="coin_hand_script"]
+[ext_resource type="Texture2D" path="res://assets/art/shop/gift.svg" id="gift"]
 
 [sub_resource type="StyleBoxFlat" id="home_normal"]
 bg_color = Color(0.894, 0.851, 1, 1)
@@ -82,6 +85,7 @@ shadow_offset = Vector2(0, 6)
 
 [node name="Shop" type="Node2D"]
 script = ExtResource("shop_script")
+gift_texture = ExtResource("gift")
 
 [node name="World" type="Node2D" parent="."]
 
@@ -163,6 +167,7 @@ art_scale = 0.55
 
 [node name="Shopkeeper" type="Node2D" parent="World"]
 position = Vector2(860, 860)
+script = ExtResource("shopkeeper_script")
 
 [node name="Body" type="Sprite2D" parent="World/Shopkeeper"]
 texture = ExtResource("5_fox_body")
@@ -239,6 +244,13 @@ script = ExtResource("pause_script")
 [node name="TapRouter" type="Node" parent="."]
 script = ExtResource("tap_router_script")
 
+[node name="CoinHand" type="Node" parent="." node_paths=PackedStringArray("jar", "shelf_items", "drag_layer")]
+script = ExtResource("coin_hand_script")
+jar = NodePath("../World/CoinJar")
+shelf_items = NodePath("../World/ShelfItems")
+drag_layer = NodePath("../DragLayer")
+coin_texture = ExtResource("coin")
+
 [node name="Ambience" type="Node" parent="."]
 script = ExtResource("ambience_script")
 wind_volume_db = -22.0
@@ -275,5 +287,8 @@ theme_override_styles/normal = SubResource("home_normal")
 position = Vector2(65, 65)
 scale = Vector2(0.5, 0.5)
 texture = ExtResource("10_home")
+
+[node name="DragLayer" type="CanvasLayer" parent="."]
+layer = 2
 
 [node name="BasketMenu" parent="." instance=ExtResource("basket_menu")]

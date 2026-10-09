@@ -3,6 +3,9 @@ extends Node2D
 ## Dükkân rafında satılan bir ürün (ShopItems): resmi rafın üstünde durur, aksesuarlar küçük bir minderin
 ## üstünde. Önünde, rafın kenarında fiyat etiketi (PriceTag) vardır. Dokununca tapped yayılır; parası
 ## yetiyorsa ürün sevinçle zıplar (hop), yetmiyorsa etiketi sallanır (nudge).
+## Kumbaradan çekilen para ürünün üstüne getirilince ürün parlar (set_highlighted); para etiketin sıradaki
+## yuvasına uçar (coin_target, coin_arrived). Açılışta yarım ödemeler ve alınmışlık Owned'dan kurulur;
+## alınmış ürünün etiketinde rozet durur ve ona para konmaz.
 ## Kök noktası ürünün rafa değdiği yerin ortasıdır; etiket rafın kenarındadır (tag_offset).
 
 signal tapped(item: ShelfItem)
@@ -16,6 +19,7 @@ const SQUASH: Vector2 = Vector2(1.08, 0.92)
 const SQUASH_TIME: float = 0.07
 const SHAKE_DEGREES: float = 4.0
 const SHAKE_TIME: float = 0.07
+const HIGHLIGHT_COLOR: Color = Color(1.18, 1.18, 1.1)
 
 @export var item: StringName
 @export var texture: Texture2D
@@ -40,15 +44,49 @@ func _ready() -> void:
 	var lift: float = CUSHION_TOP if on_cushion else 0.0
 	_art.position = Vector2(0.0, -lift - size.y * 0.5)
 	_tag.position = tag_offset
-	_tag.set_price(ShopItems.price(item))
+	_tag.set_price(ShopItems.price(item), Owned.paid(item))
+	if Owned.has(item):
+		_tag.set_owned(false)
 	var top: float = -lift - size.y - TAP_MARGIN
 	var width: float = maxf(size.x, _cushion.texture.get_width() if on_cushion else 0.0) + TAP_MARGIN * 2.0
 	_tap_area.area = Rect2(-width * 0.5, top, width, tag_offset.y + PriceTag.SLOT_SIZE - top)
 	_tap_area.tapped.connect(func(_point: Vector2) -> void: tapped.emit(self))
 
 
-func price() -> int:
-	return _tag.price()
+## Ürünün alınması için daha kaç para gerektiği (alınmışsa 0).
+func remaining() -> int:
+	return Owned.remaining(item)
+
+
+func is_owned() -> bool:
+	return _tag.is_owned()
+
+
+func contains(global_point: Vector2) -> bool:
+	return _tap_area.contains(global_point)
+
+
+func set_highlighted(highlighted: bool) -> void:
+	_body.modulate = HIGHLIGHT_COLOR if highlighted else Color.WHITE
+
+
+## Son ödenen paranın oturacağı yuva (dünya konumu); Owned.pay'den hemen sonra sorulmalı.
+func coin_target() -> Vector2:
+	return _tag.slot_position(ShopItems.price(item) - Owned.remaining(item) - 1)
+
+
+func coin_scale() -> float:
+	return _tag.coin_scale()
+
+
+## Uçan para yuvasına oturdu.
+func coin_arrived() -> void:
+	_tag.fill()
+
+
+## Ürün alındı: etiketin yerine rozet çıkar.
+func mark_owned() -> void:
+	_tag.set_owned()
 
 
 ## Parası yetiyor: ürün yerinde sevinçle zıplar.

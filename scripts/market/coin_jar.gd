@@ -6,6 +6,8 @@ extends Node2D
 ## fazlası sayılır ama kumbara dolu görünür.
 ## Gelecek paralar deposit ile hemen Wallet'a geçer (sahne aniden kapansa da kaybolmaz), ama yığında ancak
 ## receive ile uçup içine düştüklerinde görünür. Wallet başka yerden değişirse yığın hemen ona uyar.
+## Dükkânda parmakla para çekilebilir: take_out yığından bir para gizler (Wallet değişmez), para etikete
+## konunca Wallet'tan düşer, geri dönerse put_back ile yığına döner.
 ## Paralar camın arkası (Back) ile önü (Front) arasında çizilir.
 ## Kök noktası kumbaranın tabanının ortasıdır.
 
@@ -28,6 +30,8 @@ const PILE_BOTTOM: float = -10.0
 const PILE_ROW_HEIGHT: float = 8.5
 const PILE_ROWS: int = 9
 const PILE_JITTER: float = 4.0
+## Parmakla para çekilebilen alan (kök noktasına göre).
+const GRAB_AREA: Rect2 = Rect2(-70.0, -160.0, 140.0, 175.0)
 ## Yığının her açılışta aynı görünmesi için sabit tohum.
 const PILE_SEED: int = 23
 const SQUASH: Vector2 = Vector2(1.06, 0.94)
@@ -44,6 +48,8 @@ const MAX_SOUND_PAN: float = 0.6
 
 ## Henüz kumbaraya düşmemiş, ama Wallet'a geçmiş paralar.
 var _in_flight: int = 0
+## Parmakla çekilmiş, henüz etikete konmamış ya da geri dönmemiş paralar.
+var _out: int = 0
 var _clink_sound: AudioStream
 var _pile: Array[Sprite2D] = []
 
@@ -79,6 +85,47 @@ func capacity() -> int:
 func deposit(amount: int) -> void:
 	_in_flight += amount
 	Wallet.add(amount)
+
+
+func contains(global_point: Vector2) -> bool:
+	return GRAB_AREA.has_point(to_local(global_point))
+
+
+## Kapaktaki delik (dünya konumu); çekilen para buradan çıkar, buraya döner.
+func mouth() -> Vector2:
+	return to_global(SLOT)
+
+
+## Çekilebilecek para var mı (yoldakiler ve çekilmişler sayılmaz).
+func has_coin() -> bool:
+	return Wallet.count() - _in_flight - _out > 0
+
+
+## Yığından bir para gizler; çekilecek para yoksa false döner.
+func take_out() -> bool:
+	if not has_coin():
+		return false
+	_out += 1
+	_refresh()
+	return true
+
+
+## Çekilen para kumbaraya geri düştü.
+func put_back() -> void:
+	_out = maxi(_out - 1, 0)
+	_squash()
+	_refresh()
+
+
+## Çekilen para harcandı (Wallet'tan zaten düştü).
+func spend() -> void:
+	_out = maxi(_out - 1, 0)
+	_refresh()
+
+
+## Dikkat çekmek için esner.
+func bounce() -> void:
+	_squash()
 
 
 ## deposit edilmiş bir para from_global'den (dünya konumu) havalanıp kumbaraya uçar.
@@ -118,14 +165,18 @@ func _land(coin: Node2D) -> void:
 	_in_flight = maxi(_in_flight - 1, 0)
 	var pan: float = clampf((global_position.x / SCREEN_WIDTH) * 2.0 - 1.0, -1.0, 1.0) * MAX_SOUND_PAN
 	AudioManager.play_sfx(_clink_sound, AudioManager.BUS_SFX, 0.0, randf_range(0.94, 1.08), pan)
-	var tween: Tween = create_tween()
-	tween.tween_property(_body, ^"scale", SQUASH, SQUASH_TIME).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
-	tween.tween_property(_body, ^"scale", Vector2.ONE, SETTLE_TIME).set_trans(Tween.TRANS_ELASTIC).set_ease(Tween.EASE_OUT)
+	_squash()
 	_refresh()
 	coin_landed.emit()
 
 
+func _squash() -> void:
+	var tween: Tween = create_tween()
+	tween.tween_property(_body, ^"scale", SQUASH, SQUASH_TIME).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	tween.tween_property(_body, ^"scale", Vector2.ONE, SETTLE_TIME).set_trans(Tween.TRANS_ELASTIC).set_ease(Tween.EASE_OUT)
+
+
 func _refresh() -> void:
-	var shown: int = Wallet.count() - _in_flight
+	var shown: int = Wallet.count() - _in_flight - _out
 	for i: int in _pile.size():
 		_pile[i].visible = i < shown
