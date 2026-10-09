@@ -104,6 +104,41 @@ func arrive(new_kind: int, new_order: Array[StringName], from: Vector2, to: Vect
 		arrived.emit())
 
 
+## Gelmekte ya da beklemekte olan, isteği henüz tamamlanmamış müşteri kaydedilir; teşekkür edip giden
+## müşteri kaydedilmez (boş sözlük).
+func save_state() -> Dictionary:
+	if state != State.WALKING_IN and not can_receive():
+		return {}
+	var items: Array[String] = []
+	for item: StringName in order:
+		items.append(String(item))
+	return {"kind": kind, "order": items, "filled": _filled.duplicate()}
+
+
+## Kayıttan kurar: yürümeden at'te durur, balonu açılır ve verilmiş yuvalar dolu görünür.
+## new_filled, new_order ile aynı boyda olmalı.
+func place(new_kind: int, new_order: Array[StringName], new_filled: Array[bool], at: Vector2) -> void:
+	kind = clampi(new_kind, 0, _looks.size() - 1)
+	order = new_order
+	_filled = new_filled.duplicate()
+	for i: int in _looks.size():
+		_looks[i].visible = i == kind
+	if _move_tween != null:
+		_move_tween.kill()
+	_bubble.position = (_looks[kind].get_node(^"BubbleAnchor") as Node2D).position
+	global_position = at
+	show()
+	state = State.WAITING
+	_bubble.open(order)
+	for i: int in _filled.size():
+		if _filled[i]:
+			_bubble.fill(i, false)
+
+
+func is_complete() -> bool:
+	return not _filled.is_empty() and not _filled.has(false)
+
+
 ## Balonu kapanır, başından kalpler çıkar ve sevinçle zıplar.
 func thank() -> void:
 	_bubble.close()

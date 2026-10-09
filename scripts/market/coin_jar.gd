@@ -75,6 +75,13 @@ func capacity() -> int:
 	return _pile.size()
 
 
+## Kayıttan animasyonsuz kurar.
+func set_count(value: int) -> void:
+	count = maxi(value, 0)
+	_in_flight = 0
+	_refresh()
+
+
 ## Bir para from_global'den (dünya konumu) havalanıp kumbaraya uçar; hemen sayılır.
 func receive(from_global: Vector2) -> void:
 	count += 1

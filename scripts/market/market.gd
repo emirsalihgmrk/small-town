@@ -9,7 +9,14 @@ extends Node2D
 ## Biraz sonra sıradaki müşteri gelir.
 ## Sepet boşsa müşteri gelmez; tezgâhın üstünde tarlayı gösteren bir balon durur, balona dokununca
 ## tarlaya gidilir. Sepete ürün girince balon kapanır ve müşteri yola çıkar.
+## Kumbaradaki para sayısı, sıradaki müşterinin kim olduğu ve isteği tamamlanmamış müşteri (görünüşü,
+## isteği, verilmiş yuvaları) kayda geçer: müşteri gelince, ona ürün verilince, müşteri gidince, sahneden
+## çıkarken ve SaveGame diske yazmadan hemen önce. Ödeme sürerken henüz atılmamış paralar da kumbaraya
+## sayılır. Açılışta müşteri yürümeden tezgâhın önünde, balonu verilmiş yuvalarıyla belirir. Sepette artık
+## bulunmayan istekler (ör. arada fırında kullanıldıysa) istekten çıkarılır; geriye yalnızca verilmişler
+## kaldıysa müşteri hemen öder ve gider.
 
+const SECTION: String = "market"
 const FIELD_SECTION: StringName = &"field"
 ## Kızın tezgâha (sağa) bakan kolu.
 const GIRL_STALL_ARM: int = 1
@@ -31,6 +38,8 @@ const LEAVE_DELAY: float = 0.7
 @export_range(0.0, 30.0, 0.5, "suffix:s") var next_customer_delay: float = 3.0
 
 var _next_kind: int = 0
+## Ödeme sürerken müşterinin henüz kumbaraya atmadığı paralar.
+var _unpaid: int = 0
 var _empty_bubble_scale: Vector2
 var _empty_bubble_tween: Tween
 
@@ -54,6 +63,9 @@ func _ready() -> void:
 	_customer.item_received.connect(func(_slot: int) -> void: _girl.cheer())
 	_customer.order_completed.connect(_pay)
 	_customer.left.connect(func() -> void: _refresh(next_customer_delay))
+	_customer.arrived.connect(SaveGame.request_save)
+	_customer.item_received.connect(func(_slot: int) -> void: SaveGame.request_save())
+	_customer.left.connect(SaveGame.request_save)
 	_customer_timer.timeout.connect(_send_customer)
 	_empty_bubble_scale = _empty_bubble.scale
 	_empty_bubble.hide()
@@ -61,8 +73,62 @@ func _ready() -> void:
 			_empty_bubble.position.y - BUBBLE_BOB, BUBBLE_BOB_PERIOD)
 	_empty_bubble_tap.tapped.connect(func(_point: Vector2) -> void: SceneRouter.go_to_section(FIELD_SECTION))
 	Basket.changed.connect(func(_item: StringName, _count: int) -> void: _refresh())
+	SaveGame.before_save.connect(_store)
+	_restore()
 	_refresh()
 
+
+func _exit_tree() -> void:
+	_store()
+	SaveGame.save_now()
+
+
+func _store() -> void:
+	SaveGame.set_section(SECTION, {
+		"coins": _coin_jar.count + _unpaid,
+		"next_kind": _next_kind,
+		"customer": _customer.save_state(),
+	})
+
+
+func _restore() -> void:
+	var data: Dictionary = SaveGame.get_section(SECTION)
+	if data.is_empty():
+		return
+	_coin_jar.set_count(int(data.get("coins", 0)))
+	_next_kind = posmod(int(data.get("next_kind", _next_kind)), _customer.look_count())
+	var customer_data: Variant = data.get("customer")
+	if customer_data is Dictionary:
+		_restore_customer(customer_data)
+
+
+## Kayıttaki isteği, verilmemiş ürünleri sepette hâlâ bulunanlarla sınırlayarak kurar.
+func _restore_customer(data: Dictionary) -> void:
+	var saved_order: Variant = data.get("order")
+	var saved_filled: Variant = data.get("filled")
+	if not (saved_order is Array and saved_filled is Array):
+		return
+	if (saved_order as Array).size() != (saved_filled as Array).size():
+		return
+	var order: Array[StringName] = []
+	var filled: Array[bool] = []
+	var promised: Dictionary[StringName, int] = {}
+	for i: int in (saved_order as Array).size():
+		var item: StringName = StringName(str(saved_order[i]))
+		if not MarketOrders.ALL.has(item):
+			continue
+		var given: bool = bool(saved_filled[i])
+		if not given:
+			if Basket.count(item) - promised.get(item, 0) <= 0:
+				continue
+			promised[item] = promised.get(item, 0) + 1
+		order.append(item)
+		filled.append(given)
+	if order.is_empty():
+		return
+	_customer.place(int(data.get("kind", 0)), order, filled, _customer_spot.global_position)
+	if _customer.is_complete():
+		_pay()
 
 ## Müşteri yoksa: sepette ürün varsa müşteriyi delay sonra yola çıkarır, yoksa tarla balonunu açar.
 func _refresh(delay: float = customer_delay) -> void:
@@ -77,12 +143,15 @@ func _refresh(delay: float = customer_delay) -> void:
 
 ## Müşteri teşekkür eder, istediği her ürün için kumbaraya bir para atar ve gider.
 func _pay() -> void:
+	_unpaid = _customer.order.size()
 	var tween: Tween = create_tween()
 	tween.tween_interval(THANK_DELAY)
 	tween.tween_callback(_customer.thank)
 	for i: int in _customer.order.size():
 		tween.tween_interval(COIN_INTERVAL)
-		tween.tween_callback(func() -> void: _coin_jar.receive(_customer.hand_point()))
+		tween.tween_callback(func() -> void:
+			_unpaid -= 1
+			_coin_jar.receive(_customer.hand_point()))
 	tween.tween_interval(LEAVE_DELAY)
 	tween.tween_callback(func() -> void:
 		_customer.leave(Vector2(ENTRY_X, _customer.global_position.y))

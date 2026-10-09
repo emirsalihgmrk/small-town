@@ -68,12 +68,18 @@ func close() -> void:
 	_pop_tween.tween_callback(hide)
 
 
-## index. yuvayı dolu gösterir.
-func fill(index: int) -> void:
+## index. yuvayı dolu gösterir; animate değilse (kayıttan kurulurken) zıplamadan ve yıldızsız.
+func fill(index: int, animate: bool = true) -> void:
 	if index < 0 or index >= _slot_sprites.size():
 		return
 	var slot: Sprite2D = _slot_sprites[index]
 	slot.texture = filled_slot_texture
+	if not animate:
+		var still_tick: Sprite2D = Sprite2D.new()
+		still_tick.texture = tick_texture
+		still_tick.position = TICK_OFFSET
+		slot.add_child(still_tick)
+		return
 	var tween: Tween = create_tween()
 	tween.tween_property(slot, ^"scale", Vector2.ONE * FILL_POP_SCALE, FILL_POP_TIME) \
 			.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
