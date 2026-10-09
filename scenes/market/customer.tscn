@@ -1,0 +1,80 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/market/customer.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://assets/art/character/girl/shadow.svg" id="2_shadow"]
+[ext_resource type="Texture2D" path="res://assets/art/market/bunny_body.svg" id="3_bunny_body"]
+[ext_resource type="Texture2D" path="res://assets/art/market/bunny_head.svg" id="4_bunny_head"]
+[ext_resource type="Texture2D" path="res://assets/art/market/bear_body.svg" id="5_bear_body"]
+[ext_resource type="Texture2D" path="res://assets/art/market/bear_head.svg" id="6_bear_head"]
+[ext_resource type="Texture2D" path="res://assets/art/market/hedgehog_body.svg" id="7_hedgehog_body"]
+[ext_resource type="Texture2D" path="res://assets/art/market/hedgehog_head.svg" id="8_hedgehog_head"]
+[ext_resource type="PackedScene" path="res://scenes/market/request_bubble.tscn" id="9_bubble"]
+
+[node name="Customer" type="Node2D"]
+script = ExtResource("1_script")
+
+[node name="Shadow" type="Sprite2D" parent="."]
+scale = Vector2(0.75, 1)
+texture = ExtResource("2_shadow")
+centered = false
+offset = Vector2(-82, -7)
+
+[node name="Hop" type="Node2D" parent="."]
+
+[node name="Looks" type="Node2D" parent="Hop"]
+
+[node name="Bunny" type="Node2D" parent="Hop/Looks"]
+
+[node name="Body" type="Sprite2D" parent="Hop/Looks/Bunny"]
+texture = ExtResource("3_bunny_body")
+centered = false
+offset = Vector2(-80, -172)
+
+[node name="Head" type="Node2D" parent="Hop/Looks/Bunny"]
+position = Vector2(0, -146)
+
+[node name="Sprite" type="Sprite2D" parent="Hop/Looks/Bunny/Head"]
+texture = ExtResource("4_bunny_head")
+centered = false
+offset = Vector2(-80, -248)
+
+[node name="BubbleAnchor" type="Marker2D" parent="Hop/Looks/Bunny"]
+position = Vector2(0, -400)
+
+[node name="Bear" type="Node2D" parent="Hop/Looks"]
+
+[node name="Body" type="Sprite2D" parent="Hop/Looks/Bear"]
+texture = ExtResource("5_bear_body")
+centered = false
+offset = Vector2(-90, -172)
+
+[node name="Head" type="Node2D" parent="Hop/Looks/Bear"]
+position = Vector2(0, -144)
+
+[node name="Sprite" type="Sprite2D" parent="Hop/Looks/Bear/Head"]
+texture = ExtResource("6_bear_head")
+centered = false
+offset = Vector2(-90, -152)
+
+[node name="BubbleAnchor" type="Marker2D" parent="Hop/Looks/Bear"]
+position = Vector2(0, -310)
+
+[node name="Hedgehog" type="Node2D" parent="Hop/Looks"]
+
+[node name="Body" type="Sprite2D" parent="Hop/Looks/Hedgehog"]
+texture = ExtResource("7_hedgehog_body")
+centered = false
+offset = Vector2(-70, -130)
+
+[node name="Head" type="Node2D" parent="Hop/Looks/Hedgehog"]
+position = Vector2(0, -112)
+
+[node name="Sprite" type="Sprite2D" parent="Hop/Looks/Hedgehog/Head"]
+texture = ExtResource("8_hedgehog_head")
+centered = false
+offset = Vector2(-100, -160)
+
+[node name="BubbleAnchor" type="Marker2D" parent="Hop/Looks/Hedgehog"]
+position = Vector2(0, -280)
+
+[node name="Bubble" parent="." instance=ExtResource("9_bubble")]

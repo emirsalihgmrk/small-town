@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="180" height="160" viewBox="-90 -152 180 160">
+<circle cx="-54" cy="-118" r="24" fill="#c68a55" stroke="#8a5a36" stroke-width="5"/>
+<circle cx="-54" cy="-116" r="12" fill="#e8b98a"/>
+<circle cx="54" cy="-118" r="24" fill="#c68a55" stroke="#8a5a36" stroke-width="5"/>
+<circle cx="54" cy="-116" r="12" fill="#e8b98a"/>
+<ellipse cx="0" cy="-68" rx="74" ry="66" fill="#c68a55" stroke="#8a5a36" stroke-width="5"/>
+<ellipse cx="0" cy="-44" rx="32" ry="24" fill="#f0d2a8" stroke="#d9b48a" stroke-width="3"/>
+<circle cx="-28" cy="-82" r="9" fill="#3a2a22"/>
+<circle cx="-25" cy="-85" r="3.1" fill="#ffffff"/>
+<circle cx="28" cy="-82" r="9" fill="#3a2a22"/>
+<circle cx="31" cy="-85" r="3.1" fill="#ffffff"/>
+<ellipse cx="-50" cy="-54" rx="13" ry="8" fill="#ff9fb3" opacity="0.6"/>
+<ellipse cx="50" cy="-54" rx="13" ry="8" fill="#ff9fb3" opacity="0.6"/>
+<ellipse cx="0" cy="-54" rx="10" ry="7" fill="#4a3226"/>
+<path d="M-10 -38 Q-5 -30 0 -38 Q5 -30 10 -38" fill="none" stroke="#4a3226" stroke-width="3.5" stroke-linecap="round"/>
+</svg>
