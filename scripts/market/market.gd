@@ -4,20 +4,31 @@ extends Node2D
 ## ve başının üstünde isteği (MarketOrders) görünür; müşteri gelince kız ona el sallar. Müşteriler
 ## sırayla gelir (tavşan, ayıcık, kirpi), ilk gelen rastgeledir. İstenen ürünler sepetten parmakla
 ## müşteriye götürülür (SellHand); her verilen üründe kız sevinir.
+## İstek tamamlanınca müşteri teşekkür eder (balonu kapanır, kalpler çıkar) ve istediği her ürün için bir
+## bozuk parayı tezgâhtaki kumbaraya (CoinJar) atar; sonra sağa yürüyüp gider, kız arkasından el sallar.
+## Biraz sonra sıradaki müşteri gelir.
 ## Sepet boşsa müşteri gelmez; tezgâhın üstünde tarlayı gösteren bir balon durur, balona dokununca
 ## tarlaya gidilir. Sepete ürün girince balon kapanır ve müşteri yola çıkar.
 
 const FIELD_SECTION: StringName = &"field"
 ## Kızın tezgâha (sağa) bakan kolu.
 const GIRL_STALL_ARM: int = 1
-## Müşteri ekranın sağ kenarının bu kadar dışından yürümeye başlar.
+## Müşteri ekranın sağ kenarının bu kadar dışından yürümeye başlar ve oraya yürüyüp gider.
 const ENTRY_X: float = 2120.0
 const BUBBLE_POP_TIME: float = 0.25
 const BUBBLE_BOB: float = 8.0
 const BUBBLE_BOB_PERIOD: float = 1.8
+## Son ürün verildikten sonra müşterinin teşekkür etmesine kadar geçen süre.
+const THANK_DELAY: float = 0.5
+## Teşekkürden ilk paraya ve paralar arası süre.
+const COIN_INTERVAL: float = 0.3
+## Son para atıldıktan sonra müşterinin yola çıkmasına kadar geçen süre.
+const LEAVE_DELAY: float = 0.7
 
 ## Sahne açıldıktan ya da sepete ürün girdikten sonra müşterinin yola çıkmasına kadar geçen süre.
 @export_range(0.0, 30.0, 0.5, "suffix:s") var customer_delay: float = 1.5
+## Bir müşteri gittikten sonra sıradakinin yola çıkmasına kadar geçen süre.
+@export_range(0.0, 30.0, 0.5, "suffix:s") var next_customer_delay: float = 3.0
 
 var _next_kind: int = 0
 var _empty_bubble_scale: Vector2
@@ -30,6 +41,7 @@ var _empty_bubble_tween: Tween
 @onready var _customer: Customer = $World/Customer
 @onready var _customer_spot: Marker2D = $World/CustomerSpot
 @onready var _customer_timer: Timer = $CustomerTimer
+@onready var _coin_jar: CoinJar = $World/Stall/CoinJar
 @onready var _empty_bubble: Node2D = $World/Stall/EmptyBubble
 @onready var _empty_bubble_tap: Tappable = $World/Stall/EmptyBubble/TapArea
 
@@ -40,6 +52,8 @@ func _ready() -> void:
 	_next_kind = randi_range(0, _customer.look_count() - 1)
 	_customer.arrived.connect(_girl.wave.bind(GIRL_STALL_ARM))
 	_customer.item_received.connect(func(_slot: int) -> void: _girl.cheer())
+	_customer.order_completed.connect(_pay)
+	_customer.left.connect(func() -> void: _refresh(next_customer_delay))
 	_customer_timer.timeout.connect(_send_customer)
 	_empty_bubble_scale = _empty_bubble.scale
 	_empty_bubble.hide()
@@ -50,15 +64,29 @@ func _ready() -> void:
 	_refresh()
 
 
-## Müşteri yoksa: sepette ürün varsa müşteriyi yola çıkarır, yoksa tarla balonunu açar.
-func _refresh() -> void:
+## Müşteri yoksa: sepette ürün varsa müşteriyi delay sonra yola çıkarır, yoksa tarla balonunu açar.
+func _refresh(delay: float = customer_delay) -> void:
 	if _customer.is_present() or not _customer_timer.is_stopped():
 		return
 	if MarketOrders.has_anything():
 		_set_empty_bubble_visible(false)
-		_customer_timer.start(customer_delay)
+		_customer_timer.start(maxf(delay, 0.01))
 	else:
 		_set_empty_bubble_visible(true)
+
+
+## Müşteri teşekkür eder, istediği her ürün için kumbaraya bir para atar ve gider.
+func _pay() -> void:
+	var tween: Tween = create_tween()
+	tween.tween_interval(THANK_DELAY)
+	tween.tween_callback(_customer.thank)
+	for i: int in _customer.order.size():
+		tween.tween_interval(COIN_INTERVAL)
+		tween.tween_callback(func() -> void: _coin_jar.receive(_customer.hand_point()))
+	tween.tween_interval(LEAVE_DELAY)
+	tween.tween_callback(func() -> void:
+		_customer.leave(Vector2(ENTRY_X, _customer.global_position.y))
+		_girl.wave(GIRL_STALL_ARM))
 
 
 func _send_customer() -> void:

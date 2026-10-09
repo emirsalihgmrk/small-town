@@ -8,12 +8,14 @@ extends Node2D
 ## Beklerken istediği ürünleri alır (SellHand getirir): her ürün balondaki yuvasını doldurur, müşteri
 ## sevinçle zıplar. Ürün müşterinin üstüne ya da balonuna bırakılabilir; parmaktaki ürün oradayken müşteri
 ## hafifçe büyür.
+## İsteği tamamlanınca balonu kapanır ve başından kalpler çıkar (thank); sonra sağa yürüyüp gider (leave).
 
 signal arrived
 signal item_received(slot: int)
 signal order_completed
+signal left
 
-enum State { AWAY, WALKING_IN, WAITING }
+enum State { AWAY, WALKING_IN, WAITING, LEAVING }
 
 const WALK_SPEED: float = 280.0
 const STEP_TIME: float = 0.16
@@ -37,7 +39,10 @@ const HAPPY_HOP: float = 30.0
 const HAPPY_HOP_TIME: float = 0.15
 const SCREEN_WIDTH: float = 1920.0
 const MAX_SOUND_PAN: float = 0.6
+## Kalpler balonun kuyruk ucunun bu kadar altından çıkar (başının üstü).
+const HEART_BELOW_BUBBLE: float = 40.0
 
+@export var heart_scene: PackedScene
 @export_file("*.ogg", "*.wav") var receive_sound_path: String = "res://assets/audio/sfx/basket_drop.ogg"
 
 var state: State = State.AWAY
@@ -99,6 +104,34 @@ func arrive(new_kind: int, new_order: Array[StringName], from: Vector2, to: Vect
 		arrived.emit())
 
 
+## Balonu kapanır, başından kalpler çıkar ve sevinçle zıplar.
+func thank() -> void:
+	_bubble.close()
+	if heart_scene != null:
+		var hearts: CPUParticles2D = heart_scene.instantiate() as CPUParticles2D
+		add_child(hearts)
+		hearts.position = _bubble.position + Vector2(0.0, HEART_BELOW_BUBBLE)
+		hearts.finished.connect(hearts.queue_free)
+		hearts.emitting = true
+	_happy_hop()
+
+
+## to'ya yürür, orada kaybolur ve left yayar.
+func leave(to: Vector2) -> void:
+	state = State.LEAVING
+	set_highlighted(false)
+	_start_waddle()
+	if _move_tween != null:
+		_move_tween.kill()
+	_move_tween = create_tween()
+	_move_tween.tween_property(self, ^"global_position", to, global_position.distance_to(to) / WALK_SPEED)
+	_move_tween.tween_callback(func() -> void:
+		_stop_waddle()
+		hide()
+		state = State.AWAY
+		left.emit())
+
+
 func is_present() -> bool:
 	return state != State.AWAY
 
@@ -149,14 +182,18 @@ func receive(slot: int) -> void:
 	_bubble.fill(slot)
 	var pan: float = clampf((global_position.x / SCREEN_WIDTH) * 2.0 - 1.0, -1.0, 1.0) * MAX_SOUND_PAN
 	AudioManager.play_sfx(_receive_sound, AudioManager.BUS_SFX, 0.0, randf_range(0.95, 1.05), pan)
+	_happy_hop()
+	item_received.emit(slot)
+	if not _filled.has(false):
+		order_completed.emit()
+
+
+func _happy_hop() -> void:
 	if _hop_tween != null:
 		_hop_tween.kill()
 	_hop_tween = create_tween().set_trans(Tween.TRANS_QUAD)
 	_hop_tween.tween_property(_hop, ^"position:y", -HAPPY_HOP, HAPPY_HOP_TIME).set_ease(Tween.EASE_OUT)
 	_hop_tween.tween_property(_hop, ^"position:y", 0.0, HAPPY_HOP_TIME).set_ease(Tween.EASE_IN)
-	item_received.emit(slot)
-	if not _filled.has(false):
-		order_completed.emit()
 
 
 func _start_waddle() -> void:

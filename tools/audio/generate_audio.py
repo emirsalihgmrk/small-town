@@ -578,6 +578,22 @@ def make_cow_bell() -> np.ndarray:
     return fade_edges(linear_reverb(lowpass(buf, 6000), wet=0.2, seconds=0.6), fade_out=0.3)
 
 
+# ------------------------------------------------------------------ pazar
+def make_coin_clink() -> np.ndarray:
+    """Bozuk para cam kumbaraya düşer: parlak bir "tın" ve para yerine otururken ikinci, küçük bir "tın"."""
+    t = times(0.5)
+    out = np.zeros(len(t))
+    for start, base, gain in ((0.0, 2950.0, 1.0), (0.07, 3300.0, 0.45)):
+        tt = np.maximum(t - start, 0)
+        hit = np.zeros(len(t))
+        for ratio, decay, partial_gain in ((1.0, 0.13, 1.0), (2.32, 0.07, 0.5), (4.1, 0.04, 0.25)):
+            hit += partial_gain * np.sin(2 * np.pi * base * ratio * tt) * np.exp(-tt / decay)
+        out += gain * hit * (t >= start)
+    tap = sosfilt(butter(2, [3000, 9000], "band", fs=SR, output="sos"), rng.standard_normal(int(0.004 * SR)))
+    out[: len(tap)] += tap * np.hanning(len(tap)) * 0.4 / np.max(np.abs(tap))
+    return fade_edges(linear_reverb(lowpass(out, 9000), wet=0.18, seconds=0.4), fade_out=0.1)
+
+
 def main() -> None:
     write("music/home_theme.ogg", make_music())
     write("ambience/wind_loop.ogg", make_wind())
@@ -610,6 +626,7 @@ def main() -> None:
     write("sfx/hay_rustle.ogg", make_hay_rustle())
     write("sfx/milk_squirt.ogg", make_milk_squirt())
     write("sfx/cow_bell.ogg", make_cow_bell())
+    write("sfx/coin_clink.ogg", make_coin_clink())
 
 
 if __name__ == "__main__":

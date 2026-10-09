@@ -9,9 +9,11 @@
 [ext_resource type="Texture2D" path="res://assets/art/market/hedgehog_body.svg" id="7_hedgehog_body"]
 [ext_resource type="Texture2D" path="res://assets/art/market/hedgehog_head.svg" id="8_hedgehog_head"]
 [ext_resource type="PackedScene" path="res://scenes/market/request_bubble.tscn" id="9_bubble"]
+[ext_resource type="PackedScene" path="res://scenes/field/effects/heart_burst.tscn" id="10_hearts"]
 
 [node name="Customer" type="Node2D"]
 script = ExtResource("1_script")
+heart_scene = ExtResource("10_hearts")
 
 [node name="Shadow" type="Sprite2D" parent="."]
 scale = Vector2(0.75, 1)

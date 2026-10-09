@@ -16,7 +16,11 @@
 [ext_resource type="Texture2D" path="res://assets/art/market/stall_frame.svg" id="15_frame"]
 [ext_resource type="Texture2D" path="res://assets/art/market/stall_awning.svg" id="16_awning"]
 [ext_resource type="Texture2D" path="res://assets/art/market/stall_counter.svg" id="17_counter"]
-[ext_resource type="Texture2D" path="res://assets/art/market/coin_jar.svg" id="18_jar"]
+[ext_resource type="Script" path="res://scripts/market/coin_jar.gd" id="18_jar_script"]
+[ext_resource type="Texture2D" path="res://assets/art/market/coin_jar_back.svg" id="jar_back"]
+[ext_resource type="Texture2D" path="res://assets/art/market/coin_jar_front.svg" id="jar_front"]
+[ext_resource type="Texture2D" path="res://assets/art/market/coin.svg" id="coin"]
+[ext_resource type="Texture2D" path="res://assets/art/market/coin_flat.svg" id="coin_flat"]
 [ext_resource type="PackedScene" path="res://scenes/entities/girl.tscn" id="19_girl"]
 [ext_resource type="Texture2D" path="res://assets/art/ui/icons/home.svg" id="20_home"]
 [ext_resource type="PackedScene" path="res://scenes/entities/basket.tscn" id="basket_scene"]
@@ -250,9 +254,24 @@ texture = ExtResource("17_counter")
 centered = false
 offset = Vector2(-370, -32)
 
-[node name="CoinJar" type="Sprite2D" parent="World/Stall"]
+[node name="CoinJar" type="Node2D" parent="World/Stall" node_paths=PackedStringArray("flights")]
 position = Vector2(-250, -24)
-texture = ExtResource("18_jar")
+script = ExtResource("18_jar_script")
+coin_texture = ExtResource("coin")
+coin_flat_texture = ExtResource("coin_flat")
+flights = NodePath("../../Flights")
+
+[node name="Body" type="Node2D" parent="World/Stall/CoinJar"]
+
+[node name="Back" type="Sprite2D" parent="World/Stall/CoinJar/Body"]
+texture = ExtResource("jar_back")
+centered = false
+offset = Vector2(-60, -150)
+
+[node name="Coins" type="Node2D" parent="World/Stall/CoinJar/Body"]
+
+[node name="Front" type="Sprite2D" parent="World/Stall/CoinJar/Body"]
+texture = ExtResource("jar_front")
 centered = false
 offset = Vector2(-60, -150)
 

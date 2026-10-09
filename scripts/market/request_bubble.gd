@@ -4,7 +4,8 @@ extends Node2D
 ## iki yumurta istenirse iki yumurta resmi görünür. Balonun genişliği yuva sayısına göre seçilir.
 ## Müşteriye verilen ürünün yuvası dolar: yuva yeşile döner, ürün resmi zıplar, köşesinde bir onay işareti
 ## belirir ve yıldızlar saçılır.
-## Kök noktası balonun kuyruğunun ucudur. Açılırken büyüyerek belirir, açıkken hafifçe süzülür.
+## Kök noktası balonun kuyruğunun ucudur. Açılırken büyüyerek belirir, açıkken hafifçe süzülür, kapanırken
+## küçülerek kaybolur.
 
 const POP_TIME: float = 0.3
 const BOB: float = 8.0
@@ -54,6 +55,17 @@ func open(order: Array[StringName]) -> void:
 	show()
 	_pop_tween = create_tween()
 	_pop_tween.tween_property(self, ^"scale", Vector2.ONE, POP_TIME).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+
+
+## Balon küçülerek kapanır.
+func close() -> void:
+	if not visible:
+		return
+	if _pop_tween != null:
+		_pop_tween.kill()
+	_pop_tween = create_tween()
+	_pop_tween.tween_property(self, ^"scale", Vector2.ZERO, POP_TIME).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_IN)
+	_pop_tween.tween_callback(hide)
 
 
 ## index. yuvayı dolu gösterir.
