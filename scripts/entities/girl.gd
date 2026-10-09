@@ -6,6 +6,9 @@ extends Node2D
 ## işlerin (hasat, ekim...) kendi sesi zaten vardır, her seferinde üstüne bir ses daha binmesin.
 ## Sürekli nefes, gövde/baş sallanması ve şapka/örgü salınımı sahnedeki bileşenlerle yapılır
 ## (PulseComponent, SwayComponent, SpringFollowComponent).
+## Başında hasır şapka ya da Dükkân'dan alınmış bir aksesuar durur (wear). Açılışta Owned'daki takılı
+## aksesuarı takar; aksesuarlar Head/Wearables altında, kimliğinin PascalCase adıyla durur (flower_crown ->
+## FlowerCrown).
 
 const BLINK_CLOSED_TIME: float = 0.12
 const WAVE_RAISE_TIME: float = 0.45
@@ -59,6 +62,8 @@ var _wave_timer: Timer
 @onready var _mouth_smile: CanvasItem = $Body/Torso/Head/Mouth/Smile
 @onready var _mouth_open: CanvasItem = $Body/Torso/Head/Mouth/Open
 @onready var _tap_area: Tappable = $TapArea
+@onready var _hat: Sprite2D = $Body/Torso/Head/Hat
+@onready var _wearables: Node2D = $Body/Torso/Head/Wearables
 @onready var _hearts: CPUParticles2D = $Hearts
 @onready var _stars: CPUParticles2D = $Stars
 
@@ -71,6 +76,34 @@ func _ready() -> void:
 	_wave_timer = _make_timer(_wave)
 	_restart(_blink_timer, blink_interval_min, blink_interval_max)
 	_restart(_wave_timer, wave_interval_min, wave_interval_max)
+	wear(Owned.worn())
+
+
+## Başına item kimlikli aksesuarı takar; boşsa ya da öyle bir aksesuar yoksa hasır şapkayı.
+func wear(item: StringName) -> void:
+	var worn: Sprite2D = _wearable(item)
+	for child: Node in _wearables.get_children():
+		if child is CanvasItem:
+			(child as CanvasItem).visible = child == worn
+	_hat.visible = worn == null
+
+
+## item kimlikli aksesuarın (boşsa hasır şapkanın) başta dururkenki resmi; uçan kopyası için.
+func wear_sprite(item: StringName) -> Sprite2D:
+	var sprite: Sprite2D = _wearable(item)
+	return sprite if sprite != null else _hat
+
+
+## wear_sprite'ın başta dururkenki ortası (dünya konumu).
+func wear_center(item: StringName) -> Vector2:
+	var sprite: Sprite2D = wear_sprite(item)
+	return sprite.to_global(sprite.get_rect().get_center())
+
+
+func _wearable(item: StringName) -> Sprite2D:
+	if item == &"":
+		return null
+	return _wearables.get_node_or_null(NodePath(String(item).to_pascal_case())) as Sprite2D
 
 
 func _blink() -> void:

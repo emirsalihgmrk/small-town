@@ -1,16 +1,19 @@
 extends Node
 ## Dükkândan alınanlar (autoload: Owned). Etikete konan her para hemen ortak paradan (Wallet) düşer ve o
 ## ürünün yarım ödemesine yazılır; ödeme fiyata ulaşınca ürün alınmış olur (purchased) ve bir daha satılmaz.
-## İçerik SaveGame'in "shop" bölümünde kalıcı tutulur: alınanlar ve yarım ödemeler. Ürün kimlikleri ve
-## fiyatlar ShopItems'tadır.
+## Kızın taktığı aksesuar da burada tutulur (worn; boşsa hasır şapka). Kız her bölümde açılışta onu takar.
+## İçerik SaveGame'in "shop" bölümünde kalıcı tutulur: alınanlar, yarım ödemeler ve takılı aksesuar. Ürün
+## kimlikleri ve fiyatlar ShopItems'tadır.
 
 signal paid_changed(item: StringName, paid: int)
 signal purchased(item: StringName)
+signal worn_changed(item: StringName)
 
 const SECTION: String = "shop"
 
 var _owned: Array[StringName] = []
 var _paid: Dictionary[StringName, int] = {}
+var _worn: StringName = &""
 
 
 func _ready() -> void:
@@ -27,6 +30,9 @@ func _ready() -> void:
 			var item: StringName = StringName(str(key))
 			if ShopItems.PRICES.has(item) and not _owned.has(item):
 				_paid[item] = clampi(int(paid[key]), 0, ShopItems.price(item) - 1)
+	var worn: StringName = StringName(str(saved.get("worn", "")))
+	if _owned.has(worn) and ShopItems.kind(worn) == ShopItems.Kind.ACCESSORY:
+		_worn = worn
 
 
 func has(item: StringName) -> bool:
@@ -40,6 +46,22 @@ func paid(item: StringName) -> int:
 ## Ürünün tamamlanması için daha kaç para gerektiği (alınmışsa 0).
 func remaining(item: StringName) -> int:
 	return 0 if has(item) else ShopItems.price(item) - paid(item)
+
+
+## Kızın taktığı aksesuar; hasır şapkadaysa boş.
+func worn() -> StringName:
+	return _worn
+
+
+## Alınmış bir aksesuarı takar; boş verilirse hasır şapkaya döner. Alınmamış ya da süs ise hiçbir şey yapmaz.
+func wear(item: StringName) -> void:
+	if item == _worn:
+		return
+	if item != &"" and not (has(item) and ShopItems.kind(item) == ShopItems.Kind.ACCESSORY):
+		return
+	_worn = item
+	_store()
+	worn_changed.emit(item)
 
 
 ## Ürüne bir para öder (Wallet'tan düşer). Para yoksa ya da ürün alınmışsa false döner.
@@ -66,5 +88,5 @@ func _store() -> void:
 	var paid: Dictionary = {}
 	for item: StringName in _paid:
 		paid[String(item)] = _paid[item]
-	SaveGame.set_section(SECTION, {"owned": owned, "paid": paid})
+	SaveGame.set_section(SECTION, {"owned": owned, "paid": paid, "worn": String(_worn)})
 	SaveGame.request_save()

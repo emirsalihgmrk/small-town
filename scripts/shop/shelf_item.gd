@@ -5,7 +5,8 @@ extends Node2D
 ## yetiyorsa ürün sevinçle zıplar (hop), yetmiyorsa etiketi sallanır (nudge).
 ## Kumbaradan çekilen para ürünün üstüne getirilince ürün parlar (set_highlighted); para etiketin sıradaki
 ## yuvasına uçar (coin_target, coin_arrived). Açılışta yarım ödemeler ve alınmışlık Owned'dan kurulur;
-## alınmış ürünün etiketinde rozet durur ve ona para konmaz.
+## alınmış ürünün etiketinde rozet durur ve ona para konmaz. Kızın başındaki aksesuarın minderi boş durur
+## (set_worn).
 ## Kök noktası ürünün rafa değdiği yerin ortasıdır; etiket rafın kenarındadır (tag_offset).
 
 signal tapped(item: ShelfItem)
@@ -20,6 +21,7 @@ const SQUASH_TIME: float = 0.07
 const SHAKE_DEGREES: float = 4.0
 const SHAKE_TIME: float = 0.07
 const HIGHLIGHT_COLOR: Color = Color(1.18, 1.18, 1.1)
+const RETURN_POP_TIME: float = 0.3
 
 @export var item: StringName
 @export var texture: Texture2D
@@ -47,6 +49,7 @@ func _ready() -> void:
 	_tag.set_price(ShopItems.price(item), Owned.paid(item))
 	if Owned.has(item):
 		_tag.set_owned(false)
+	set_worn(Owned.worn() == item, false)
 	var top: float = -lift - size.y - TAP_MARGIN
 	var width: float = maxf(size.x, _cushion.texture.get_width() if on_cushion else 0.0) + TAP_MARGIN * 2.0
 	_tap_area.area = Rect2(-width * 0.5, top, width, tag_offset.y + PriceTag.SLOT_SIZE - top)
@@ -87,6 +90,30 @@ func coin_arrived() -> void:
 ## Ürün alındı: etiketin yerine rozet çıkar.
 func mark_owned() -> void:
 	_tag.set_owned()
+
+
+## Aksesuar kızın başındayken minderi boş kalır; geri gelince (animate ise) büyüyerek yerine oturur.
+func set_worn(worn: bool, animate: bool = true) -> void:
+	_art.visible = not worn
+	if worn or not animate:
+		return
+	var rest: Vector2 = Vector2.ONE * art_scale
+	_art.scale = Vector2.ZERO
+	create_tween().tween_property(_art, ^"scale", rest, RETURN_POP_TIME).set_trans(Tween.TRANS_BACK) \
+			.set_ease(Tween.EASE_OUT)
+
+
+func art_texture() -> Texture2D:
+	return _art.texture
+
+
+## Ürün resminin ortası ve ölçeği (dünyada); uçan kopyası buradan kalkar.
+func art_center() -> Vector2:
+	return _art.global_position
+
+
+func art_global_scale() -> Vector2:
+	return _art.global_scale
 
 
 ## Parası yetiyor: ürün yerinde sevinçle zıplar.

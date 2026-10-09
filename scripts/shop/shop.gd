@@ -6,7 +6,11 @@ extends Node2D
 ## Satın alma: paralar kumbaradan parmakla tek tek ürüne götürülür (CoinHand); her para etiketin sıradaki
 ## yuvasına oturur ve o anda ödenmiş sayılır (Owned). Son yuva dolunca etiketin yerine rozet çıkar, tilki
 ## (Shopkeeper) sevinçle zıplayıp paketi uzatır, paket kavis çizerek kıza uçar ve kız sevinir.
-## Ürüne dokununca: alınmışsa ya da kalan parası yetiyorsa ürün zıplar (yetiyorsa kumbara da esneyip
+## Takma: alınmış bir aksesuara dokununca aksesuar raftan kızın başına uçar, kız sevinir; başındaki eski
+## aksesuar minderine, hasır şapka kapının yanındaki askıya (HatHook) döner. Askıdaki hasır şapkaya ya da
+## boş minderine (kızın başındaki aksesuarın) dokununca hasır şapka başa döner. Takılan Owned'a yazılır,
+## kız her bölümde onu takar. Uçuş sürerken yeni takma isteği yok sayılır.
+## Ürüne dokununca: alınmış süsse ya da kalan parası yetiyorsa ürün zıplar (yetiyorsa kumbara da esneyip
 ## paraların yerini gösterir); yetmiyorsa etiketi sallanır ve kumbaranın üstünde Pazar'ı gösteren balon bir
 ## süre açılır. Boş kumbaradan para çekilmeye çalışılınca da balon açılır. Alınmamış hiçbir ürüne para
 ## yetmiyorsa balon sürekli açık durur. Balona dokununca Pazar'a gidilir.
@@ -26,6 +30,9 @@ const GIFT_ARC_HEIGHT: float = 220.0
 const GIFT_ARRIVE_SCALE: float = 0.5
 ## Paketin kıza vardığı yer (kızın kök noktasına göre): göğsünün önü.
 const GIRL_CHEST: Vector2 = Vector2(30.0, -170.0)
+const WEAR_FLIGHT_TIME: float = 0.6
+const WEAR_ARC_HEIGHT: float = 160.0
+const HOOK_POP_TIME: float = 0.3
 const SCREEN_WIDTH: float = 1920.0
 const MAX_SOUND_PAN: float = 0.6
 
@@ -50,6 +57,11 @@ var _gift_sound: AudioStream
 @onready var _bubble: Node2D = $World/MarketBubble
 @onready var _bubble_tap: Tappable = $World/MarketBubble/TapArea
 @onready var _hint_timer: Timer = $HintTimer
+@onready var _hook_hat: Sprite2D = $World/HatHook/Hat
+@onready var _hook_tap: Tappable = $World/HatHook/TapArea
+
+var _dressing: bool = false
+var _hook_hat_scale: Vector2
 
 
 func _ready() -> void:
@@ -60,6 +72,9 @@ func _ready() -> void:
 	for node: Node in _shelf_items.get_children():
 		(node as ShelfItem).tapped.connect(_on_item_tapped)
 	_coin_hand.coin_placed.connect(_on_coin_placed)
+	_hook_hat_scale = _hook_hat.scale
+	_hook_hat.visible = Owned.worn() != &""
+	_hook_tap.tapped.connect(func(_point: Vector2) -> void: _dress(&""))
 	_coin_hand.refused.connect(_show_hint)
 	_bubble_scale = _bubble.scale
 	_bubble.hide()
@@ -74,7 +89,12 @@ func _ready() -> void:
 
 func _on_item_tapped(item: ShelfItem) -> void:
 	if item.is_owned():
-		item.hop()
+		if ShopItems.kind(item.item) != ShopItems.Kind.ACCESSORY:
+			item.hop()
+		elif Owned.worn() == item.item:
+			_dress(&"")
+		else:
+			_dress(item.item)
 		return
 	if Wallet.count() >= item.remaining():
 		item.hop()
@@ -114,10 +134,69 @@ func _deliver() -> void:
 		_girl.cheer())
 
 
-## İkinci dereceden Bezier: başlangıç ve varışın ortasının GIFT_ARC_HEIGHT üstünden geçer.
-func _fly(t: float, gift: Node2D, start: Vector2, end: Vector2) -> void:
-	var control: Vector2 = (start + end) * 0.5 + Vector2(0.0, -GIFT_ARC_HEIGHT)
-	gift.position = start.lerp(control, t).lerp(control.lerp(end, t), t)
+## İkinci dereceden Bezier: başlangıç ve varışın ortasının arc kadar üstünden geçer.
+func _fly(t: float, node: Node2D, start: Vector2, end: Vector2, arc: float = GIFT_ARC_HEIGHT) -> void:
+	var control: Vector2 = (start + end) * 0.5 + Vector2(0.0, -arc)
+	node.position = start.lerp(control, t).lerp(control.lerp(end, t), t)
+
+
+## Kızın başına item'ı (boşsa hasır şapkayı) takar: raftan ya da askıdan başına uçar.
+func _dress(item: StringName) -> void:
+	var old: StringName = Owned.worn()
+	if _dressing or item == old:
+		return
+	_dressing = true
+	var flying: Sprite2D = Sprite2D.new()
+	var from: Vector2
+	if item == &"":
+		flying.texture = _hook_hat.texture
+		flying.scale = _hook_hat.global_scale
+		flying.rotation = _hook_hat.global_rotation
+		from = _hook_hat.global_position
+		_hook_hat.hide()
+	else:
+		var shelf_item: ShelfItem = _shelf_item(item)
+		flying.texture = shelf_item.art_texture()
+		flying.scale = shelf_item.art_global_scale()
+		from = shelf_item.art_center()
+		shelf_item.set_worn(true)
+	var target: Sprite2D = _girl.wear_sprite(item)
+	_flights.add_child(flying)
+	var start: Vector2 = _flights.to_local(from)
+	var end: Vector2 = _flights.to_local(_girl.wear_center(item))
+	flying.position = start
+	var pan: float = clampf((from.x / SCREEN_WIDTH) * 2.0 - 1.0, -1.0, 1.0) * MAX_SOUND_PAN
+	AudioManager.play_sfx(_gift_sound, AudioManager.BUS_SFX, 0.0, randf_range(1.05, 1.15), pan)
+	var tween: Tween = flying.create_tween().set_parallel()
+	tween.tween_method(_fly.bind(flying, start, end, WEAR_ARC_HEIGHT), 0.0, 1.0, WEAR_FLIGHT_TIME) \
+			.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	tween.tween_property(flying, ^"scale", target.global_scale, WEAR_FLIGHT_TIME)
+	tween.tween_property(flying, ^"rotation", target.global_rotation, WEAR_FLIGHT_TIME)
+	tween.chain().tween_callback(func() -> void:
+		flying.queue_free()
+		_girl.wear(item)
+		_girl.cheer()
+		Owned.wear(item)
+		_take_off(old)
+		_dressing = false)
+
+
+## Başından çıkan old (boşsa hasır şapka) yerine döner: minderine ya da askıya.
+func _take_off(old: StringName) -> void:
+	if old != &"":
+		_shelf_item(old).set_worn(false)
+		return
+	_hook_hat.show()
+	_hook_hat.scale = Vector2.ZERO
+	create_tween().tween_property(_hook_hat, ^"scale", _hook_hat_scale, HOOK_POP_TIME) \
+			.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+
+
+func _shelf_item(item: StringName) -> ShelfItem:
+	for node: Node in _shelf_items.get_children():
+		if (node as ShelfItem).item == item:
+			return node as ShelfItem
+	return null
 
 
 func _show_hint() -> void:
