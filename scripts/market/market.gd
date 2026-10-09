@@ -7,6 +7,8 @@ extends Node2D
 ## İstek tamamlanınca müşteri teşekkür eder (balonu kapanır, kalpler çıkar) ve istediği her ürün için bir
 ## bozuk parayı tezgâhtaki kumbaraya (CoinJar) atar; sonra sağa yürüyüp gider, kız arkasından el sallar.
 ## Biraz sonra sıradaki müşteri gelir.
+## Uzun süre dokunulmazsa kız esner. Tente rüzgârda dalgalanır, tentenin üstüne arada bir kuş konar
+## (FieldBird), meydanda kelebekler gezinir (Butterfly); müşteriye dokunulabilir (Customer).
 ## Sepet boşsa müşteri gelmez; tezgâhın üstünde tarlayı gösteren bir balon durur, balona dokununca
 ## tarlaya gidilir. Sepete ürün girince balon kapanır ve müşteri yola çıkar.
 ## Kumbaradaki para sayısı, sıradaki müşterinin kim olduğu ve isteği tamamlanmamış müşteri (görünüşü,
@@ -17,6 +19,8 @@ extends Node2D
 ## kaldıysa müşteri hemen öder ve gider.
 
 const SECTION: String = "market"
+## Esneme zamanı geldiğinde kız başka bir hareketteyse bu kadar sonra yeniden denenir.
+const YAWN_RETRY_TIME: float = 2.0
 const FIELD_SECTION: StringName = &"field"
 ## Kızın tezgâha (sağa) bakan kolu.
 const GIRL_STALL_ARM: int = 1
@@ -36,10 +40,13 @@ const LEAVE_DELAY: float = 0.7
 @export_range(0.0, 30.0, 0.5, "suffix:s") var customer_delay: float = 1.5
 ## Bir müşteri gittikten sonra sıradakinin yola çıkmasına kadar geçen süre.
 @export_range(0.0, 30.0, 0.5, "suffix:s") var next_customer_delay: float = 3.0
+## Bu kadar süre hiç dokunulmazsa kız esner (sonra yine aynı süre beklenir).
+@export_range(5.0, 120.0, 1.0, "suffix:s") var idle_yawn_time: float = 25.0
 
 var _next_kind: int = 0
 ## Ödeme sürerken müşterinin henüz kumbaraya atmadığı paralar.
 var _unpaid: int = 0
+var _idle_time: float = 0.0
 var _empty_bubble_scale: Vector2
 var _empty_bubble_tween: Tween
 
@@ -76,6 +83,17 @@ func _ready() -> void:
 	SaveGame.before_save.connect(_store)
 	_restore()
 	_refresh()
+
+
+func _process(delta: float) -> void:
+	_idle_time += delta
+	if _idle_time >= idle_yawn_time:
+		_idle_time = 0.0 if _girl.yawn() else idle_yawn_time - YAWN_RETRY_TIME
+
+
+func _input(event: InputEvent) -> void:
+	if event is InputEventScreenTouch or event is InputEventScreenDrag:
+		_idle_time = 0.0
 
 
 func _exit_tree() -> void:

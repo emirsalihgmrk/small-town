@@ -9,6 +9,7 @@ extends Node2D
 ## sevinçle zıplar. Ürün müşterinin üstüne ya da balonuna bırakılabilir; parmaktaki ürün oradayken müşteri
 ## hafifçe büyür.
 ## İsteği tamamlanınca balonu kapanır ve başından kalpler çıkar (thank); sonra sağa yürüyüp gider (leave).
+## Beklerken dokununca hışırtıyla sevinip zıplar ve başından kalpler çıkar; yürürken dokunuş yok sayılır.
 
 signal arrived
 signal item_received(slot: int)
@@ -44,6 +45,7 @@ const HEART_BELOW_BUBBLE: float = 40.0
 
 @export var heart_scene: PackedScene
 @export_file("*.ogg", "*.wav") var receive_sound_path: String = "res://assets/audio/sfx/basket_drop.ogg"
+@export_file("*.ogg", "*.wav") var tap_sound_path: String = "res://assets/audio/sfx/feather_fluff.ogg"
 
 var state: State = State.AWAY
 ## Görünüşün Looks altındaki sırası.
@@ -58,6 +60,7 @@ var _hop_tween: Tween
 var _highlighted: bool = false
 var _looks: Array[Node2D] = []
 var _receive_sound: AudioStream
+var _tap_sound: AudioStream
 
 @onready var _hop: Node2D = $Hop
 @onready var _bubble: RequestBubble = $Bubble
@@ -66,6 +69,9 @@ var _receive_sound: AudioStream
 func _ready() -> void:
 	if ResourceLoader.exists(receive_sound_path):
 		_receive_sound = load(receive_sound_path) as AudioStream
+	if ResourceLoader.exists(tap_sound_path):
+		_tap_sound = load(tap_sound_path) as AudioStream
+	($TapArea as Tappable).tapped.connect(func(_point: Vector2) -> void: _on_tapped())
 	_looks.assign($Hop/Looks.get_children())
 	for look: Node2D in _looks:
 		Oscillation.ping_pong(self, look, ^"scale:y", 1.0, BREATH_SCALE, BREATH_PERIOD, 0.1)
@@ -142,12 +148,7 @@ func is_complete() -> bool:
 ## Balonu kapanır, başından kalpler çıkar ve sevinçle zıplar.
 func thank() -> void:
 	_bubble.close()
-	if heart_scene != null:
-		var hearts: CPUParticles2D = heart_scene.instantiate() as CPUParticles2D
-		add_child(hearts)
-		hearts.position = _bubble.position + Vector2(0.0, HEART_BELOW_BUBBLE)
-		hearts.finished.connect(hearts.queue_free)
-		hearts.emitting = true
+	_burst_hearts()
 	_happy_hop()
 
 
@@ -221,6 +222,26 @@ func receive(slot: int) -> void:
 	item_received.emit(slot)
 	if not _filled.has(false):
 		order_completed.emit()
+
+
+## Önceki zıplama bitmeden gelen dokunuş yok sayılır.
+func _on_tapped() -> void:
+	if state != State.WAITING or (_hop_tween != null and _hop_tween.is_running()):
+		return
+	var pan: float = clampf((global_position.x / SCREEN_WIDTH) * 2.0 - 1.0, -1.0, 1.0) * MAX_SOUND_PAN
+	AudioManager.play_sfx(_tap_sound, AudioManager.BUS_SFX, 0.0, randf_range(0.9, 1.1), pan)
+	_burst_hearts()
+	_happy_hop()
+
+
+func _burst_hearts() -> void:
+	if heart_scene == null:
+		return
+	var hearts: CPUParticles2D = heart_scene.instantiate() as CPUParticles2D
+	add_child(hearts)
+	hearts.position = _bubble.position + Vector2(0.0, HEART_BELOW_BUBBLE)
+	hearts.finished.connect(hearts.queue_free)
+	hearts.emitting = true
 
 
 func _happy_hop() -> void:

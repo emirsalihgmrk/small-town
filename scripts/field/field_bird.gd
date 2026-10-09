@@ -2,6 +2,8 @@ class_name FieldBird
 extends Node2D
 ## Tarlaya arada bir uçarak gelen kuş. Tercihen ekili bir parselin üstüne, yoksa çitin üstüne konar;
 ## gagalar, bir süre sonra uçup gider. Dokununca cıvıldayıp hemen kaçar. Bitkilere dokunmaz.
+## Parsel kökü verilmezse (ör. pazarda) hep çite, yani fence_top_y yüksekliğinde perch_x_min..perch_x_max
+## arasına (pazarda tentenin üstü) konar.
 ## Kök noktası kuşun ayaklarıdır; görsel Body altında sağa bakar, ters yöne giderken kök aynalanır.
 
 enum Mode { AWAY, ARRIVING, PERCHED, LEAVING }
@@ -21,8 +23,6 @@ const PECK_INTERVAL_MIN: float = 0.6
 const PECK_INTERVAL_MAX: float = 1.4
 ## Ekili parsel varken bile ara sıra çite konsun.
 const FENCE_CHANCE: float = 0.25
-const FENCE_X_MIN: float = 80.0
-const FENCE_X_MAX: float = 1840.0
 const PLOT_PERCH_X: float = 110.0
 const PLOT_PERCH_Y: float = 20.0
 const MAX_SOUND_PAN: float = 0.7
@@ -30,6 +30,9 @@ const MAX_SOUND_PAN: float = 0.7
 @export var plots_root: Node2D
 ## Çitin üst kalasının üstü (dünya y).
 @export var fence_top_y: float = 584.0
+## Çitin üstünde konulabilecek yatay aralık (dünya x).
+@export var perch_x_min: float = 80.0
+@export var perch_x_max: float = 1840.0
 @export_range(1.0, 120.0, 0.5, "suffix:s") var visit_interval_min: float = 12.0
 @export_range(1.0, 120.0, 0.5, "suffix:s") var visit_interval_max: float = 25.0
 @export_range(1.0, 60.0, 0.5, "suffix:s") var stay_min: float = 6.0
@@ -150,12 +153,13 @@ func _set_flapping(flapping: bool) -> void:
 ## Ekili parsellerden birinin üstü; yoksa (ya da ara sıra) çitin üstünde bir yer.
 func _pick_perch() -> Vector2:
 	var spots: Array[Vector2] = []
-	for node: Node in plots_root.get_children():
-		var plot: Plot = node as Plot
-		if plot != null and plot.state == Plot.State.SOWN:
-			spots.append(plot.to_global(Vector2(randf_range(-PLOT_PERCH_X, PLOT_PERCH_X), randf_range(-PLOT_PERCH_Y, PLOT_PERCH_Y))))
+	if plots_root != null:
+		for node: Node in plots_root.get_children():
+			var plot: Plot = node as Plot
+			if plot != null and plot.state == Plot.State.SOWN:
+				spots.append(plot.to_global(Vector2(randf_range(-PLOT_PERCH_X, PLOT_PERCH_X), randf_range(-PLOT_PERCH_Y, PLOT_PERCH_Y))))
 	if spots.is_empty() or randf() < FENCE_CHANCE:
-		return Vector2(randf_range(FENCE_X_MIN, FENCE_X_MAX), fence_top_y)
+		return Vector2(randf_range(perch_x_min, perch_x_max), fence_top_y)
 	return spots.pick_random()
 
 

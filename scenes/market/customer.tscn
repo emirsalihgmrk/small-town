@@ -10,6 +10,7 @@
 [ext_resource type="Texture2D" path="res://assets/art/market/hedgehog_head.svg" id="8_hedgehog_head"]
 [ext_resource type="PackedScene" path="res://scenes/market/request_bubble.tscn" id="9_bubble"]
 [ext_resource type="PackedScene" path="res://scenes/field/effects/heart_burst.tscn" id="10_hearts"]
+[ext_resource type="Script" path="res://scripts/input/tappable.gd" id="11_tappable"]
 
 [node name="Customer" type="Node2D"]
 script = ExtResource("1_script")
@@ -80,3 +81,8 @@ offset = Vector2(-100, -160)
 position = Vector2(0, -280)
 
 [node name="Bubble" parent="." instance=ExtResource("9_bubble")]
+
+[node name="TapArea" type="Node2D" parent="."]
+script = ExtResource("11_tappable")
+area = Rect2(-100, -330, 200, 340)
+priority = 4
