@@ -1,0 +1,25 @@
+[gd_scene format=3]
+
+[ext_resource type="Texture2D" path="res://assets/art/ui/icons/shop/bag.svg" id="1_bag"]
+[ext_resource type="Texture2D" path="res://assets/art/ui/icons/shop/sparkle.svg" id="2_sparkle"]
+
+[node name="ShopIcon" type="Node2D"]
+
+[node name="Bag" type="Sprite2D" parent="."]
+position = Vector2(-6, 12)
+texture = ExtResource("1_bag")
+centered = false
+offset = Vector2(-76, -92)
+
+[node name="Sparkle1" type="Sprite2D" parent="."]
+position = Vector2(66, -62)
+texture = ExtResource("2_sparkle")
+centered = false
+offset = Vector2(-22, -22)
+
+[node name="Sparkle2" type="Sprite2D" parent="."]
+position = Vector2(-74, -52)
+scale = Vector2(0.65, 0.65)
+texture = ExtResource("2_sparkle")
+centered = false
+offset = Vector2(-22, -22)

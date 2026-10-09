@@ -11,6 +11,7 @@ const SECTION_SCENES: Dictionary[StringName, String] = {
 	&"bakery": "res://scenes/bakery/bakery.tscn",
 	&"barn": "res://scenes/barn/barn.tscn",
 	&"market": "res://scenes/market/market.tscn",
+	&"shop": "res://scenes/shop/shop.tscn",
 }
 ## Her şeyin, ana ekrandaki kartlar dahil, üstünde kalsın.
 const CURTAIN_LAYER: int = 100

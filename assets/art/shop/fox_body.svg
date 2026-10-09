@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="240" height="186" viewBox="-90 -172 240 186">
+<path d="M48 -40 Q110 -40 128 -92 Q138 -122 116 -126 Q104 -90 52 -74 Z" fill="#f28c38" stroke="#c4631c" stroke-width="5" stroke-linejoin="round"/>
+<path d="M128 -92 Q138 -122 116 -126 Q112 -110 106 -100 Z" fill="#fff4e6"/>
+<ellipse cx="-30" cy="-10" rx="28" ry="13" fill="#5a3a2a" stroke="#3a2a22" stroke-width="4"/>
+<ellipse cx="30" cy="-10" rx="28" ry="13" fill="#5a3a2a" stroke="#3a2a22" stroke-width="4"/>
+<ellipse cx="-64" cy="-96" rx="17" ry="38" fill="#f28c38" stroke="#c4631c" stroke-width="4" transform="rotate(18 -64 -96)"/>
+<ellipse cx="64" cy="-96" rx="17" ry="38" fill="#f28c38" stroke="#c4631c" stroke-width="4" transform="rotate(-18 64 -96)"/>
+<path d="M-44 -150 Q-54 -150 -56 -136 L-62 -36 Q-64 -18 -44 -18 L44 -18 Q64 -18 62 -36 L56 -136 Q54 -150 44 -150 Z" fill="#f28c38" stroke="#c4631c" stroke-width="5" stroke-linejoin="round"/>
+<path d="M-34 -150 L-26 -120 L26 -120 L34 -150 Z" fill="#fff4e6"/>
+<path d="M-38 -120 L38 -120 L46 -24 Q46 -18 40 -18 L-40 -18 Q-46 -18 -46 -24 Z" fill="#b98fd6" stroke="#8d64b0" stroke-width="5" stroke-linejoin="round"/>
+<path d="M-30 -120 L-40 -150 M30 -120 L40 -150" stroke="#8d64b0" stroke-width="6" stroke-linecap="round"/>
+<rect x="-22" y="-82" width="44" height="34" rx="8" fill="#d2b3ea" stroke="#8d64b0" stroke-width="4"/>
+<path d="M-40 -104 L40 -104" stroke="#d2b3ea" stroke-width="5" stroke-linecap="round" stroke-dasharray="10 8"/>
+</svg>

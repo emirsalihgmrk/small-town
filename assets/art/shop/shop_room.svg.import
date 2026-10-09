@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://ccqbubui6n0ix"
-path="res://.godot/imported/ripple.svg-7f3311e17762a354335816eae24a188d.ctex"
+uid="uid://dscmd4qactb6c"
+path="res://.godot/imported/shop_room.svg-ca162791a8a80890089277df1086aa03.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/art/ui/icons/pond/ripple.svg"
-dest_files=["res://.godot/imported/ripple.svg-7f3311e17762a354335816eae24a188d.ctex"]
+source_file="res://assets/art/shop/shop_room.svg"
+dest_files=["res://.godot/imported/shop_room.svg-ca162791a8a80890089277df1086aa03.ctex"]
 
 [params]
 

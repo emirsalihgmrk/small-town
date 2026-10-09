@@ -23,7 +23,7 @@
 [ext_resource type="PackedScene" path="res://scenes/ui/icons/field_icon.tscn" id="21_field_icon"]
 [ext_resource type="PackedScene" path="res://scenes/ui/icons/barn_icon.tscn" id="22_barn_icon"]
 [ext_resource type="PackedScene" path="res://scenes/ui/icons/coop_icon.tscn" id="23_coop_icon"]
-[ext_resource type="PackedScene" path="res://scenes/ui/icons/pond_icon.tscn" id="24_pond_icon"]
+[ext_resource type="PackedScene" path="res://scenes/ui/icons/shop_icon.tscn" id="24_shop_icon"]
 [ext_resource type="PackedScene" path="res://scenes/ui/icons/market_icon.tscn" id="25_market_icon"]
 [ext_resource type="PackedScene" path="res://scenes/ui/icons/bakery_icon.tscn" id="26_bakery_icon"]
 [ext_resource type="Script" path="res://scripts/components/scene_ambience.gd" id="ambience_script"]
@@ -494,12 +494,12 @@ mouse_filter = 2
 theme_override_constants/separation = 40
 alignment = 1
 
-[node name="PondCard" parent="UI/Root/RightCards" instance=ExtResource("20_section_card")]
+[node name="ShopCard" parent="UI/Root/RightCards" instance=ExtResource("20_section_card")]
 layout_mode = 2
-section_id = &"pond"
-title = "Göl"
-icon_scene = ExtResource("24_pond_icon")
-card_color = Color(0.78, 0.914, 1, 1)
+section_id = &"shop"
+title = "Dükkân"
+icon_scene = ExtResource("24_shop_icon")
+card_color = Color(0.894, 0.851, 1, 1)
 
 [node name="MarketCard" parent="UI/Root/RightCards" instance=ExtResource("20_section_card")]
 layout_mode = 2

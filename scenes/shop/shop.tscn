@@ -1,0 +1,191 @@
+[gd_scene format=3]
+
+[ext_resource type="Texture2D" path="res://assets/art/shop/shop_room.svg" id="1_room"]
+[ext_resource type="Texture2D" path="res://assets/art/shop/shop_sign.svg" id="2_sign"]
+[ext_resource type="Texture2D" path="res://assets/art/shop/shop_bell.svg" id="3_bell"]
+[ext_resource type="Texture2D" path="res://assets/art/shop/shop_shelf.svg" id="4_shelf"]
+[ext_resource type="Texture2D" path="res://assets/art/shop/fox_body.svg" id="5_fox_body"]
+[ext_resource type="Texture2D" path="res://assets/art/shop/fox_head.svg" id="6_fox_head"]
+[ext_resource type="Texture2D" path="res://assets/art/shop/shop_counter.svg" id="7_counter"]
+[ext_resource type="Script" path="res://scripts/market/coin_jar.gd" id="8_jar_script"]
+[ext_resource type="Texture2D" path="res://assets/art/market/coin_jar_back.svg" id="jar_back"]
+[ext_resource type="Texture2D" path="res://assets/art/market/coin_jar_front.svg" id="jar_front"]
+[ext_resource type="Texture2D" path="res://assets/art/market/coin.svg" id="coin"]
+[ext_resource type="Texture2D" path="res://assets/art/market/coin_flat.svg" id="coin_flat"]
+[ext_resource type="PackedScene" path="res://scenes/entities/girl.tscn" id="9_girl"]
+[ext_resource type="PackedScene" path="res://scenes/entities/basket.tscn" id="basket_scene"]
+[ext_resource type="Texture2D" path="res://assets/art/ui/icons/home.svg" id="10_home"]
+[ext_resource type="PackedScene" path="res://scenes/ui/basket_menu.tscn" id="basket_menu"]
+[ext_resource type="Script" path="res://scripts/shop/shop.gd" id="shop_script"]
+[ext_resource type="Script" path="res://scripts/input/tap_router.gd" id="tap_router_script"]
+[ext_resource type="Script" path="res://scripts/components/pause_when_inactive.gd" id="pause_script"]
+[ext_resource type="Script" path="res://scripts/components/scene_ambience.gd" id="ambience_script"]
+
+[sub_resource type="StyleBoxFlat" id="home_normal"]
+bg_color = Color(0.894, 0.851, 1, 1)
+border_width_left = 8
+border_width_top = 8
+border_width_right = 8
+border_width_bottom = 8
+border_color = Color(1, 1, 1, 1)
+corner_radius_top_left = 36
+corner_radius_top_right = 36
+corner_radius_bottom_right = 36
+corner_radius_bottom_left = 36
+shadow_color = Color(0, 0, 0, 0.22)
+shadow_size = 8
+shadow_offset = Vector2(0, 6)
+
+[sub_resource type="StyleBoxFlat" id="home_hover"]
+bg_color = Color(0.907, 0.869, 1, 1)
+border_width_left = 8
+border_width_top = 8
+border_width_right = 8
+border_width_bottom = 8
+border_color = Color(1, 1, 1, 1)
+corner_radius_top_left = 36
+corner_radius_top_right = 36
+corner_radius_bottom_right = 36
+corner_radius_bottom_left = 36
+shadow_color = Color(0, 0, 0, 0.22)
+shadow_size = 8
+shadow_offset = Vector2(0, 6)
+
+[sub_resource type="StyleBoxFlat" id="home_pressed"]
+bg_color = Color(0.805, 0.766, 0.9, 1)
+border_width_left = 8
+border_width_top = 8
+border_width_right = 8
+border_width_bottom = 8
+border_color = Color(1, 1, 1, 1)
+corner_radius_top_left = 36
+corner_radius_top_right = 36
+corner_radius_bottom_right = 36
+corner_radius_bottom_left = 36
+shadow_color = Color(0, 0, 0, 0.22)
+shadow_size = 8
+shadow_offset = Vector2(0, 6)
+
+[sub_resource type="StyleBoxEmpty" id="home_focus"]
+
+[node name="Shop" type="Node2D"]
+script = ExtResource("shop_script")
+
+[node name="World" type="Node2D" parent="."]
+
+[node name="Room" type="Sprite2D" parent="World"]
+texture = ExtResource("1_room")
+centered = false
+
+[node name="Sign" type="Sprite2D" parent="World"]
+position = Vector2(830, 120)
+texture = ExtResource("2_sign")
+centered = false
+offset = Vector2(-150, -10)
+
+[node name="Bell" type="Sprite2D" parent="World"]
+position = Vector2(458, 244)
+texture = ExtResource("3_bell")
+centered = false
+offset = Vector2(-30, -4)
+
+[node name="Shelf" type="Sprite2D" parent="World"]
+position = Vector2(1500, 890)
+texture = ExtResource("4_shelf")
+centered = false
+offset = Vector2(-370, -730)
+
+[node name="Shopkeeper" type="Node2D" parent="World"]
+position = Vector2(860, 860)
+
+[node name="Body" type="Sprite2D" parent="World/Shopkeeper"]
+texture = ExtResource("5_fox_body")
+centered = false
+offset = Vector2(-90, -172)
+
+[node name="Head" type="Node2D" parent="World/Shopkeeper"]
+position = Vector2(0, -146)
+
+[node name="Sprite" type="Sprite2D" parent="World/Shopkeeper/Head"]
+texture = ExtResource("6_fox_head")
+centered = false
+offset = Vector2(-100, -178)
+
+[node name="Counter" type="Sprite2D" parent="World"]
+position = Vector2(830, 790)
+texture = ExtResource("7_counter")
+centered = false
+offset = Vector2(-290, -36)
+
+[node name="CoinJar" type="Node2D" parent="World" node_paths=PackedStringArray("flights")]
+position = Vector2(640, 760)
+script = ExtResource("8_jar_script")
+coin_texture = ExtResource("coin")
+coin_flat_texture = ExtResource("coin_flat")
+flights = NodePath("../Flights")
+
+[node name="Body" type="Node2D" parent="World/CoinJar"]
+
+[node name="Back" type="Sprite2D" parent="World/CoinJar/Body"]
+texture = ExtResource("jar_back")
+centered = false
+offset = Vector2(-60, -150)
+
+[node name="Coins" type="Node2D" parent="World/CoinJar/Body"]
+
+[node name="Front" type="Sprite2D" parent="World/CoinJar/Body"]
+texture = ExtResource("jar_front")
+centered = false
+offset = Vector2(-60, -150)
+
+[node name="Girl" parent="World" instance=ExtResource("9_girl")]
+position = Vector2(230, 1000)
+
+[node name="Basket" parent="World" node_paths=PackedStringArray("flights") instance=ExtResource("basket_scene")]
+position = Vector2(440, 1025)
+flights = NodePath("../Flights")
+
+[node name="Flights" type="Node2D" parent="World"]
+z_index = 2
+
+[node name="PauseWhenInactive" type="Node" parent="."]
+script = ExtResource("pause_script")
+
+[node name="TapRouter" type="Node" parent="."]
+script = ExtResource("tap_router_script")
+
+[node name="Ambience" type="Node" parent="."]
+script = ExtResource("ambience_script")
+wind_volume_db = -22.0
+bird_volume_db = -12.0
+distant_farm_path = ""
+
+[node name="UI" type="CanvasLayer" parent="."]
+
+[node name="Root" type="Control" parent="UI"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="HomeButton" type="Button" parent="UI/Root"]
+layout_mode = 0
+offset_left = 40.0
+offset_top = 40.0
+offset_right = 170.0
+offset_bottom = 170.0
+focus_mode = 0
+theme_override_styles/focus = SubResource("home_focus")
+theme_override_styles/hover = SubResource("home_hover")
+theme_override_styles/pressed = SubResource("home_pressed")
+theme_override_styles/normal = SubResource("home_normal")
+
+[node name="Icon" type="Sprite2D" parent="UI/Root/HomeButton"]
+position = Vector2(65, 65)
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("10_home")
+
+[node name="BasketMenu" parent="." instance=ExtResource("basket_menu")]

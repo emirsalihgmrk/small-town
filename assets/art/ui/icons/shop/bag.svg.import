@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cgedf5ja2xptf"
-path="res://.godot/imported/reeds.svg-c558827b7d48785ccafd6aa073575051.ctex"
+uid="uid://c50bef3ogig0k"
+path="res://.godot/imported/bag.svg-544278d731601de8de39f026ce1f3750.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/art/ui/icons/pond/reeds.svg"
-dest_files=["res://.godot/imported/reeds.svg-c558827b7d48785ccafd6aa073575051.ctex"]
+source_file="res://assets/art/ui/icons/shop/bag.svg"
+dest_files=["res://.godot/imported/bag.svg-544278d731601de8de39f026ce1f3750.ctex"]
 
 [params]
 
