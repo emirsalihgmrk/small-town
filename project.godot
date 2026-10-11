@@ -23,6 +23,7 @@ SaveGame="*res://autoload/save_game.gd"
 Basket="*res://autoload/basket.gd"
 Wallet="*res://autoload/wallet.gd"
 Owned="*res://autoload/owned.gd"
+DebugPanel="*res://autoload/debug_panel.gd"
 
 [display]
 
