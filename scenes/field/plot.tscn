@@ -25,6 +25,12 @@
 [ext_resource type="Texture2D" path="res://assets/art/field/strawberry_bush.svg" id="23_strawberry_bush"]
 [ext_resource type="Texture2D" path="res://assets/art/field/strawberry_flower.svg" id="24_strawberry_flower"]
 [ext_resource type="Texture2D" path="res://assets/art/ui/icons/field/strawberry.svg" id="25_strawberry"]
+[ext_resource type="Texture2D" path="res://assets/art/field/pumpkin_seed.svg" id="26_pumpkin_seed"]
+[ext_resource type="Texture2D" path="res://assets/art/field/pumpkin_sprout.svg" id="27_pumpkin_sprout"]
+[ext_resource type="Texture2D" path="res://assets/art/field/pumpkin_vine.svg" id="28_pumpkin_vine"]
+[ext_resource type="Texture2D" path="res://assets/art/field/pumpkin_young.svg" id="29_pumpkin_young"]
+[ext_resource type="Texture2D" path="res://assets/art/field/pumpkin_flower.svg" id="30_pumpkin_flower"]
+[ext_resource type="Texture2D" path="res://assets/art/ui/icons/field/pumpkin.svg" id="31_pumpkin"]
 
 [sub_resource type="Curve" id="Curve_twinkle"]
 _data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.3, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
@@ -36,6 +42,7 @@ dirt_burst_scene = ExtResource("5_dirt")
 sparkle_scene = ExtResource("6_sparkle")
 carrot_seed_texture = ExtResource("10_carrot_seed")
 strawberry_seed_texture = ExtResource("21_strawberry_seed")
+pumpkin_seed_texture = ExtResource("26_pumpkin_seed")
 
 [node name="Soil" type="Sprite2D" parent="."]
 texture = ExtResource("1_soil")
@@ -703,6 +710,65 @@ position = Vector2(24, -10)
 rotation = -0.2
 scale = Vector2(0.55, 0.55)
 texture = ExtResource("25_strawberry")
+
+[node name="PumpkinSpot" type="Node2D" parent="."]
+position = Vector2(0, 4)
+
+[node name="Hole" type="Sprite2D" parent="PumpkinSpot"]
+scale = Vector2(1.5, 1.5)
+texture = ExtResource("7_hole")
+
+[node name="Mound" type="Sprite2D" parent="PumpkinSpot"]
+visible = false
+scale = Vector2(1.5, 1.5)
+texture = ExtResource("8_mound")
+centered = false
+offset = Vector2(-26, -15)
+
+[node name="Plant" type="Node2D" parent="PumpkinSpot"]
+position = Vector2(0, -4)
+
+[node name="Stage1" type="Sprite2D" parent="PumpkinSpot/Plant"]
+visible = false
+texture = ExtResource("27_pumpkin_sprout")
+centered = false
+offset = Vector2(-32, -54)
+
+[node name="Stage2" type="Node2D" parent="PumpkinSpot/Plant"]
+visible = false
+
+[node name="Vine" type="Sprite2D" parent="PumpkinSpot/Plant/Stage2"]
+scale = Vector2(0.7, 0.7)
+texture = ExtResource("28_pumpkin_vine")
+centered = false
+offset = Vector2(-150, -88)
+
+[node name="Young" type="Sprite2D" parent="PumpkinSpot/Plant/Stage2"]
+position = Vector2(0, -18)
+scale = Vector2(0.45, 0.45)
+texture = ExtResource("29_pumpkin_young")
+
+[node name="Flower1" type="Sprite2D" parent="PumpkinSpot/Plant/Stage2"]
+position = Vector2(-62, -44)
+texture = ExtResource("30_pumpkin_flower")
+
+[node name="Flower2" type="Sprite2D" parent="PumpkinSpot/Plant/Stage2"]
+position = Vector2(58, -40)
+scale = Vector2(0.85, 0.85)
+texture = ExtResource("30_pumpkin_flower")
+
+[node name="Stage3" type="Node2D" parent="PumpkinSpot/Plant"]
+visible = false
+
+[node name="Vine" type="Sprite2D" parent="PumpkinSpot/Plant/Stage3"]
+texture = ExtResource("28_pumpkin_vine")
+centered = false
+offset = Vector2(-150, -88)
+
+[node name="Pumpkin" type="Sprite2D" parent="PumpkinSpot/Plant/Stage3"]
+position = Vector2(0, -48)
+scale = Vector2(1.25, 1.25)
+texture = ExtResource("31_pumpkin")
 
 [node name="Weeds" type="Node2D" parent="."]
 

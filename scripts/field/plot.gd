@@ -3,14 +3,16 @@ extends Node2D
 ## Tarladaki bir parsel: otlu -> (çapa) -> sürülmüş -> (tohum) -> ekili, büyüyor -> hazır -> (hasat) -> otlu.
 ## Çapanın her vuruşu (chop) vurulan noktaya en yakın ot kümesini söker ve sürülmüş toprağı biraz daha
 ## belirginleştirir; son ot da gidince parsel sürülmüş olur.
-## Sürülmüş parsele havuç ya da çilek (3 çukura birer tohum) veya buğday (yüzeye serpilir) ekilir; ilk
-## tohum parselin ürününü belirler, yarım kalan ekim sonra tamamlanabilir.
+## Sürülmüş parsele havuç ya da çilek (3 çukura birer tohum), balkabağı (ortadaki tek iri çukura bir
+## çekirdek) veya buğday (yüzeye serpilir) ekilir; ilk tohum parselin ürününü belirler, yarım kalan ekim
+## sonra tamamlanabilir.
 ## Ekili bitki tohum -> filiz -> yapraklı -> hazır aşamalarından geçer. Tohumken ve yapraklıyken susar:
 ## toprak kurur, su balonu çıkar, bitki boynunu büker; sulanana kadar büyüme durur (bitki asla ölmez).
 ## Sahne açıkken büyüme gerçek zamanlı ilerler; sahne kapalıyken geçen süre geri dönüldüğünde
 ## load_state ile sessizce ileri sarılır (susamış bitki yine bekler).
 ## Hazır havuçlar parmakla tek tek çekilip çıkarılır, hazır buğday orakla biçilir, çilekler (her çalıda
-## iki tane) dokununca tek tek kopar. Hasat bitince parsel
+## iki tane) dokununca tek tek kopar, balkabağı parmakla yana yuvarlanarak parselden çıkarılır. Hasat
+## bitince parsel
 ## tamamen başa dönmez: toprak yarı sürülmüş kalır, üstünde birkaç ot çıkar.
 ## Her aşamanın sonunda parsel sevinçle zıplar.
 
@@ -23,7 +25,7 @@ signal harvested(harvested_crop: Crop, global_point: Vector2)
 
 enum State { WEEDY, TILLED, SOWN, READY }
 ## Kayıtta sayı olarak tutulur: yeni ürün yalnızca sona eklenmeli.
-enum Crop { NONE, CARROT, WHEAT, STRAWBERRY }
+enum Crop { NONE, CARROT, WHEAT, STRAWBERRY, PUMPKIN }
 
 ## Çukurlara (Spots) ekilen ürünler ve her çukurdaki bitki düğümünün adı.
 const SPOT_PLANTS: Dictionary[Crop, NodePath] = {
@@ -74,7 +76,16 @@ const BERRY_PICK_PITCH: float = 1.35
 const BERRY_PICK_VOLUME_DB: float = -3.0
 const BUSH_WIGGLE_DEGREES: float = 7.0
 const BUSH_WIGGLE_TIME: float = 0.4
-const BUSH_FADE_TIME: float = 0.3
+## Hasattan sonra yerinde kalan çilek çalısı ve balkabağı sarmaşığı bu sürede solup gider.
+const PLANT_FADE_TIME: float = 0.3
+## Hazır balkabağının dokunulabilir alanı (balkabağı çukuruna göre yerel).
+const PUMPKIN_HIT: Rect2 = Rect2(-76.0, -112.0, 152.0, 122.0)
+const PUMPKIN_SOW_RADIUS: float = 70.0
+## Balkabağı yuvarlanırken bu kadar (yerel px) yol bir radyan döndürür.
+const PUMPKIN_RADIUS: float = 52.0
+## Geniş sarmaşık susayınca bütün bitkiler kadar eğilmez, yalnızca biraz.
+const VINE_DROOP_DEGREES: float = 4.0
+const PUMPKIN_OUT_PITCH: float = 0.7
 ## Orağın ucu bir başağa bu kadar (yerel px) yaklaşınca başak kesilir.
 const REAP_RADIUS: float = 60.0
 const STALK_FALL_DEGREES: float = 80.0
@@ -115,12 +126,14 @@ const MAX_SOUND_PAN: float = 0.6
 @export var sparkle_scene: PackedScene
 @export var carrot_seed_texture: Texture2D
 @export var strawberry_seed_texture: Texture2D
+@export var pumpkin_seed_texture: Texture2D
 
 @export_group("Büyüme")
 ## Sulamayı bekleme süresi hariç, tohumdan hazır olana kadar geçen süre.
 @export_range(1.0, 600.0, 1.0, "suffix:s") var carrot_grow_time: float = 35.0
 @export_range(1.0, 600.0, 1.0, "suffix:s") var wheat_grow_time: float = 55.0
 @export_range(1.0, 600.0, 1.0, "suffix:s") var strawberry_grow_time: float = 45.0
+@export_range(1.0, 600.0, 1.0, "suffix:s") var pumpkin_grow_time: float = 80.0
 ## Susamış parsel kova altında bu kadar kalınca sulanmış olur.
 @export_range(0.1, 5.0, 0.1, "suffix:s") var water_needed: float = 1.0
 
@@ -171,6 +184,9 @@ var _seeds_landed: int = 0
 var _berries: Array[Node2D] = []
 var _ready_berries: Array[Node2D] = []
 var _berry_spots: Dictionary[Node2D, Node2D] = {}
+var _pumpkin_sown: bool = false
+var _pumpkin_ready: bool = false
+var _pumpkin_rest: Vector2
 var _wheat_seeds_left: Array[Node2D] = []
 var _last_sprinkle_ms: int = -SPRINKLE_SOUND_INTERVAL_MS
 var _chop_sound: AudioStream
@@ -181,6 +197,9 @@ var _ready_sound: AudioStream
 @onready var _tilled_soil: CanvasItem = $TilledSoil
 @onready var _weeds: Node2D = $Weeds
 @onready var _spots_root: Node2D = $Spots
+@onready var _pumpkin_spot: Node2D = $PumpkinSpot
+@onready var _pumpkin_plant: Node2D = $PumpkinSpot/Plant
+@onready var _pumpkin: Node2D = $PumpkinSpot/Plant/Stage3/Pumpkin
 @onready var _wheat_seeds: Node2D = $WheatSeeds
 @onready var _wheat_plants: Node2D = $WheatPlants
 @onready var _dry_soil: CanvasItem = $DrySoil
@@ -211,6 +230,8 @@ func _ready() -> void:
 			if berry.name.begins_with("Berry"):
 				_berries.append(berry as Node2D)
 				_berry_spots[berry as Node2D] = spot
+	_plant_rest[_pumpkin_plant] = _pumpkin_plant.position
+	_pumpkin_rest = _pumpkin.position
 	_weed_count = _all_weeds.size()
 	_weeds_left = _all_weeds.duplicate()
 	_spots_left = _spots.duplicate()
@@ -273,6 +294,9 @@ func chop(global_point: Vector2) -> void:
 func set_holes_visible(holes_visible: bool, seed_crop: Crop) -> void:
 	if not can_sow(seed_crop):
 		return
+	if seed_crop == Crop.PUMPKIN:
+		create_tween().tween_property(_hole(_pumpkin_spot), ^"modulate:a", 1.0 if holes_visible else 0.0, HOLE_FADE_TIME)
+		return
 	var alpha: float = 1.0 if holes_visible or crop != Crop.NONE else 0.0
 	for spot: Node2D in _spots_left:
 		create_tween().tween_property(_hole(spot), ^"modulate:a", alpha, HOLE_FADE_TIME)
@@ -286,6 +310,8 @@ func sow_at(global_point: Vector2, seed_crop: Crop) -> bool:
 	var local_point: Vector2 = to_local(global_point)
 	if SPOT_PLANTS.has(seed_crop):
 		return _sow_spot(local_point, seed_crop)
+	if seed_crop == Crop.PUMPKIN:
+		return _sow_pumpkin(local_point)
 	if seed_crop == Crop.WHEAT:
 		return _sow_wheat(local_point)
 	return false
@@ -301,10 +327,25 @@ func _sow_spot(local_point: Vector2, seed_crop: Crop) -> bool:
 	return false
 
 
+func _sow_pumpkin(local_point: Vector2) -> bool:
+	if _pumpkin_sown or _pumpkin_spot.position.distance_to(local_point) > PUMPKIN_SOW_RADIUS:
+		return false
+	_pumpkin_sown = true
+	crop = Crop.PUMPKIN
+	_drop_seed(local_point, _pumpkin_spot)
+	return true
+
+
 ## Tohum torbanın ağzından çukura düşer; değince çukur kapanıp tümseğe döner.
 func _drop_seed(from_local: Vector2, spot: Node2D) -> void:
 	var seed: Sprite2D = Sprite2D.new()
-	seed.texture = strawberry_seed_texture if crop == Crop.STRAWBERRY else carrot_seed_texture
+	match crop:
+		Crop.STRAWBERRY:
+			seed.texture = strawberry_seed_texture
+		Crop.PUMPKIN:
+			seed.texture = pumpkin_seed_texture
+		_:
+			seed.texture = carrot_seed_texture
 	seed.position = from_local
 	add_child(seed)
 	var tween: Tween = create_tween()
@@ -319,7 +360,7 @@ func _plant_seed(spot: Node2D) -> void:
 	_hole(spot).modulate.a = 0.0
 	_pop_in(_mound(spot))
 	_seeds_landed += 1
-	if _seeds_landed == _spots.size():
+	if crop == Crop.PUMPKIN or _seeds_landed == _spots.size():
 		_finish_sowing()
 
 
@@ -393,7 +434,7 @@ func _show_thirst() -> void:
 	for plant: Node2D in _plants:
 		var side: float = 1.0 if randf() < 0.5 else -1.0
 		var tween: Tween = create_tween().set_parallel().set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
-		tween.tween_property(plant, ^"rotation", deg_to_rad(DROOP_DEGREES) * side, DROOP_TIME)
+		tween.tween_property(plant, ^"rotation", _droop_angle(plant) * side, DROOP_TIME)
 		tween.tween_property(plant, ^"modulate", DROOP_TINT, DROOP_TIME)
 
 
@@ -417,6 +458,9 @@ func _advance_stage() -> void:
 	_play_sound(_grow_sound, 0.0, 1.0 + randf_range(-seed_pitch_variation, seed_pitch_variation))
 	if stage == STAGE_SPROUT and crop == Crop.WHEAT:
 		_wheat_seeds.hide()
+	# Sarmaşık tümseği örtmez; filiz çıkınca tümsek kalkar.
+	if stage == STAGE_SPROUT and crop == Crop.PUMPKIN:
+		_mound(_pumpkin_spot).hide()
 	for i: int in _plants.size():
 		var plant: Node2D = _plants[i]
 		var delay: float = GROW_STAGGER * float(i) / maxf(_plants.size() - 1, 1)
@@ -443,6 +487,8 @@ func _step_stage() -> void:
 				_ready_carrots = _spots.duplicate()
 			Crop.STRAWBERRY:
 				_ready_berries = _berries.duplicate()
+			Crop.PUMPKIN:
+				_pumpkin_ready = true
 			_:
 				_stalks_left = _plants.duplicate()
 	elif stage in THIRSTY_STAGES:
@@ -464,6 +510,8 @@ func save_state() -> Dictionary:
 		"carrot_sown": _spots.map(func(spot: Node2D) -> bool: return spot not in _spots_left),
 		"carrot_ready": _spots.map(func(spot: Node2D) -> bool: return spot in _ready_carrots),
 		"strawberry_ready": _berries.map(func(berry: Node2D) -> bool: return berry in _ready_berries),
+		"pumpkin_sown": _pumpkin_sown,
+		"pumpkin_ready": _pumpkin_ready,
 		"wheat_sown": _all_wheat_seeds.map(func(seed: Node2D) -> bool: return seed not in _wheat_seeds_left),
 		"wheat_standing": _all_wheat_plants.map(func(plant: Node2D) -> bool: return plant in _stalks_left),
 	}
@@ -484,9 +532,12 @@ func load_state(data: Dictionary, elapsed: float) -> void:
 	_seeds_landed = _spots.size() - _spots_left.size()
 	_ready_carrots = _pick(_spots, data.get("carrot_ready", []), true)
 	_ready_berries = _pick(_berries, data.get("strawberry_ready", []), true)
+	_pumpkin_sown = crop == Crop.PUMPKIN and bool(data.get("pumpkin_sown", false))
+	_pumpkin_ready = crop == Crop.PUMPKIN and bool(data.get("pumpkin_ready", false))
 	_wheat_seeds_left = _pick(_all_wheat_seeds, data.get("wheat_sown", []), false)
 	_stalks_left = _pick(_all_wheat_plants, data.get("wheat_standing", []), true)
 	var fully_sown: bool = (SPOT_PLANTS.has(crop) and _spots_left.is_empty()) \
+			or (crop == Crop.PUMPKIN and _pumpkin_sown) \
 			or (crop == Crop.WHEAT and _wheat_seeds_left.is_empty())
 	if state == State.TILLED and fully_sown:
 		state = State.SOWN
@@ -498,7 +549,8 @@ func load_state(data: Dictionary, elapsed: float) -> void:
 	if state == State.SOWN:
 		_fast_forward(elapsed)
 	_apply_visuals()
-	if state == State.READY and _ready_carrots.is_empty() and _ready_berries.is_empty() and _stalks_left.is_empty():
+	if state == State.READY and _ready_carrots.is_empty() and _ready_berries.is_empty() and _stalks_left.is_empty() \
+			and not _pumpkin_ready:
 		_regrow()
 
 
@@ -532,6 +584,14 @@ func _apply_visuals() -> void:
 				_set_plant_stage(plant, stage)
 	for berry: Node2D in _berries:
 		berry.visible = state != State.READY or berry in _ready_berries
+	_hole(_pumpkin_spot).modulate.a = 0.0
+	_mound(_pumpkin_spot).visible = _pumpkin_sown and stage == STAGE_SEED
+	_reset_plant(_pumpkin_plant)
+	if growing and crop == Crop.PUMPKIN:
+		_set_plant_stage(_pumpkin_plant, stage)
+	_pumpkin.position = _pumpkin_rest
+	_pumpkin.rotation = 0.0
+	_pumpkin.visible = state != State.READY or _pumpkin_ready
 	_wheat_seeds.visible = stage == STAGE_SEED
 	for seed: Node2D in _all_wheat_seeds:
 		seed.scale = Vector2.ONE
@@ -545,7 +605,7 @@ func _apply_visuals() -> void:
 	_water_bubble.scale = Vector2.ONE
 	if thirsty:
 		for plant: Node2D in _plants:
-			plant.rotation = deg_to_rad(DROOP_DEGREES) * (1.0 if randf() < 0.5 else -1.0)
+			plant.rotation = _droop_angle(plant) * (1.0 if randf() < 0.5 else -1.0)
 			plant.modulate = DROOP_TINT
 	_ready_glint.emitting = state == State.READY
 
@@ -555,6 +615,8 @@ func _crop_plants() -> Array[Node2D]:
 	if SPOT_PLANTS.has(crop):
 		for spot: Node2D in _spots:
 			plants.append(spot.get_node(SPOT_PLANTS[crop]) as Node2D)
+	elif crop == Crop.PUMPKIN:
+		plants.append(_pumpkin_plant)
 	elif crop == Crop.WHEAT:
 		plants = _all_wheat_plants.duplicate()
 	return plants
@@ -615,6 +677,39 @@ func uproot_carrot(index: int) -> void:
 	harvested.emit(crop, from)
 	if _ready_carrots.is_empty():
 		_finish_harvest()
+
+
+func pumpkin_at(global_point: Vector2) -> bool:
+	return state == State.READY and _pumpkin_ready \
+			and PUMPKIN_HIT.has_point(to_local(global_point) - _pumpkin_spot.position)
+
+
+## Balkabağı parmakla yana itiliyor: sideways, parmağın yana kayması (dünya px). Kabak gittiği yöne
+## doğru yuvarlanır.
+func roll_pumpkin(sideways: float) -> void:
+	var offset: float = sideways / global_scale.x
+	_pumpkin.position = _pumpkin_rest + Vector2(offset, 0.0)
+	_pumpkin.rotation = offset / PUMPKIN_RADIUS
+
+
+## Erken bırakıldı: balkabağı geri yuvarlanıp yerine oturur.
+func release_pumpkin() -> void:
+	var tween: Tween = create_tween().set_parallel().set_trans(Tween.TRANS_ELASTIC).set_ease(Tween.EASE_OUT)
+	tween.tween_property(_pumpkin, ^"position", _pumpkin_rest, SNAP_BACK_TIME)
+	tween.tween_property(_pumpkin, ^"rotation", 0.0, SNAP_BACK_TIME)
+
+
+## Balkabağı sapından kopup parselden yuvarlanarak çıktı; sarmaşık yerinde kalır, sonra solar.
+func roll_out_pumpkin() -> void:
+	if not _pumpkin_ready:
+		return
+	_pumpkin_ready = false
+	var from: Vector2 = _pumpkin.global_position
+	_pumpkin.hide()
+	_play_sound(_carrot_pop_sound, 0.0, PUMPKIN_OUT_PITCH + randf_range(-seed_pitch_variation, seed_pitch_variation))
+	_spawn_effect(dirt_burst_scene, _pumpkin_spot.global_position)
+	harvested.emit(crop, from)
+	_finish_harvest()
 
 
 ## Noktadaki çalının, noktaya en yakın hazır çileğinin sırası; yoksa -1. Çilek küçük olduğundan çalının
@@ -700,7 +795,10 @@ func _finish_harvest() -> void:
 
 ## Hasattan sonra: toprak yarı sürülmüş kalır, üstünde birkaç ot çıkar; parsel yeniden çapalanabilir.
 func _regrow() -> void:
-	var bushes_left: bool = crop == Crop.STRAWBERRY
+	# Ürünü toplanmış çilek çalısı ve balkabağı sarmaşığı birden kaybolmasın, solarak gitsin.
+	var leaving: Array[Node2D] = []
+	if crop == Crop.STRAWBERRY or crop == Crop.PUMPKIN:
+		leaving = _plants.duplicate()
 	state = State.WEEDY
 	crop = Crop.NONE
 	stage = STAGE_SEED
@@ -709,20 +807,25 @@ func _regrow() -> void:
 	_ready_carrots.clear()
 	_ready_berries.clear()
 	_stalks_left.clear()
+	_pumpkin_sown = false
+	_pumpkin_ready = false
 	_seeds_landed = 0
 	_spots_left = _spots.duplicate()
 	for spot: Node2D in _spots:
 		create_tween().tween_property(_hole(spot), ^"modulate:a", 0.0, HOLE_FADE_TIME)
 		_mound(spot).hide()
 		_reset_plant(spot.get_node(SPOT_PLANTS[Crop.CARROT]) as Node2D)
-		# Meyvesi toplanmış çilek çalısı birden kaybolmasın, solarak gitsin.
 		var bush: Node2D = spot.get_node(SPOT_PLANTS[Crop.STRAWBERRY]) as Node2D
-		if bushes_left:
-			var tween: Tween = create_tween()
-			tween.tween_property(bush, ^"modulate:a", 0.0, BUSH_FADE_TIME)
-			tween.tween_callback(_reset_bush.bind(bush))
-		else:
-			_reset_bush(bush)
+		if bush not in leaving:
+			_restore_plant(bush)
+	_hole(_pumpkin_spot).modulate.a = 0.0
+	_mound(_pumpkin_spot).hide()
+	if _pumpkin_plant not in leaving:
+		_restore_plant(_pumpkin_plant)
+	for plant: Node2D in leaving:
+		var tween: Tween = create_tween()
+		tween.tween_property(plant, ^"modulate:a", 0.0, PLANT_FADE_TIME)
+		tween.tween_callback(_restore_plant.bind(plant))
 	_wheat_seeds.show()
 	_wheat_seeds_left = _all_wheat_seeds.duplicate()
 	for seed: Node2D in _all_wheat_seeds:
@@ -752,12 +855,21 @@ func _reset_plant(plant: Node2D) -> void:
 	plant.modulate = Color.WHITE
 
 
-## Çilek çalısı gizlenir, koparılan çilekleri bir sonraki ekim için dallarına geri takılır.
-func _reset_bush(bush: Node2D) -> void:
-	_reset_plant(bush)
+## Çilek çalısı ya da balkabağı sarmaşığı gizlenir; toplanan ürünü bir sonraki ekim için yerine geri
+## takılır (çilekler dallarına, balkabağı sarmaşığın ortasına).
+func _restore_plant(plant: Node2D) -> void:
+	_reset_plant(plant)
 	for berry: Node2D in _berries:
-		if bush.is_ancestor_of(berry):
+		if plant.is_ancestor_of(berry):
 			berry.show()
+	if plant == _pumpkin_plant:
+		_pumpkin.position = _pumpkin_rest
+		_pumpkin.rotation = 0.0
+		_pumpkin.show()
+
+
+func _droop_angle(plant: Node2D) -> float:
+	return deg_to_rad(VINE_DROOP_DEGREES if plant == _pumpkin_plant else DROOP_DEGREES)
 
 
 func _carrot_plant(index: int) -> Node2D:
@@ -770,6 +882,8 @@ func _grow_time() -> float:
 			return carrot_grow_time
 		Crop.STRAWBERRY:
 			return strawberry_grow_time
+		Crop.PUMPKIN:
+			return pumpkin_grow_time
 	return wheat_grow_time
 
 

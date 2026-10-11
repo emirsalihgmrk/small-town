@@ -10,6 +10,7 @@
 [ext_resource type="PackedScene" path="res://scenes/field/effects/sparkle_burst.tscn" id="sparkle_burst"]
 [ext_resource type="Script" path="res://scripts/input/tappable.gd" id="tappable_script"]
 [ext_resource type="Texture2D" path="res://assets/art/ui/icons/field/strawberry.svg" id="strawberry"]
+[ext_resource type="Texture2D" path="res://assets/art/ui/icons/field/pumpkin.svg" id="pumpkin"]
 
 [node name="Basket" type="Node2D"]
 script = ExtResource("basket_view_script")
@@ -17,6 +18,7 @@ item_textures = Dictionary[StringName, Texture2D]({
 &"carrot": ExtResource("carrot_produce"),
 &"wheat": ExtResource("wheat_bundle"),
 &"strawberry": ExtResource("strawberry"),
+&"pumpkin": ExtResource("pumpkin"),
 &"egg": ExtResource("egg"),
 &"milk": ExtResource("milk")
 })

@@ -4,8 +4,8 @@ extends Node
 ## parmak kalkınca rafa geri uçar. Tek parmak izlenir; araç tutulurken gelen diğer dokunuşlar bu
 ## düğümü ilgilendirmez.
 ## - Çapa: otlu parselin üstünde ovuşturuldukça her stroke_distance yolda bir vurur.
-## - Havuç ve çilek tohumu: tutulunca ekilebilir parsellerde çukurlar belirir; torba bir çukurun
-##   üstünden geçince içine tohum düşer.
+## - Havuç, çilek ve balkabağı tohumu: tutulunca ekilebilir parsellerde çukurlar (balkabağında ortada
+##   tek iri çukur) belirir; torba bir çukurun üstünden geçince içine tohum düşer.
 ## - Buğday tohumu: torba ekilebilir parselin üstünde gezdikçe tohum serpilir.
 ## - Kova: susamış parselin üstünde öne eğilip su döker; başka yerde dökmez.
 ## - Orak: hazır buğday parselinin üstünden geçtikçe yakındaki başakları biçer.
@@ -13,12 +13,13 @@ extends Node
 ## raf ön sıranın altında olduğundan arka sıraya giderken yoldaki parsele istemeden dökülmesin.
 ## Not: Sahnede kamera yok, dünya ve ekran koordinatları canvas dönüşümüyle çevrilir.
 
-enum Tool { HOE, CARROT_SEEDS, WHEAT_SEEDS, STRAWBERRY_SEEDS, BUCKET, SICKLE }
+enum Tool { HOE, CARROT_SEEDS, WHEAT_SEEDS, STRAWBERRY_SEEDS, PUMPKIN_SEEDS, BUCKET, SICKLE }
 
 ## Çukurlara tek tek ekilen tohumların torbaları ve ektikleri ürün.
-const SPOT_SEEDS: Dictionary[Tool, Plot.Crop] = {
+const HOLE_SEEDS: Dictionary[Tool, Plot.Crop] = {
 	Tool.CARROT_SEEDS: Plot.Crop.CARROT,
 	Tool.STRAWBERRY_SEEDS: Plot.Crop.STRAWBERRY,
+	Tool.PUMPKIN_SEEDS: Plot.Crop.PUMPKIN,
 }
 
 const NO_TOUCH: int = -1
@@ -30,6 +31,7 @@ const SLOT_BOUNCE_TIME: float = 0.25
 @export var carrot_seed_slot: Control
 @export var wheat_seed_slot: Control
 @export var strawberry_seed_slot: Control
+@export var pumpkin_seed_slot: Control
 @export var bucket_slot: Control
 @export var sickle_slot: Control
 
@@ -38,6 +40,7 @@ const SLOT_BOUNCE_TIME: float = 0.25
 @export var carrot_bag_scene: PackedScene
 @export var wheat_bag_scene: PackedScene
 @export var strawberry_bag_scene: PackedScene
+@export var pumpkin_bag_scene: PackedScene
 @export var bucket_scene: PackedScene
 @export var sickle_scene: PackedScene
 
@@ -68,9 +71,11 @@ var _last_tip: Vector2
 
 func _ready() -> void:
 	_slots = {Tool.HOE: hoe_slot, Tool.CARROT_SEEDS: carrot_seed_slot, Tool.WHEAT_SEEDS: wheat_seed_slot,
-			Tool.STRAWBERRY_SEEDS: strawberry_seed_slot, Tool.BUCKET: bucket_slot, Tool.SICKLE: sickle_slot}
+			Tool.STRAWBERRY_SEEDS: strawberry_seed_slot, Tool.PUMPKIN_SEEDS: pumpkin_seed_slot,
+			Tool.BUCKET: bucket_slot, Tool.SICKLE: sickle_slot}
 	_scenes = {Tool.HOE: hoe_scene, Tool.CARROT_SEEDS: carrot_bag_scene, Tool.WHEAT_SEEDS: wheat_bag_scene,
-			Tool.STRAWBERRY_SEEDS: strawberry_bag_scene, Tool.BUCKET: bucket_scene, Tool.SICKLE: sickle_scene}
+			Tool.STRAWBERRY_SEEDS: strawberry_bag_scene, Tool.PUMPKIN_SEEDS: pumpkin_bag_scene,
+			Tool.BUCKET: bucket_scene, Tool.SICKLE: sickle_scene}
 	for kind: Tool in _slots:
 		_icons[kind] = _slots[kind].get_node(^"Icon") as Node2D
 		_icon_scales[kind] = _icons[kind].scale
@@ -126,8 +131,8 @@ func _pick_up(kind: Tool, index: int, screen_point: Vector2) -> void:
 	drag_layer.add_child(_tool)
 	_tool.position = screen_point + hold_offset
 	_tool.pop_in()
-	if SPOT_SEEDS.has(kind):
-		_set_holes_visible(true, SPOT_SEEDS[kind])
+	if HOLE_SEEDS.has(kind):
+		_set_holes_visible(true, HOLE_SEEDS[kind])
 	_plot = null
 	_update_plot(0.0)
 
@@ -137,8 +142,8 @@ func _move_to(screen_point: Vector2) -> void:
 
 
 func _drop() -> void:
-	if SPOT_SEEDS.has(_held):
-		_set_holes_visible(false, SPOT_SEEDS[_held])
+	if HOLE_SEEDS.has(_held):
+		_set_holes_visible(false, HOLE_SEEDS[_held])
 	var kind: Tool = _held
 	_touch_index = NO_TOUCH
 	_plot = null
@@ -165,8 +170,8 @@ func _update_plot(delta: float) -> void:
 	match _held:
 		Tool.HOE:
 			_use_hoe(plot, tip)
-		Tool.CARROT_SEEDS, Tool.STRAWBERRY_SEEDS:
-			if armed and plot.sow_at(tip, SPOT_SEEDS[_held]):
+		Tool.CARROT_SEEDS, Tool.STRAWBERRY_SEEDS, Tool.PUMPKIN_SEEDS:
+			if armed and plot.sow_at(tip, HOLE_SEEDS[_held]):
 				_tool.play_use()
 		Tool.WHEAT_SEEDS:
 			var sowing: bool = armed and plot.can_sow(Plot.Crop.WHEAT)

@@ -7,6 +7,8 @@ const CARROT: StringName = &"carrot"
 const WHEAT: StringName = &"wheat"
 ## Tarlada çalıdan koparılan çilek.
 const STRAWBERRY: StringName = &"strawberry"
+## Tarlada sarmaşıkta büyüyen, yuvarlanarak toplanan balkabağı.
+const PUMPKIN: StringName = &"pumpkin"
 ## Kümesteki tavukların yumurtası.
 const EGG: StringName = &"egg"
 ## Fırında pişen ürünler (her biri aynı adlı tarifin ürünü, bkz. Recipes).

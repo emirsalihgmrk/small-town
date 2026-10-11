@@ -13,6 +13,7 @@
 [ext_resource type="Texture2D" path="res://assets/art/field/basket_front.svg" id="5_basket_front"]
 [ext_resource type="Texture2D" path="res://assets/art/ui/icons/close.svg" id="6_close"]
 [ext_resource type="Texture2D" path="res://assets/art/ui/icons/field/strawberry.svg" id="strawberry"]
+[ext_resource type="Texture2D" path="res://assets/art/ui/icons/field/pumpkin.svg" id="pumpkin"]
 
 [sub_resource type="StyleBoxFlat" id="card"]
 content_margin_left = 36.0
@@ -94,6 +95,7 @@ item_icons = Dictionary[StringName, Texture2D]({
 &"carrot": ExtResource("2_carrot"),
 &"wheat": ExtResource("3_wheat"),
 &"strawberry": ExtResource("strawberry"),
+&"pumpkin": ExtResource("pumpkin"),
 &"egg": ExtResource("egg"),
 &"milk": ExtResource("milk"),
 &"bread": ExtResource("bread"),
