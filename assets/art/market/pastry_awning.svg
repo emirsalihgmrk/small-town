@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="348" height="112" viewBox="-174 -14 348 112">
+<path d="M-150 0 L-112.5 0 L-124.5 56 L-166 56 Z" fill="#f48fb1"/>
+<path d="M-112.5 0 L-75 0 L-83 56 L-124.5 56 Z" fill="#fffaf0"/>
+<path d="M-75 0 L-37.5 0 L-41.5 56 L-83 56 Z" fill="#f48fb1"/>
+<path d="M-37.5 0 L0 0 L0 56 L-41.5 56 Z" fill="#fffaf0"/>
+<path d="M0 0 L37.5 0 L41.5 56 L0 56 Z" fill="#f48fb1"/>
+<path d="M37.5 0 L75 0 L83 56 L41.5 56 Z" fill="#fffaf0"/>
+<path d="M75 0 L112.5 0 L124.5 56 L83 56 Z" fill="#f48fb1"/>
+<path d="M112.5 0 L150 0 L166 56 L124.5 56 Z" fill="#fffaf0"/>
+<path d="M-150 0 L150 0 L166 56 L-166 56 Z" fill="none" stroke="#c2577c" stroke-width="4" stroke-linejoin="round"/>
+<g stroke="#c2577c" stroke-width="4" stroke-linejoin="round">
+<path d="M-166 56 L-124.5 56 L-124.5 66 Q-145 92 -166 66 Z" fill="#f48fb1"/>
+<path d="M-124.5 56 L-83 56 L-83 66 Q-104 92 -124.5 66 Z" fill="#fffaf0"/>
+<path d="M-83 56 L-41.5 56 L-41.5 66 Q-62 92 -83 66 Z" fill="#f48fb1"/>
+<path d="M-41.5 56 L0 56 L0 66 Q-21 92 -41.5 66 Z" fill="#fffaf0"/>
+<path d="M0 56 L41.5 56 L41.5 66 Q21 92 0 66 Z" fill="#f48fb1"/>
+<path d="M41.5 56 L83 56 L83 66 Q62 92 41.5 66 Z" fill="#fffaf0"/>
+<path d="M83 56 L124.5 56 L124.5 66 Q104 92 83 66 Z" fill="#f48fb1"/>
+<path d="M124.5 56 L166 56 L166 66 Q145 92 124.5 66 Z" fill="#fffaf0"/>
+</g>
+<rect x="-158" y="-10" width="316" height="14" rx="7" fill="#f9d5df" stroke="#c2577c" stroke-width="4"/>
+</svg>

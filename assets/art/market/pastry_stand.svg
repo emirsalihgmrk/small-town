@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="324" height="472" viewBox="-162 -464 324 472">
+<rect x="-148" y="-460" width="20" height="348" rx="6" fill="#f9d5df" stroke="#c9758f" stroke-width="5"/>
+<rect x="128" y="-460" width="20" height="348" rx="6" fill="#f9d5df" stroke="#c9758f" stroke-width="5"/>
+<rect x="-128" y="-444" width="256" height="314" fill="#fff4f7" stroke="#e3a3b6" stroke-width="4"/>
+<g fill="#ffdbe5">
+<circle cx="-100" cy="-370" r="7"/><circle cx="-50" cy="-350" r="7"/><circle cx="0" cy="-372" r="7"/><circle cx="50" cy="-350" r="7"/><circle cx="100" cy="-370" r="7"/>
+<circle cx="-100" cy="-300" r="7"/><circle cx="-50" cy="-320" r="7"/><circle cx="0" cy="-298" r="7"/><circle cx="50" cy="-320" r="7"/><circle cx="100" cy="-300" r="7"/>
+<circle cx="-100" cy="-180" r="7"/><circle cx="-50" cy="-200" r="7"/><circle cx="0" cy="-178" r="7"/><circle cx="50" cy="-200" r="7"/><circle cx="100" cy="-180" r="7"/>
+<circle cx="-75" cy="-150" r="7"/><circle cx="-75" cy="-420" r="7"/><circle cx="25" cy="-420" r="7"/><circle cx="-25" cy="-400" r="7"/><circle cx="75" cy="-400" r="7"/><circle cx="25" cy="-150" r="7"/><circle cx="-25" cy="-228" r="7"/><circle cx="75" cy="-228" r="7"/>
+</g>
+<rect x="-140" y="-262" width="280" height="14" rx="5" fill="#fbe3ea" stroke="#c9758f" stroke-width="4"/>
+<g fill="#ffffff" stroke="#f2a7bb" stroke-width="3" stroke-linejoin="round">
+<path d="M-128 -248 L-96 -248 Q-112 -230 -128 -248 Z"/><path d="M-96 -248 L-64 -248 Q-80 -230 -96 -248 Z"/>
+<path d="M-64 -248 L-32 -248 Q-48 -230 -64 -248 Z"/><path d="M-32 -248 L0 -248 Q-16 -230 -32 -248 Z"/>
+<path d="M0 -248 L32 -248 Q16 -230 0 -248 Z"/><path d="M32 -248 L64 -248 Q48 -230 32 -248 Z"/>
+<path d="M64 -248 L96 -248 Q80 -230 64 -248 Z"/><path d="M96 -248 L128 -248 Q112 -230 96 -248 Z"/>
+</g>
+<rect x="-142" y="-118" width="284" height="106" rx="6" fill="#ffe4ec" stroke="#c9758f" stroke-width="5"/>
+<rect x="-126" y="-88" width="116" height="62" rx="10" fill="none" stroke="#f2a7bb" stroke-width="4"/>
+<rect x="10" y="-88" width="116" height="62" rx="10" fill="none" stroke="#f2a7bb" stroke-width="4"/>
+<circle cx="-22" cy="-57" r="5" fill="#c9758f"/>
+<circle cx="22" cy="-57" r="5" fill="#c9758f"/>
+<g stroke-width="3" stroke-linejoin="round">
+<path d="M-140 -118 L-105 -118 Q-122 -98 -140 -118 Z" fill="#f48fb1" stroke="#d26a8f"/>
+<path d="M-105 -118 L-70 -118 Q-88 -98 -105 -118 Z" fill="#ffffff" stroke="#f2a7bb"/>
+<path d="M-70 -118 L-35 -118 Q-52 -98 -70 -118 Z" fill="#f48fb1" stroke="#d26a8f"/>
+<path d="M-35 -118 L0 -118 Q-18 -98 -35 -118 Z" fill="#ffffff" stroke="#f2a7bb"/>
+<path d="M0 -118 L35 -118 Q18 -98 0 -118 Z" fill="#f48fb1" stroke="#d26a8f"/>
+<path d="M35 -118 L70 -118 Q52 -98 35 -118 Z" fill="#ffffff" stroke="#f2a7bb"/>
+<path d="M70 -118 L105 -118 Q88 -98 70 -118 Z" fill="#f48fb1" stroke="#d26a8f"/>
+<path d="M105 -118 L140 -118 Q122 -98 105 -118 Z" fill="#ffffff" stroke="#f2a7bb"/>
+</g>
+<rect x="-154" y="-136" width="308" height="20" rx="7" fill="#f7c3d2" stroke="#c9758f" stroke-width="5"/>
+<path d="M-136 -128 L136 -128" stroke="#ffe4ec" stroke-width="4" stroke-linecap="round"/>
+<rect x="-134" y="-14" width="24" height="16" rx="4" fill="#c9758f"/>
+<rect x="110" y="-14" width="24" height="16" rx="4" fill="#c9758f"/>
+</svg>

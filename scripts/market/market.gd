@@ -1,9 +1,12 @@
 extends Node2D
 ## Pazar bölümü: eve dönüş, sepete dokununca sepetin içini açma, müşterilerin gelişi ve kızın tepkileri.
+## Sepetteki ürünler reyonlarda da görünür (StockBin): çiftlik tezgâhında her ham ürünün kendi kasası,
+## yanındaki pastane tezgâhında her fırın ürününün kendi raf bölmesi. Müşteri sağda, meydanda durur.
 ## Sepette ürün varsa kısa bir süre sonra bir hayvan dost (Customer) sağdan yürüyerek tezgâhın önüne gelir
 ## ve başının üstünde isteği (MarketOrders) görünür; müşteri gelince kız ona el sallar. Müşteriler
-## sırayla gelir (tavşan, ayıcık, kirpi), ilk gelen rastgeledir. İstenen ürünler sepetten parmakla
-## müşteriye götürülür (SellHand); her verilen üründe kız sevinir.
+## sırayla gelir (tavşan, ayıcık, kirpi), ilk gelen rastgeledir. İstenen ürünler reyonlardan parmakla
+## müşteriye götürülür (SellHand); her verilen üründe kız sevinir. Yanlış ürün getirilirse müşteri başını
+## sallar ve ürün reyondaki yerine döner. Sepete dokununca yalnızca sepet menüsü açılır.
 ## İstek tamamlanınca müşteri teşekkür eder (balonu kapanır, kalpler çıkar) ve istediği her ürün için bir
 ## bozuk parayı tezgâhtaki kumbaraya (CoinJar) atar; paralar ortak paraya (Wallet) ödeme başlarken hemen
 ## geçer. Sonra müşteri sağa yürüyüp gider, kız arkasından el sallar.

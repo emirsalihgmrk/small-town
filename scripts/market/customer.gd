@@ -5,9 +5,9 @@ extends Node2D
 ## Beklerken nefes alır, başını hafifçe sallar. Önden görünür, yürürken aynalanmaz; her adımda seker ve
 ## iki yana sallanır (bu hareket Hop düğümünde oynar).
 ## Her görünüşün BubbleAnchor işareti, balonun kuyruk ucunun duracağı yerdir. Kök noktası ayaklardır.
-## Beklerken istediği ürünleri alır (SellHand getirir): her ürün balondaki yuvasını doldurur, müşteri
-## sevinçle zıplar. Ürün müşterinin üstüne ya da balonuna bırakılabilir; parmaktaki ürün oradayken müşteri
-## hafifçe büyür.
+## Beklerken istediği ürünleri alır (SellHand reyondan getirir): her ürün balondaki yuvasını doldurur,
+## müşteri sevinçle zıplar. İstemediği ürün getirilirse başını sallar (refuse). Ürün müşterinin üstüne ya da
+## balonuna bırakılabilir; parmaktaki ürün oradayken müşteri hafifçe büyür.
 ## İsteği tamamlanınca balonu kapanır ve başından kalpler çıkar (thank); sonra sağa yürüyüp gider (leave).
 ## Beklerken dokununca hışırtıyla sevinip zıplar ve başından kalpler çıkar; yürürken dokunuş yok sayılır.
 
@@ -42,6 +42,10 @@ const SCREEN_WIDTH: float = 1920.0
 const MAX_SOUND_PAN: float = 0.6
 ## Kalpler balonun kuyruk ucunun bu kadar altından çıkar (başının üstü).
 const HEART_BELOW_BUBBLE: float = 40.0
+## Yanlış ürün getirilince baş sağa sola bu kadar dönerek sallanır.
+const SHAKE_DEGREES: float = 14.0
+const SHAKE_TIME: float = 0.09
+const SHAKE_COUNT: int = 3
 
 @export var heart_scene: PackedScene
 @export_file("*.ogg", "*.wav") var receive_sound_path: String = "res://assets/audio/sfx/basket_drop.ogg"
@@ -57,6 +61,7 @@ var _move_tween: Tween
 var _waddle_tween: Tween
 var _highlight_tween: Tween
 var _hop_tween: Tween
+var _shake_tween: Tween
 var _highlighted: bool = false
 var _looks: Array[Node2D] = []
 var _receive_sound: AudioStream
@@ -188,6 +193,27 @@ func open_slots() -> Array[int]:
 
 func wanted(slot: int) -> StringName:
 	return order[slot]
+
+
+## item'ı isteyen, henüz verilmemiş ilk yuva; yoksa -1.
+func slot_for(item: StringName) -> int:
+	for slot: int in open_slots():
+		if order[slot] == item:
+			return slot
+	return -1
+
+
+## İstemediği ürün getirilince başını sağa sola sallar (baş resmi boynun üstünde döner).
+func refuse() -> void:
+	set_highlighted(false)
+	var head: Node2D = _looks[kind].get_node(^"Head/Sprite") as Node2D
+	if _shake_tween != null:
+		_shake_tween.kill()
+	_shake_tween = create_tween().set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	for i: int in SHAKE_COUNT:
+		_shake_tween.tween_property(head, ^"rotation", deg_to_rad(SHAKE_DEGREES), SHAKE_TIME)
+		_shake_tween.tween_property(head, ^"rotation", deg_to_rad(-SHAKE_DEGREES), SHAKE_TIME * 2.0)
+	_shake_tween.tween_property(head, ^"rotation", 0.0, SHAKE_TIME)
 
 
 func contains(global_point: Vector2) -> bool:
