@@ -3,6 +3,7 @@ extends Node
 ## Hazır havuçları parmakla çekip çıkarma. Parmak bir havucun yapraklarına basıp yukarı çektikçe havuç
 ## esner ve topraktan biraz yükselir; pull_distance kadar çekilince "pop!" diye fırlar. Erken bırakılırsa
 ## yerine yaylanarak oturur. Tek parmak izlenir; raftan araç taşıyan parmaktan bağımsızdır.
+## Hazır çilek çalısına dokunmak, dokunulan yere en yakın çileği hemen koparır (çekmek gerekmez).
 ## Not: Sahnede kamera yok, dünya ve ekran koordinatları canvas dönüşümüyle çevrilir.
 
 const NO_TOUCH: int = -1
@@ -21,7 +22,9 @@ func _unhandled_input(event: InputEvent) -> void:
 	var touch: InputEventScreenTouch = event as InputEventScreenTouch
 	if touch != null:
 		if touch.pressed and _touch_index == NO_TOUCH:
-			if _grab(_to_world(touch.position)):
+			if _pick_berry(_to_world(touch.position)):
+				get_viewport().set_input_as_handled()
+			elif _grab(_to_world(touch.position)):
 				_touch_index = touch.index
 				get_viewport().set_input_as_handled()
 		elif not touch.pressed and touch.index == _touch_index:
@@ -54,6 +57,24 @@ func _grab(world_point: Vector2) -> bool:
 			_carrot = carrot
 	_start = world_point
 	return _plot != null
+
+
+## Arka ve ön sıra üst üste bindiğinde öndeki parseldeki çilek kopar.
+func _pick_berry(world_point: Vector2) -> bool:
+	var best: Plot = null
+	var best_berry: int = -1
+	for node: Node in plots_root.get_children():
+		var plot: Plot = node as Plot
+		if plot == null or (best != null and plot.global_position.y < best.global_position.y):
+			continue
+		var berry: int = plot.berry_at(world_point)
+		if berry >= 0:
+			best = plot
+			best_berry = berry
+	if best == null:
+		return false
+	best.pick_berry(best_berry)
+	return true
 
 
 ## Havuç çıktıysa parmak kalkana kadar gelen olaylar artık bu düğümü ilgilendirmez.

@@ -11,6 +11,7 @@ const SECTION: String = "field"
 const CROP_ITEMS: Dictionary = {
 	Plot.Crop.CARROT: Items.CARROT,
 	Plot.Crop.WHEAT: Items.WHEAT,
+	Plot.Crop.STRAWBERRY: Items.STRAWBERRY,
 }
 ## Kızın tarlaya (sağa) bakan kolu.
 const GIRL_FIELD_ARM: int = 1

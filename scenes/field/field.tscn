@@ -19,6 +19,7 @@
 [ext_resource type="Texture2D" path="res://assets/art/ui/icons/tools/hoe.svg" id="19_hoe"]
 [ext_resource type="PackedScene" path="res://scenes/ui/icons/tools/seed_bag_carrot_icon.tscn" id="20_seed_carrot"]
 [ext_resource type="PackedScene" path="res://scenes/ui/icons/tools/seed_bag_wheat_icon.tscn" id="21_seed_wheat"]
+[ext_resource type="PackedScene" path="res://scenes/ui/icons/tools/seed_bag_strawberry_icon.tscn" id="seed_strawberry"]
 [ext_resource type="Texture2D" path="res://assets/art/ui/icons/tools/bucket.svg" id="22_bucket"]
 [ext_resource type="Texture2D" path="res://assets/art/ui/icons/tools/sickle.svg" id="23_sickle"]
 [ext_resource type="Script" path="res://scripts/input/tap_router.gd" id="tap_router_script"]
@@ -28,6 +29,7 @@
 [ext_resource type="PackedScene" path="res://scenes/field/held_hoe.tscn" id="held_hoe"]
 [ext_resource type="PackedScene" path="res://scenes/field/held_carrot_bag.tscn" id="held_carrot_bag"]
 [ext_resource type="PackedScene" path="res://scenes/field/held_wheat_bag.tscn" id="held_wheat_bag"]
+[ext_resource type="PackedScene" path="res://scenes/field/held_strawberry_bag.tscn" id="held_strawberry_bag"]
 [ext_resource type="PackedScene" path="res://scenes/field/held_bucket.tscn" id="held_bucket"]
 [ext_resource type="PackedScene" path="res://scenes/field/held_sickle.tscn" id="held_sickle"]
 [ext_resource type="Script" path="res://scripts/field/harvest_hand.gd" id="harvest_hand_script"]
@@ -428,16 +430,18 @@ script = ExtResource("tap_router_script")
 [node name="Ambience" type="Node" parent="."]
 script = ExtResource("ambience_script")
 
-[node name="FieldTools" type="Node" parent="." node_paths=PackedStringArray("hoe_slot", "carrot_seed_slot", "wheat_seed_slot", "bucket_slot", "sickle_slot", "plots_root", "drag_layer")]
+[node name="FieldTools" type="Node" parent="." node_paths=PackedStringArray("hoe_slot", "carrot_seed_slot", "wheat_seed_slot", "strawberry_seed_slot", "bucket_slot", "sickle_slot", "plots_root", "drag_layer")]
 script = ExtResource("field_tools_script")
 hoe_slot = NodePath("../UI/Root/ToolTray/Slots/Hoe")
 carrot_seed_slot = NodePath("../UI/Root/ToolTray/Slots/CarrotSeeds")
 wheat_seed_slot = NodePath("../UI/Root/ToolTray/Slots/WheatSeeds")
+strawberry_seed_slot = NodePath("../UI/Root/ToolTray/Slots/StrawberrySeeds")
 bucket_slot = NodePath("../UI/Root/ToolTray/Slots/Bucket")
 sickle_slot = NodePath("../UI/Root/ToolTray/Slots/Sickle")
 hoe_scene = ExtResource("held_hoe")
 carrot_bag_scene = ExtResource("held_carrot_bag")
 wheat_bag_scene = ExtResource("held_wheat_bag")
+strawberry_bag_scene = ExtResource("held_strawberry_bag")
 bucket_scene = ExtResource("held_bucket")
 sickle_scene = ExtResource("held_sickle")
 plots_root = NodePath("../World/Plots")
@@ -524,6 +528,16 @@ mouse_filter = 2
 theme_override_styles/panel = SubResource("slot")
 
 [node name="Icon" parent="UI/Root/ToolTray/Slots/WheatSeeds" instance=ExtResource("21_seed_wheat")]
+position = Vector2(58, 58)
+scale = Vector2(0.5, 0.5)
+
+[node name="StrawberrySeeds" type="Panel" parent="UI/Root/ToolTray/Slots"]
+custom_minimum_size = Vector2(116, 116)
+layout_mode = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("slot")
+
+[node name="Icon" parent="UI/Root/ToolTray/Slots/StrawberrySeeds" instance=ExtResource("seed_strawberry")]
 position = Vector2(58, 58)
 scale = Vector2(0.5, 0.5)
 

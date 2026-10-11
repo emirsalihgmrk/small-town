@@ -28,6 +28,7 @@
 [ext_resource type="Script" path="res://scripts/input/tap_router.gd" id="tap_router_script"]
 [ext_resource type="Script" path="res://scripts/components/pause_when_inactive.gd" id="pause_script"]
 [ext_resource type="Script" path="res://scripts/components/scene_ambience.gd" id="ambience_script"]
+[ext_resource type="Texture2D" path="res://assets/art/ui/icons/field/strawberry.svg" id="strawberry"]
 
 [sub_resource type="StyleBoxFlat" id="home_normal"]
 bg_color = Color(0.965, 0.863, 0.761, 1)
@@ -157,6 +158,7 @@ position = Vector2(450, 1005)
 item_textures = Dictionary[StringName, Texture2D]({
 &"carrot": ExtResource("carrot_icon"),
 &"wheat": ExtResource("wheat_bundle"),
+&"strawberry": ExtResource("strawberry"),
 &"egg": ExtResource("egg"),
 &"milk": ExtResource("milk"),
 &"bread": ExtResource("bread"),

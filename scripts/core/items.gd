@@ -5,6 +5,8 @@ extends RefCounted
 const CARROT: StringName = &"carrot"
 ## Buğday sepette demet olarak sayılır.
 const WHEAT: StringName = &"wheat"
+## Tarlada çalıdan koparılan çilek.
+const STRAWBERRY: StringName = &"strawberry"
 ## Kümesteki tavukların yumurtası.
 const EGG: StringName = &"egg"
 ## Fırında pişen ürünler (her biri aynı adlı tarifin ürünü, bkz. Recipes).
