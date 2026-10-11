@@ -198,12 +198,11 @@ position = Vector2(50, 50)
 scale = Vector2(0.3, 0.3)
 texture = ExtResource("6_close")
 
-[node name="Items" type="HBoxContainer" parent="Root/Panel/VBox"]
+[node name="Items" type="VBoxContainer" parent="Root/Panel/VBox"]
 unique_name_in_owner = true
 layout_mode = 2
 mouse_filter = 2
-theme_override_constants/separation = 28
-alignment = 1
+theme_override_constants/separation = 20
 
 [node name="Template" type="Control" parent="Root/Panel/VBox/Items"]
 unique_name_in_owner = true
