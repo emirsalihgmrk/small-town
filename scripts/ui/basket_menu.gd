@@ -7,8 +7,8 @@ extends CanvasLayer
 ## Çarpıya ya da karartılmış arka plana dokununca kapanır.
 ## Kutular, sahnedeki gizli şablon kutudan (Template) item_icons sırasıyla çoğaltılır ve ortalanmış
 ## satırlara dizilir: bir satırda en fazla MAX_PER_ROW kutu olur, satırlar eşit dolar (8 ürün 4 + 4,
-## 13 ürün 7 + 6). Kutunun kendisini satır yerleştirir; büyüyerek belirme, konteynerin ölçeğe
-## dokunmadığı iç düğümde (Content) oynar.
+## 13 ürün 7 + 6); row_starts'taki ürün her zaman yeni bir satıra başlar. Kutunun kendisini satır
+## yerleştirir; büyüyerek belirme, konteynerin ölçeğe dokunmadığı iç düğümde (Content) oynar.
 
 const DIM_ALPHA: float = 0.4
 const FADE_TIME: float = 0.2
@@ -24,6 +24,8 @@ const CELL_SEPARATION: int = 28
 
 ## Menüde gösterilecek ürünler (Items kimliği -> resmi), soldan sağa bu sırayla.
 @export var item_icons: Dictionary[StringName, Texture2D] = {}
+## Bu ürünler yeni bir satırın başında durur (ham ürünler ile fırın ürünleri ayrı satırlarda olsun diye).
+@export var row_starts: Array[StringName] = []
 
 var is_open: bool = false
 
@@ -45,7 +47,7 @@ func _ready() -> void:
 	var per_row: int = ceili(item_icons.size() / float(maxi(row_count, 1)))
 	var row: HBoxContainer
 	for item: StringName in item_icons:
-		if row == null or row.get_child_count() == per_row:
+		if row == null or row.get_child_count() == per_row or (row_starts.has(item) and row.get_child_count() > 0):
 			row = _add_row()
 		var cell: Control = _template.duplicate() as Control
 		cell.name = String(item).capitalize()

@@ -15,7 +15,7 @@ const EMPTY_SLOT_ALPHA: float = 0.3
 const SLOT_POP_SCALE: float = 1.35
 const SLOT_POP_TIME: float = 0.12
 const SLOT_SETTLE_TIME: float = 0.3
-## Malzeme simgeleri bu yüksekliğe sığdırılır ve aralarında bu kadar mesafe olur.
+## Malzeme simgeleri bu boyda bir kareye sığdırılır ve aralarında bu kadar mesafe olur.
 const INGREDIENT_HEIGHT: float = 46.0
 const INGREDIENT_SPACING: float = 50.0
 ## Ürün resmi bu kutuya sığdırılır.
@@ -59,7 +59,7 @@ func _ready() -> void:
 		var icon: Sprite2D = Sprite2D.new()
 		icon.texture = ingredient_textures.get(item)
 		if icon.texture != null:
-			icon.scale = Vector2.ONE * (INGREDIENT_HEIGHT / icon.texture.get_height())
+			icon.scale = _icon_scale(icon)
 		icon.position.x = x
 		_ingredients.add_child(icon)
 		_slots.append(icon)
@@ -96,10 +96,15 @@ func fill_slot(index: int, animate: bool = true) -> void:
 	icon.modulate.a = 1.0
 	if not animate:
 		return
-	var rest: Vector2 = Vector2.ONE * (INGREDIENT_HEIGHT / icon.texture.get_height())
+	var rest: Vector2 = _icon_scale(icon)
 	var tween: Tween = create_tween()
 	tween.tween_property(icon, ^"scale", rest * SLOT_POP_SCALE, SLOT_POP_TIME).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 	tween.tween_property(icon, ^"scale", rest, SLOT_SETTLE_TIME).set_trans(Tween.TRANS_ELASTIC).set_ease(Tween.EASE_OUT)
+
+
+func _icon_scale(icon: Sprite2D) -> Vector2:
+	var size: Vector2 = icon.texture.get_size()
+	return Vector2.ONE * (INGREDIENT_HEIGHT / maxf(size.x, size.y))
 
 
 func clear_slots() -> void:

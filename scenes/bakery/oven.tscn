@@ -15,6 +15,12 @@
 [ext_resource type="Script" path="res://scripts/input/tappable.gd" id="13_tappable"]
 [ext_resource type="Texture2D" path="res://assets/art/bakery/raw_birthday_cake.svg" id="raw_birthday_cake"]
 [ext_resource type="Texture2D" path="res://assets/art/bakery/birthday_cake.svg" id="birthday_cake"]
+[ext_resource type="Texture2D" path="res://assets/art/bakery/raw_simit.svg" id="raw_simit"]
+[ext_resource type="Texture2D" path="res://assets/art/bakery/simit.svg" id="simit"]
+[ext_resource type="Texture2D" path="res://assets/art/bakery/raw_strawberry_cake.svg" id="raw_strawberry_cake"]
+[ext_resource type="Texture2D" path="res://assets/art/bakery/strawberry_cake.svg" id="strawberry_cake"]
+[ext_resource type="Texture2D" path="res://assets/art/bakery/raw_pumpkin_pie.svg" id="raw_pumpkin_pie"]
+[ext_resource type="Texture2D" path="res://assets/art/bakery/pumpkin_pie.svg" id="pumpkin_pie"]
 
 [sub_resource type="Gradient" id="Gradient_steam"]
 offsets = PackedFloat32Array(0, 0.3, 1)
@@ -26,13 +32,19 @@ raw_textures = Dictionary[StringName, Texture2D]({
 &"birthday_cake": ExtResource("raw_birthday_cake"),
 &"bread": ExtResource("5_raw_bread"),
 &"carrot_cake": ExtResource("7_raw_cake"),
-&"cookie": ExtResource("6_raw_cookie")
+&"cookie": ExtResource("6_raw_cookie"),
+&"simit": ExtResource("raw_simit"),
+&"strawberry_cake": ExtResource("raw_strawberry_cake"),
+&"pumpkin_pie": ExtResource("raw_pumpkin_pie")
 })
 baked_textures = Dictionary[StringName, Texture2D]({
 &"birthday_cake": ExtResource("birthday_cake"),
 &"bread": ExtResource("8_bread"),
 &"carrot_cake": ExtResource("10_cake"),
-&"cookie": ExtResource("9_cookie")
+&"cookie": ExtResource("9_cookie"),
+&"simit": ExtResource("simit"),
+&"strawberry_cake": ExtResource("strawberry_cake"),
+&"pumpkin_pie": ExtResource("pumpkin_pie")
 })
 sparkle_scene = ExtResource("11_sparkle")
 

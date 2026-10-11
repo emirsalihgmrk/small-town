@@ -30,6 +30,9 @@
 [ext_resource type="Script" path="res://scripts/components/scene_ambience.gd" id="ambience_script"]
 [ext_resource type="Texture2D" path="res://assets/art/ui/icons/field/strawberry.svg" id="strawberry"]
 [ext_resource type="Texture2D" path="res://assets/art/ui/icons/field/pumpkin.svg" id="pumpkin"]
+[ext_resource type="Texture2D" path="res://assets/art/bakery/simit.svg" id="simit"]
+[ext_resource type="Texture2D" path="res://assets/art/bakery/strawberry_cake.svg" id="strawberry_cake"]
+[ext_resource type="Texture2D" path="res://assets/art/bakery/pumpkin_pie.svg" id="pumpkin_pie"]
 
 [sub_resource type="StyleBoxFlat" id="home_normal"]
 bg_color = Color(0.965, 0.863, 0.761, 1)
@@ -119,34 +122,51 @@ position = Vector2(925, 320)
 [node name="Board" type="Sprite2D" parent="World/RecipeBoard"]
 texture = ExtResource("board")
 centered = false
-offset = Vector2(-380, -240)
+offset = Vector2(-320, -290)
 
 [node name="Cards" type="Node2D" parent="World/RecipeBoard"]
-position = Vector2(0, 2)
 
 [node name="Bread" parent="World/RecipeBoard/Cards" instance=ExtResource("card_scene")]
-position = Vector2(-258, 0)
-scale = Vector2(0.88, 0.88)
+position = Vector2(-210, -100)
+scale = Vector2(0.7, 0.7)
 recipe = &"bread"
 product_texture = ExtResource("bread")
 
 [node name="Cookie" parent="World/RecipeBoard/Cards" instance=ExtResource("card_scene")]
-position = Vector2(-86, 0)
-scale = Vector2(0.88, 0.88)
+position = Vector2(-70, -100)
+scale = Vector2(0.7, 0.7)
 recipe = &"cookie"
 product_texture = ExtResource("cookie")
 
 [node name="CarrotCake" parent="World/RecipeBoard/Cards" instance=ExtResource("card_scene")]
-position = Vector2(86, 0)
-scale = Vector2(0.88, 0.88)
+position = Vector2(70, -100)
+scale = Vector2(0.7, 0.7)
 recipe = &"carrot_cake"
 product_texture = ExtResource("carrot_cake")
 
 [node name="BirthdayCake" parent="World/RecipeBoard/Cards" instance=ExtResource("card_scene")]
-position = Vector2(258, 0)
-scale = Vector2(0.88, 0.88)
+position = Vector2(210, -100)
+scale = Vector2(0.7, 0.7)
 recipe = &"birthday_cake"
 product_texture = ExtResource("birthday_cake")
+
+[node name="Simit" parent="World/RecipeBoard/Cards" instance=ExtResource("card_scene")]
+position = Vector2(-140, 64)
+scale = Vector2(0.7, 0.7)
+recipe = &"simit"
+product_texture = ExtResource("simit")
+
+[node name="StrawberryCake" parent="World/RecipeBoard/Cards" instance=ExtResource("card_scene")]
+position = Vector2(0, 64)
+scale = Vector2(0.7, 0.7)
+recipe = &"strawberry_cake"
+product_texture = ExtResource("strawberry_cake")
+
+[node name="PumpkinPie" parent="World/RecipeBoard/Cards" instance=ExtResource("card_scene")]
+position = Vector2(140, 64)
+scale = Vector2(0.7, 0.7)
+recipe = &"pumpkin_pie"
+product_texture = ExtResource("pumpkin_pie")
 
 [node name="Bowl" parent="World" instance=ExtResource("7_bowl")]
 position = Vector2(820, 678)
@@ -166,7 +186,10 @@ item_textures = Dictionary[StringName, Texture2D]({
 &"bread": ExtResource("bread"),
 &"cookie": ExtResource("cookie"),
 &"carrot_cake": ExtResource("carrot_cake"),
-&"birthday_cake": ExtResource("birthday_cake")
+&"birthday_cake": ExtResource("birthday_cake"),
+&"simit": ExtResource("simit"),
+&"strawberry_cake": ExtResource("strawberry_cake"),
+&"pumpkin_pie": ExtResource("pumpkin_pie")
 })
 flights = NodePath("../Flights")
 

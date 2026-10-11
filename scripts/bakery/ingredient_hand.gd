@@ -34,6 +34,8 @@ const POUR_TILT_DEGREES: Dictionary[StringName, float] = {
 	Items.WHEAT: 125.0,
 	Items.EGG: 180.0,
 	Items.CARROT: 150.0,
+	Items.STRAWBERRY: 160.0,
+	Items.PUMPKIN: 150.0,
 	Items.MILK: 135.0,
 }
 const POUR_SHAKE_DEGREES: float = 12.0

@@ -5,8 +5,9 @@ extends CanvasLayer
 ## Silmek için: bu dosyayı (ve .uid'ini) sil, project.godot'taki [autoload] altından DebugPanel satırını kaldır.
 
 const BASKET_ITEMS: Array[StringName] = [
-	Items.CARROT, Items.WHEAT, Items.EGG, Items.MILK,
+	Items.CARROT, Items.WHEAT, Items.STRAWBERRY, Items.PUMPKIN, Items.EGG, Items.MILK,
 	Items.BREAD, Items.COOKIE, Items.CARROT_CAKE, Items.BIRTHDAY_CAKE,
+	Items.SIMIT, Items.STRAWBERRY_CAKE, Items.PUMPKIN_PIE,
 ]
 const FONT_SIZE: int = 28
 const MAX_COUNT: int = 999

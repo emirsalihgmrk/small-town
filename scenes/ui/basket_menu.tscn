@@ -14,6 +14,9 @@
 [ext_resource type="Texture2D" path="res://assets/art/ui/icons/close.svg" id="6_close"]
 [ext_resource type="Texture2D" path="res://assets/art/ui/icons/field/strawberry.svg" id="strawberry"]
 [ext_resource type="Texture2D" path="res://assets/art/ui/icons/field/pumpkin.svg" id="pumpkin"]
+[ext_resource type="Texture2D" path="res://assets/art/bakery/simit.svg" id="simit"]
+[ext_resource type="Texture2D" path="res://assets/art/bakery/strawberry_cake.svg" id="strawberry_cake"]
+[ext_resource type="Texture2D" path="res://assets/art/bakery/pumpkin_pie.svg" id="pumpkin_pie"]
 
 [sub_resource type="StyleBoxFlat" id="card"]
 content_margin_left = 36.0
@@ -101,8 +104,12 @@ item_icons = Dictionary[StringName, Texture2D]({
 &"bread": ExtResource("bread"),
 &"cookie": ExtResource("cookie"),
 &"carrot_cake": ExtResource("carrot_cake"),
-&"birthday_cake": ExtResource("birthday_cake")
+&"birthday_cake": ExtResource("birthday_cake"),
+&"simit": ExtResource("simit"),
+&"strawberry_cake": ExtResource("strawberry_cake"),
+&"pumpkin_pie": ExtResource("pumpkin_pie")
 })
+row_starts = Array[StringName]([&"bread"])
 
 [node name="Root" type="Control" parent="."]
 layout_mode = 3

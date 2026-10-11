@@ -18,6 +18,10 @@
 [ext_resource type="Texture2D" path="res://assets/art/bakery/bowl_milk.svg" id="16_milk"]
 [ext_resource type="Texture2D" path="res://assets/art/bakery/dough_birthday_cake.svg" id="17_dough_birthday_cake"]
 [ext_resource type="PackedScene" path="res://scenes/ui/icons/barn_icon.tscn" id="18_barn_icon"]
+[ext_resource type="Texture2D" path="res://assets/art/bakery/bowl_strawberry.svg" id="19_strawberry"]
+[ext_resource type="Texture2D" path="res://assets/art/bakery/bowl_pumpkin.svg" id="20_pumpkin"]
+[ext_resource type="Texture2D" path="res://assets/art/bakery/dough_strawberry_cake.svg" id="21_dough_strawberry_cake"]
+[ext_resource type="Texture2D" path="res://assets/art/bakery/dough_pumpkin_pie.svg" id="22_dough_pumpkin_pie"]
 
 [sub_resource type="Gradient" id="Gradient_puff"]
 offsets = PackedFloat32Array(0, 0.5, 1)
@@ -30,7 +34,10 @@ dough_textures = Dictionary[StringName, Texture2D]({
 &"birthday_cake": ExtResource("17_dough_birthday_cake"),
 &"bread": ExtResource("12_dough_bread"),
 &"carrot_cake": ExtResource("14_dough_cake"),
-&"cookie": ExtResource("13_dough_cookie")
+&"cookie": ExtResource("13_dough_cookie"),
+&"simit": ExtResource("12_dough_bread"),
+&"strawberry_cake": ExtResource("21_dough_strawberry_cake"),
+&"pumpkin_pie": ExtResource("22_dough_pumpkin_pie")
 })
 
 [node name="Body" type="Node2D" parent="."]
@@ -61,6 +68,18 @@ offset = Vector2(-52, -40)
 [node name="Carrot" type="Sprite2D" parent="Body/Contents"]
 position = Vector2(-6, -12)
 texture = ExtResource("5_carrot")
+centered = false
+offset = Vector2(-75, -44)
+
+[node name="Strawberry" type="Sprite2D" parent="Body/Contents"]
+position = Vector2(4, -8)
+texture = ExtResource("19_strawberry")
+centered = false
+offset = Vector2(-75, -44)
+
+[node name="Pumpkin" type="Sprite2D" parent="Body/Contents"]
+position = Vector2(-4, -6)
+texture = ExtResource("20_pumpkin")
 centered = false
 offset = Vector2(-75, -44)
 
