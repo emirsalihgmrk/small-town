@@ -3,9 +3,10 @@ extends Node2D
 ## Ahırdaki inek. Yemlikte saman varken yemliğe yürür ve BITES lokmada yer, sonra yerine döner ve sağındaki
 ## suluktan içer (yemlikle yeri arasında yürürken suluğun üstünden geçmesin diye suluk arkasında durur).
 ## Suluk tam dolu değilse başının üstünde su balonuyla bekler (susar); su gelince içer. İnek asla
-## üzülüp kaybolmaz: aç ya da susuzsa yalnızca süt vermez. İçtikten sonra milk_time kadar bekler, sonra
-## sırtının üstünde süt balonu belirir ve milk_ready yayılır. Sağılırken (MilkHand) her squirt'te memesi
-## basılır ve kovaya süt fışkırır; sağılınca (milked) balon kaybolur ve yeniden acıkır.
+## üzülüp kaybolmaz: aç ya da susuzsa yalnızca süt vermez. İçtikten sonra sırtının üstünde boş bir süt
+## şişesi balonu belirir ve milk_time boyunca yavaş yavaş dolar; dolunca balon zıplar ve milk_ready
+## yayılır. Sağılırken (MilkHand) her squirt'te memesi basılır ve kovaya süt fışkırır; sağılınca (milked)
+## balon kaybolur ve yeniden acıkır.
 ## Her zaman nefes alır, başı ve kuyruğu salınır; boşta dururken ara sıra başını silker. Yürürken
 ## bacaklarını çaprazlama sallayıp hafifçe sekerek gider, boynundaki çan sallanır. Dokununca çanı çalar,
 ## kuyruğunu iki kez sallar ve başından kalpler çıkar; o an yaptığı işi bölmez.
@@ -119,14 +120,13 @@ var _tap_tween: Tween
 @onready var _tail_sprite: Node2D = $Body/Tail/Sprite
 @onready var _legs: Array[Node2D] = [$NearLegs/Front, $FarLegs/Back, $NearLegs/Back, $FarLegs/Front]
 @onready var _water_bubble: Node2D = $WaterBubble
-@onready var _milk_bubble: Node2D = $MilkBubble
+@onready var _milk_bubble: FillBubble = $MilkBubble
 @onready var _shake_timer: Timer = $ShakeTimer
 
 
 func _ready() -> void:
 	_home = global_position
 	_water_bubble.hide()
-	_milk_bubble.hide()
 	if ResourceLoader.exists(munch_sound_path):
 		_munch_sound = load(munch_sound_path) as AudioStream
 	if ResourceLoader.exists(squirt_sound_path):
@@ -170,7 +170,7 @@ func squirt() -> void:
 func milked() -> void:
 	if state != State.MILK_READY:
 		return
-	_hide_bubble(_milk_bubble)
+	_milk_bubble.close()
 	state = State.HUNGRY
 
 
@@ -233,8 +233,7 @@ func _place(phase: String, wait: float) -> void:
 	_neck.position = _neck_rest
 	_water_bubble.hide()
 	_water_bubble.scale = Vector2.ONE
-	_milk_bubble.hide()
-	_milk_bubble.scale = Vector2.ONE
+	_milk_bubble.snap(-1.0)
 	match phase:
 		PHASE_THIRSTY:
 			state = State.THIRSTY
@@ -243,9 +242,10 @@ func _place(phase: String, wait: float) -> void:
 		PHASE_MAKING_MILK:
 			state = State.MAKING_MILK
 			_wait_left = wait
+			_milk_bubble.snap(_milk_progress())
 		PHASE_MILK_READY:
 			state = State.MILK_READY
-			_milk_bubble.show()
+			_milk_bubble.snap(1.0, true)
 		_:
 			state = State.HUNGRY
 
@@ -267,6 +267,7 @@ func _process(delta: float) -> void:
 				_drink()
 		State.MAKING_MILK:
 			_wait_left -= delta
+			_milk_bubble.set_progress(_milk_progress())
 			if _wait_left <= 0.0:
 				_make_milk_ready()
 
@@ -316,13 +317,19 @@ func _drink() -> void:
 	_head_tween.tween_callback(func() -> void:
 		_face_left()
 		state = State.MAKING_MILK
-		_wait_left = milk_time)
+		_wait_left = milk_time
+		_milk_bubble.open())
 
 
 func _make_milk_ready() -> void:
 	state = State.MILK_READY
-	_show_bubble(_milk_bubble)
+	_milk_bubble.finish()
 	milk_ready.emit()
+
+
+## Süt şişesinin ne kadar dolduğu (0-1).
+func _milk_progress() -> float:
+	return clampf(1.0 - _wait_left / milk_time, 0.0, 1.0)
 
 
 func _tween_head_down(tween: Tween, neck_drop: float) -> void:

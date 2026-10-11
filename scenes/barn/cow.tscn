@@ -15,6 +15,9 @@
 [ext_resource type="Texture2D" path="res://assets/art/barn/cow_bell.svg" id="13_bell"]
 [ext_resource type="Script" path="res://scripts/input/tappable.gd" id="14_tappable"]
 [ext_resource type="PackedScene" path="res://scenes/field/effects/heart_burst.tscn" id="15_heart"]
+[ext_resource type="Script" path="res://scripts/components/fill_bubble.gd" id="16_fill_bubble"]
+[ext_resource type="Texture2D" path="res://assets/art/barn/milk_bottle_empty.svg" id="17_bottle_empty"]
+[ext_resource type="Texture2D" path="res://assets/art/barn/milk_bottle_full.svg" id="18_bottle_full"]
 
 [sub_resource type="Gradient" id="Gradient_fade"]
 offsets = PackedFloat32Array(0, 0.8, 1)
@@ -153,15 +156,11 @@ period = 1.1
 [node name="MilkBubble" type="Node2D" parent="."]
 visible = false
 position = Vector2(60, -440)
-
-[node name="Icon" type="Sprite2D" parent="MilkBubble"]
-scale = Vector2(1.4, 1.4)
-texture = ExtResource("10_milk_bubble")
-
-[node name="Pulse" type="Node" parent="MilkBubble/Icon"]
-script = ExtResource("5_pulse")
-scale_amount = Vector2(0.1, 0.1)
-period = 1.1
+script = ExtResource("16_fill_bubble")
+back_texture = ExtResource("10_milk_bubble")
+empty_texture = ExtResource("17_bottle_empty")
+full_texture = ExtResource("18_bottle_full")
+content_scale = 1.4
 
 [node name="ShakeTimer" type="Timer" parent="."]
 one_shot = true

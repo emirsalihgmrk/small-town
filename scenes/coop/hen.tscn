@@ -8,6 +8,10 @@
 [ext_resource type="Texture2D" path="res://assets/art/field/water_bubble.svg" id="6_water_bubble"]
 [ext_resource type="Script" path="res://scripts/input/tappable.gd" id="7_tappable"]
 [ext_resource type="PackedScene" path="res://scenes/field/effects/heart_burst.tscn" id="8_heart"]
+[ext_resource type="Script" path="res://scripts/components/fill_bubble.gd" id="9_fill_bubble"]
+[ext_resource type="Texture2D" path="res://assets/art/coop/egg_bubble.svg" id="10_egg_bubble"]
+[ext_resource type="Texture2D" path="res://assets/art/coop/egg_bubble_empty.svg" id="11_egg_empty"]
+[ext_resource type="Texture2D" path="res://assets/art/coop/egg_bubble_full.svg" id="12_egg_full"]
 
 [node name="Hen" type="Node2D"]
 script = ExtResource("1_hen")
@@ -55,6 +59,14 @@ texture = ExtResource("6_water_bubble")
 script = ExtResource("4_pulse")
 scale_amount = Vector2(0.1, 0.1)
 period = 1.1
+
+[node name="EggBubble" type="Node2D" parent="."]
+visible = false
+position = Vector2(0, -205)
+script = ExtResource("9_fill_bubble")
+back_texture = ExtResource("10_egg_bubble")
+empty_texture = ExtResource("11_egg_empty")
+full_texture = ExtResource("12_egg_full")
 
 [node name="PeckTimer" type="Timer" parent="."]
 one_shot = true

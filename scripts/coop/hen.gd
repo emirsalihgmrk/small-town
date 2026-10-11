@@ -3,7 +3,8 @@ extends Node2D
 ## Kümesteki tavuk. Yemlikte ayrılmamış pay varken yemliğe yürüyüp yer, sonra suluğa gidip içer. Sulukta
 ## su yoksa başının üstünde su balonuyla bekler (susar); su gelince içer. Tavuk asla üzülüp kaybolmaz.
 ## Yiyip içtikten sonra doğrudan kümesteki kendi folluğuna yürüyüp üstüne oturur ve lay_wait_time
-## kadar orada bekler. Sonra yumurtlar, folluktan kalkıp avludaki yerine döner ve yeniden acıkır;
+## kadar orada bekler; beklerken başının üstündeki balonda boş bir yumurta yavaş yavaş dolar. Sonra
+## yumurtlar (balon kapanır), folluktan kalkıp avludaki yerine döner ve yeniden acıkır;
 ## yumurta folluğa kalır (toplanmasını beklemez).
 ## Her zaman nefes alır ve başını hafifçe sallar; avluda aç beklerken ara sıra yere gagalar.
 ## Dokununca tüylerini kabartıp zıplar ve başından kalpler çıkar; o an yaptığı işi bölmez (zıplama
@@ -91,6 +92,7 @@ var _fluff_sound: AudioStream
 @onready var _body: Node2D = $Hop/Body
 @onready var _head: Node2D = $Hop/Body/Neck/Head
 @onready var _water_bubble: Node2D = $WaterBubble
+@onready var _egg_bubble: FillBubble = $EggBubble
 @onready var _peck_timer: Timer = $PeckTimer
 
 
@@ -120,6 +122,7 @@ func _process(delta: float) -> void:
 				_drink()
 		State.NESTING:
 			_wait_left -= delta
+			_egg_bubble.set_progress(_lay_progress())
 			if _wait_left <= 0.0:
 				_lay()
 
@@ -177,10 +180,12 @@ func _place(phase: String, wait: float) -> void:
 	_head.rotation = 0.0
 	_water_bubble.hide()
 	_water_bubble.scale = Vector2.ONE
+	_egg_bubble.snap(-1.0)
 	if phase == PHASE_NESTING:
 		global_position = nest.global_position + NEST_SEAT
 		state = State.NESTING
 		_wait_left = wait
+		_egg_bubble.snap(_lay_progress())
 	elif phase == PHASE_THIRSTY:
 		global_position = waterer.spot(spot_index)
 		_face_toward(waterer.global_position.x)
@@ -253,6 +258,7 @@ func _drink() -> void:
 func _sit_on_nest() -> void:
 	state = State.NESTING
 	_wait_left = lay_wait_time
+	_egg_bubble.open()
 	var tween: Tween = create_tween().set_trans(Tween.TRANS_QUAD)
 	tween.tween_interval(SETTLE_TIME)
 	tween.tween_property(_body, ^"position:y", -NEST_HOP, NEST_HOP_TIME).set_ease(Tween.EASE_OUT)
@@ -263,6 +269,7 @@ func _sit_on_nest() -> void:
 ## sıçrayıp avludaki yerine döner ve yeniden acıkır.
 func _lay() -> void:
 	state = State.GOING_HOME
+	_egg_bubble.close()
 	nest.lay()
 	var tween: Tween = create_tween().set_trans(Tween.TRANS_QUAD)
 	tween.tween_property(_body, ^"position:y", LAY_PUSH, LAY_PUSH_TIME).set_ease(Tween.EASE_OUT)
@@ -270,6 +277,11 @@ func _lay() -> void:
 	tween.tween_property(_body, ^"position:y", -NEST_HOP, NEST_HOP_TIME).set_ease(Tween.EASE_OUT)
 	tween.tween_property(_body, ^"position:y", 0.0, NEST_HOP_TIME).set_ease(Tween.EASE_IN)
 	tween.tween_callback(_walk_to.bind(_home, _become_hungry))
+
+
+## Balondaki yumurtanın ne kadar dolduğu (0-1).
+func _lay_progress() -> float:
+	return clampf(1.0 - _wait_left / lay_wait_time, 0.0, 1.0)
 
 
 func _become_hungry() -> void:
