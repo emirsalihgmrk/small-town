@@ -156,7 +156,7 @@ offset = Vector2(-16, -39)
 [node name="HairFront" type="Sprite2D" parent="Body/Torso/Head"]
 texture = ExtResource("15_hair_front")
 centered = false
-offset = Vector2(-62, -110)
+offset = Vector2(-68, -134)
 
 [node name="Hat" type="Sprite2D" parent="Body/Torso/Head"]
 position = Vector2(0, -100)
