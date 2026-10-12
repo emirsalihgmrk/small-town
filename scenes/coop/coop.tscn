@@ -28,6 +28,7 @@
 [ext_resource type="Script" path="res://scripts/components/scene_ambience.gd" id="ambience_script"]
 [ext_resource type="Script" path="res://scripts/coop/feed_hand.gd" id="feed_hand_script"]
 [ext_resource type="Script" path="res://scripts/coop/water_hand.gd" id="water_hand_script"]
+[ext_resource type="Script" path="res://scripts/components/hint_director.gd" id="hint_director_script"]
 [ext_resource type="PackedScene" path="res://scenes/field/held_bucket.tscn" id="held_bucket"]
 [ext_resource type="Texture2D" path="res://assets/art/ui/icons/tools/bucket.svg" id="bucket_icon"]
 [ext_resource type="PackedScene" path="res://scenes/entities/basket.tscn" id="basket_scene"]
@@ -372,3 +373,6 @@ texture = ExtResource("21_home")
 layer = 2
 
 [node name="BasketMenu" parent="." instance=ExtResource("basket_menu")]
+
+[node name="HintDirector" type="Node" parent="."]
+script = ExtResource("hint_director_script")

@@ -6,12 +6,12 @@ extends CanvasLayer
 ## Tek nokta dokunmadır: el o noktaya iki kez dokunur. Aynı nokta art arda verilirse el orada kısa bir an
 ## bekler. Noktalar ekran koordinatıdır. Hareketin hepsi bitince finished yayılır; stop hemen gizler.
 ## carry verilirse (raftaki araç, sepetten çıkan ürün gibi) kopyası parmağın ucunda, bastırınca belirip
-## bırakınca kaybolur: el onu taşıyormuş gibi görünür.
+## bırakınca kaybolur: el onu taşıyormuş gibi görünür. carry sahnede değilse kendi ölçeğiyle taşınır.
 
 signal finished
 
 const DEFAULT_HOLD: float = 0.3
-const REPEATS: int = 3
+const REPEATS: int = 2
 const TAP_COUNT: int = 2
 const FADE_TIME: float = 0.25
 const APPEAR_SCALE: float = 1.15
@@ -54,7 +54,7 @@ func play(points: PackedVector2Array, hold: float = DEFAULT_HOLD, carry: Node2D 
 	if carry != null:
 		_carried = carry.duplicate() as Node2D
 		_carried.position = CARRY_OFFSET
-		_carried.scale = carry.global_scale * CARRY_SCALE
+		_carried.scale = (carry.global_scale if carry.is_inside_tree() else carry.scale) * CARRY_SCALE
 		_carried.rotation = 0.0
 		_carried.modulate.a = CARRY_ALPHA
 		_carried.hide()

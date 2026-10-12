@@ -63,6 +63,11 @@ func contains(global_point: Vector2) -> bool:
 	return _tap_area.contains(global_point)
 
 
+## El göstergesi için sepetin ortası (dünya koordinatı): dokunma alanının ortası.
+func center() -> Vector2:
+	return _tap_area.to_global(_tap_area.area.get_center())
+
+
 ## Sepetin ağzı (dünya konumu); dışarı çıkan ürün buradan çıkar, buraya döner.
 func mouth() -> Vector2:
 	return to_global(MOUTH)
