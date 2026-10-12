@@ -6,6 +6,9 @@ extends Node2D
 ## Satın alma: paralar kumbaradan parmakla tek tek ürüne götürülür (CoinHand); her para etiketin sıradaki
 ## yuvasına oturur ve o anda ödenmiş sayılır (Owned). Son yuva dolunca etiketin yerine rozet çıkar, tilki
 ## (Shopkeeper) sevinçle zıplayıp paketi uzatır, paket kavis çizerek kıza uçar ve kız sevinir.
+## Tezgâhın üstündeki duvar rafında tohum paketleri ve tarif kartları durur: alınınca tilki sevinir, ürünün
+## kopyası raftan kavis çizerek kapıdan çıkar (tarlaya ya da fırına gitti) ve kız sevinir. Bir ürünün
+## tarif kartı ancak tohumu alınınca rafta belirir.
 ## Takma: alınmış bir aksesuara dokununca aksesuar raftan kızın başına uçar, kız sevinir; başındaki eski
 ## aksesuar minderine, hasır şapka kapının yanındaki askıya (HatHook) döner. Askıdaki hasır şapkaya ya da
 ## boş minderine (kızın başındaki aksesuarın) dokununca hasır şapka başa döner. Takılan Owned'a yazılır,
@@ -34,6 +37,12 @@ const GIFT_ARC_HEIGHT: float = 220.0
 const GIFT_ARRIVE_SCALE: float = 0.5
 ## Paketin kıza vardığı yer (kızın kök noktasına göre): göğsünün önü.
 const GIRL_CHEST: Vector2 = Vector2(30.0, -170.0)
+## Tohum paketi ve tarif kartı kapının camına doğru uçup orada küçülerek kaybolur.
+const SEND_OFF_TIME: float = 0.9
+const SEND_OFF_ARC_HEIGHT: float = 180.0
+const SEND_OFF_END_SCALE: float = 0.15
+## Tohum alınınca tarif kartı, paket kapıdan çıktıktan sonra belirir.
+const REVEAL_DELAY: float = 1.3
 const WEAR_FLIGHT_TIME: float = 0.6
 const WEAR_ARC_HEIGHT: float = 160.0
 const HOOK_POP_TIME: float = 0.3
@@ -66,6 +75,7 @@ var _idle_time: float = 0.0
 @onready var _hint_timer: Timer = $HintTimer
 @onready var _hook_hat: Sprite2D = $World/HatHook/Hat
 @onready var _hook_tap: Tappable = $World/HatHook/TapArea
+@onready var _door_window: Marker2D = $World/DoorWindow
 
 var _dressing: bool = false
 var _hook_hat_scale: Vector2
@@ -126,7 +136,11 @@ func _on_coin_placed(item: ShelfItem) -> void:
 	_girl.cheer()
 	if Owned.has(item.item) and not item.is_owned():
 		item.mark_owned()
-		get_tree().create_timer(DELIVER_DELAY).timeout.connect(_deliver)
+		var kind: ShopItems.Kind = ShopItems.kind(item.item)
+		if kind == ShopItems.Kind.SEED or kind == ShopItems.Kind.RECIPE:
+			get_tree().create_timer(DELIVER_DELAY).timeout.connect(_send_off.bind(item))
+		else:
+			get_tree().create_timer(DELIVER_DELAY).timeout.connect(_deliver)
 
 
 ## Tilki zıplayıp paketi uzatır; paket kavis çizerek kıza uçar.
@@ -150,6 +164,35 @@ func _deliver() -> void:
 	tween.tween_callback(func() -> void:
 		gift.queue_free()
 		_girl.cheer())
+
+
+## Tilki zıplar; tohum paketinin ya da tarif kartının kopyası raftan kapının camına uçup küçülerek kaybolur
+## (tarlaya ya da fırına gitti). Bu üründen sonra rafta belirecek ürün varsa o da belirir.
+func _send_off(item: ShelfItem) -> void:
+	_shopkeeper.cheer()
+	var pan: float = clampf((item.global_position.x / SCREEN_WIDTH) * 2.0 - 1.0, -1.0, 1.0) * MAX_SOUND_PAN
+	AudioManager.play_sfx(_gift_sound, AudioManager.BUS_SFX, 0.0, randf_range(0.95, 1.05), pan)
+	var flying: Sprite2D = Sprite2D.new()
+	flying.texture = item.art_texture()
+	flying.scale = item.art_global_scale()
+	_flights.add_child(flying)
+	var start: Vector2 = _flights.to_local(item.art_center())
+	var end: Vector2 = _flights.to_local(_door_window.global_position)
+	flying.position = start
+	var tween: Tween = flying.create_tween().set_parallel()
+	tween.tween_method(_fly.bind(flying, start, end, SEND_OFF_ARC_HEIGHT), 0.0, 1.0, SEND_OFF_TIME) \
+			.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	tween.tween_property(flying, ^"scale", flying.scale * SEND_OFF_END_SCALE, SEND_OFF_TIME).set_ease(Tween.EASE_IN)
+	tween.tween_property(flying, ^"modulate:a", 0.0, SEND_OFF_TIME * 0.3).set_delay(SEND_OFF_TIME * 0.7)
+	tween.chain().tween_callback(func() -> void:
+		flying.queue_free()
+		_girl.cheer())
+	for node: Node in _shelf_items.get_children():
+		var other: ShelfItem = node as ShelfItem
+		if ShopItems.NEEDS.get(other.item, &"") == item.item:
+			get_tree().create_timer(REVEAL_DELAY).timeout.connect(func() -> void:
+				other.reveal()
+				_refresh_bubble())
 
 
 ## İkinci dereceden Bezier: başlangıç ve varışın ortasının arc kadar üstünden geçer.
@@ -224,10 +267,12 @@ func _show_hint() -> void:
 	_refresh_bubble()
 
 
-## Alınmamış ürünlerden en az birinin kalan parası kumbarada var mı (hepsi alındıysa da true).
+## Rafta görünen alınmamış ürünlerden en az birinin kalan parası kumbarada var mı (hepsi alındıysa da true).
 func _can_afford_anything() -> bool:
 	var cheapest: int = -1
 	for node: Node in _shelf_items.get_children():
+		if not Owned.is_offered((node as ShelfItem).item):
+			continue
 		var remaining: int = (node as ShelfItem).remaining()
 		if remaining > 0 and (cheapest < 0 or remaining < cheapest):
 			cheapest = remaining

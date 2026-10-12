@@ -6,7 +6,8 @@ extends Node2D
 ## Kumbaradan çekilen para ürünün üstüne getirilince ürün parlar (set_highlighted); para etiketin sıradaki
 ## yuvasına uçar (coin_target, coin_arrived). Açılışta yarım ödemeler ve alınmışlık Owned'dan kurulur;
 ## alınmış ürünün etiketinde rozet durur ve ona para konmaz. Kızın başındaki aksesuarın minderi boş durur
-## (set_worn).
+## (set_worn). Önce başka bir ürünün alınması gereken ürün (ShopItems.NEEDS) o ürün alınana kadar rafta
+## görünmez; alınınca büyüyerek belirir (reveal).
 ## Kök noktası ürünün rafa değdiği yerin ortasıdır; etiket rafın kenarındadır (tag_offset).
 
 signal tapped(item: ShelfItem)
@@ -54,6 +55,17 @@ func _ready() -> void:
 	var width: float = maxf(size.x, _cushion.texture.get_width() if on_cushion else 0.0) + TAP_MARGIN * 2.0
 	_tap_area.area = Rect2(-width * 0.5, top, width, tag_offset.y + PriceTag.SLOT_SIZE - top)
 	_tap_area.tapped.connect(func(_point: Vector2) -> void: tapped.emit(self))
+	visible = Owned.is_offered(item)
+
+
+## Rafta yoksa büyüyerek belirir.
+func reveal() -> void:
+	if visible:
+		return
+	show()
+	scale = Vector2.ZERO
+	create_tween().tween_property(self, ^"scale", Vector2.ONE, RETURN_POP_TIME).set_trans(Tween.TRANS_BACK) \
+			.set_ease(Tween.EASE_OUT)
 
 
 ## Ürünün alınması için daha kaç para gerektiği (alınmışsa 0).

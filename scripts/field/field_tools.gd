@@ -5,7 +5,8 @@ extends Node
 ## düğümü ilgilendirmez.
 ## - Çapa: otlu parselin üstünde ovuşturuldukça her stroke_distance yolda bir vurur.
 ## - Havuç, çilek ve balkabağı tohumu: tutulunca ekilebilir parsellerde çukurlar (balkabağında ortada
-##   tek iri çukur) belirir; torba bir çukurun üstünden geçince içine tohum düşer.
+##   tek iri çukur) belirir; torba bir çukurun üstünden geçince içine tohum düşer. Çilek ve balkabağı
+##   torbaları ancak tohumları dükkândan alınınca rafta durur.
 ## - Buğday tohumu: torba ekilebilir parselin üstünde gezdikçe tohum serpilir.
 ## - Kova: susamış parselin üstünde öne eğilip su döker; başka yerde dökmez.
 ## - Orak: hazır buğday parselinin üstünden geçtikçe yakındaki başakları biçer.
@@ -20,6 +21,11 @@ const HOLE_SEEDS: Dictionary[Tool, Plot.Crop] = {
 	Tool.CARROT_SEEDS: Plot.Crop.CARROT,
 	Tool.STRAWBERRY_SEEDS: Plot.Crop.STRAWBERRY,
 	Tool.PUMPKIN_SEEDS: Plot.Crop.PUMPKIN,
+}
+## Tohumu dükkândan alınınca rafta beliren torbalar ve ürünleri; alınmadan rafta görünmezler.
+const SHOP_SEEDS: Dictionary[Tool, StringName] = {
+	Tool.STRAWBERRY_SEEDS: Items.STRAWBERRY,
+	Tool.PUMPKIN_SEEDS: Items.PUMPKIN,
 }
 
 const NO_TOUCH: int = -1
@@ -76,6 +82,10 @@ func _ready() -> void:
 	_scenes = {Tool.HOE: hoe_scene, Tool.CARROT_SEEDS: carrot_bag_scene, Tool.WHEAT_SEEDS: wheat_bag_scene,
 			Tool.STRAWBERRY_SEEDS: strawberry_bag_scene, Tool.PUMPKIN_SEEDS: pumpkin_bag_scene,
 			Tool.BUCKET: bucket_scene, Tool.SICKLE: sickle_scene}
+	for kind: Tool in SHOP_SEEDS:
+		if not Owned.has_seeds(SHOP_SEEDS[kind]):
+			_slots[kind].hide()
+			_slots.erase(kind)
 	for kind: Tool in _slots:
 		_icons[kind] = _slots[kind].get_node(^"Icon") as Node2D
 		_icon_scales[kind] = _icons[kind].scale

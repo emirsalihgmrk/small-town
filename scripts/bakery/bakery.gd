@@ -9,6 +9,8 @@ extends Node2D
 ## boşalır, kartlar sıfırlanır (yeni tarife başlanabilir), kapak kapanınca kız fırına el sallar, ürün
 ## pişince sevinir. Pişen ürün fırından çıkınca ortak sepete eklenir, sepete uçar ve kız yine sevinir.
 ## Kız tarladaki ve kümesteki gibi uzun süre dokunulmazsa esner.
+## Kartı dükkânda satılan tarifler (Owned.has_recipe) ancak kartı alınınca panoda görünür; panodaki her sıranın
+## görünen kartları sıranın ortasına toplanır.
 ## Kase ve fırın SaveGame'in "bakery" bölümünde tutulur: seçili tarif, kasedeki malzemeler, karışma
 ## miktarı ve fırındaki ürünle pişmesine kalan süre. Tarif seçilince, kaseye malzeme konunca, hamur olunca,
 ## hamur fırına girince, sahneden çıkarken ve SaveGame diske yazmadan hemen önce kayda geçer. Açılışta
@@ -38,7 +40,12 @@ var _idle_time: float = 0.0
 
 
 func _ready() -> void:
-	_cards.assign($World/RecipeBoard/Cards.get_children())
+	for card: RecipeCard in $World/RecipeBoard/Cards.get_children():
+		if Owned.has_recipe(card.recipe):
+			_cards.append(card)
+		else:
+			card.hide()
+	_center_rows()
 	_restore()
 	_home_button.pressed.connect(SceneRouter.go_home)
 	_basket.tapped.connect(_basket_menu.open)
@@ -75,6 +82,24 @@ func _input(event: InputEvent) -> void:
 func _exit_tree() -> void:
 	_store()
 	SaveGame.save_now()
+
+
+## Aynı yükseklikteki kartlar bir sıradır; sıranın görünen kartları, aralarındaki uzaklık korunarak sıranın
+## ortasına (x = 0) dizilir.
+func _center_rows() -> void:
+	var rows: Dictionary[float, Array] = {}
+	var spacing: float = 0.0
+	for card: RecipeCard in $World/RecipeBoard/Cards.get_children():
+		if not rows.has(card.position.y):
+			rows[card.position.y] = []
+		var row: Array = rows[card.position.y]
+		if not row.is_empty():
+			spacing = maxf(spacing, absf(card.position.x - (row.back() as RecipeCard).position.x))
+		row.append(card)
+	for y: float in rows:
+		var shown: Array = rows[y].filter(func(card: RecipeCard) -> bool: return card.visible)
+		for i: int in shown.size():
+			(shown[i] as RecipeCard).position.x = (i - (shown.size() - 1) * 0.5) * spacing
 
 
 func _store() -> void:

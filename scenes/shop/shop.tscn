@@ -29,6 +29,12 @@
 [ext_resource type="Texture2D" path="res://assets/art/shop/kite.svg" id="art_kite"]
 [ext_resource type="Texture2D" path="res://assets/art/shop/swing.svg" id="art_swing"]
 [ext_resource type="Texture2D" path="res://assets/art/shop/pond.svg" id="art_pond"]
+[ext_resource type="Texture2D" path="res://assets/art/shop/seed_rack.svg" id="seed_rack"]
+[ext_resource type="Texture2D" path="res://assets/art/shop/seed_packet_strawberry.svg" id="art_strawberry_seeds"]
+[ext_resource type="Texture2D" path="res://assets/art/shop/seed_packet_pumpkin.svg" id="art_pumpkin_seeds"]
+[ext_resource type="Texture2D" path="res://assets/art/shop/recipe_simit.svg" id="art_simit_recipe"]
+[ext_resource type="Texture2D" path="res://assets/art/shop/recipe_strawberry_cake.svg" id="art_strawberry_cake_recipe"]
+[ext_resource type="Texture2D" path="res://assets/art/shop/recipe_pumpkin_pie.svg" id="art_pumpkin_pie_recipe"]
 [ext_resource type="Texture2D" path="res://assets/art/field/thought_bubble.svg" id="thought_bubble"]
 [ext_resource type="PackedScene" path="res://scenes/ui/icons/market_icon.tscn" id="market_icon"]
 [ext_resource type="Script" path="res://scripts/input/tappable.gd" id="tappable_script"]
@@ -99,7 +105,8 @@ texture = ExtResource("1_room")
 centered = false
 
 [node name="Sign" type="Sprite2D" parent="World"]
-position = Vector2(830, 120)
+position = Vector2(285, 30)
+scale = Vector2(0.75, 0.75)
 texture = ExtResource("2_sign")
 centered = false
 offset = Vector2(-150, -10)
@@ -122,6 +129,15 @@ offset = Vector2(-30, -4)
 script = ExtResource("tappable_script")
 area = Rect2(-50, -10, 100, 110)
 priority = 5
+
+[node name="SeedRack" type="Sprite2D" parent="World"]
+position = Vector2(885, 470)
+texture = ExtResource("seed_rack")
+centered = false
+offset = Vector2(-220, -345)
+
+[node name="DoorWindow" type="Marker2D" parent="World"]
+position = Vector2(270, 405)
 
 [node name="Shelf" type="Sprite2D" parent="World"]
 position = Vector2(1500, 890)
@@ -201,6 +217,36 @@ position = Vector2(1732, 716)
 item = &"pond"
 texture = ExtResource("art_pond")
 art_scale = 0.55
+
+[node name="StrawberrySeeds" parent="World/ShelfItems" instance=ExtResource("shelf_item")]
+position = Vector2(780, 280)
+item = &"strawberry_seeds"
+texture = ExtResource("art_strawberry_seeds")
+art_scale = 0.9
+
+[node name="PumpkinSeeds" parent="World/ShelfItems" instance=ExtResource("shelf_item")]
+position = Vector2(990, 280)
+item = &"pumpkin_seeds"
+texture = ExtResource("art_pumpkin_seeds")
+art_scale = 0.9
+
+[node name="StrawberryCakeRecipe" parent="World/ShelfItems" instance=ExtResource("shelf_item")]
+position = Vector2(745, 470)
+item = &"strawberry_cake_recipe"
+texture = ExtResource("art_strawberry_cake_recipe")
+art_scale = 0.9
+
+[node name="SimitRecipe" parent="World/ShelfItems" instance=ExtResource("shelf_item")]
+position = Vector2(885, 470)
+item = &"simit_recipe"
+texture = ExtResource("art_simit_recipe")
+art_scale = 0.9
+
+[node name="PumpkinPieRecipe" parent="World/ShelfItems" instance=ExtResource("shelf_item")]
+position = Vector2(1025, 470)
+item = &"pumpkin_pie_recipe"
+texture = ExtResource("art_pumpkin_pie_recipe")
+art_scale = 0.9
 
 [node name="Shopkeeper" type="Node2D" parent="World"]
 position = Vector2(860, 860)

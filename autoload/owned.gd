@@ -2,6 +2,8 @@ extends Node
 ## Dükkândan alınanlar (autoload: Owned). Etikete konan her para hemen ortak paradan (Wallet) düşer ve o
 ## ürünün yarım ödemesine yazılır; ödeme fiyata ulaşınca ürün alınmış olur (purchased) ve bir daha satılmaz.
 ## Kızın taktığı aksesuar da burada tutulur (worn; boşsa hasır şapka). Kız her bölümde açılışta onu takar.
+## Alınan tohum paketleri tarlada yeni ürünleri (has_seeds), tarif kartları fırında yeni tarifleri
+## (has_recipe) açar.
 ## İçerik SaveGame'in "shop" bölümünde kalıcı tutulur: alınanlar, yarım ödemeler ve takılı aksesuar. Ürün
 ## kimlikleri ve fiyatlar ShopItems'tadır.
 
@@ -37,6 +39,21 @@ func _ready() -> void:
 
 func has(item: StringName) -> bool:
 	return _owned.has(item)
+
+
+## Tarlada bu ürün ekilebilir mi: tohumu dükkânda satılmayan ürünler hep açıktır.
+func has_seeds(crop_item: StringName) -> bool:
+	return not ShopItems.SEEDS_FOR.has(crop_item) or has(ShopItems.SEEDS_FOR[crop_item])
+
+
+## Fırında bu tarif görünür mü: kartı dükkânda satılmayan tarifler hep açıktır.
+func has_recipe(recipe: StringName) -> bool:
+	return not ShopItems.RECIPE_CARDS.has(recipe) or has(ShopItems.RECIPE_CARDS[recipe])
+
+
+## Ürün dükkânın rafında görünür mü: önce alınması gereken bir ürün varsa o alınmış olmalı.
+func is_offered(item: StringName) -> bool:
+	return not ShopItems.NEEDS.has(item) or has(ShopItems.NEEDS[item])
 
 
 func paid(item: StringName) -> int:
