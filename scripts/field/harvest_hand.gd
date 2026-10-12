@@ -5,12 +5,14 @@ extends Node
 ## yerine yaylanarak oturur. Tek parmak izlenir; raftan araç taşıyan parmaktan bağımsızdır.
 ## Hazır çilek çalısına dokunmak, dokunulan yere en yakın çileği hemen koparır (çekmek gerekmez).
 ## Hazır balkabağı parmakla sağa ya da sola itildikçe o yöne yuvarlanır; roll_distance kadar gidince
-## sapından kopup çıkar. Erken bırakılırsa geri yuvarlanır.
+## sapından kopup çıkar. Erken bırakılırsa geri yuvarlanır; kaydırmadan bırakılırsa yerinde sallanır.
 ## Not: Sahnede kamera yok, dünya ve ekran koordinatları canvas dönüşümüyle çevrilir.
 
 const NO_TOUCH: int = -1
 ## _carrot bu değerdeyse tutulan şey balkabağıdır.
 const PUMPKIN: int = -2
+## Parmak en fazla bu kadar kaydıysa dokunuş sayılır.
+const TAP_DISTANCE: float = 16.0
 
 @export var plots_root: Node2D
 ## Havucu çıkarmak için parmağın yukarı gitmesi gereken yol.
@@ -22,6 +24,8 @@ var _touch_index: int = NO_TOUCH
 var _plot: Plot
 var _carrot: int = -1
 var _start: Vector2
+## Bu basışta parmağın başlangıçtan en çok uzaklaştığı yol.
+var _farthest: float = 0.0
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -34,7 +38,9 @@ func _unhandled_input(event: InputEvent) -> void:
 				_touch_index = touch.index
 				get_viewport().set_input_as_handled()
 		elif not touch.pressed and touch.index == _touch_index:
-			if _carrot == PUMPKIN:
+			if _carrot == PUMPKIN and _farthest <= TAP_DISTANCE:
+				_plot.tap_pumpkin()
+			elif _carrot == PUMPKIN:
 				_plot.release_pumpkin()
 			else:
 				_plot.release_carrot(_carrot)
@@ -44,6 +50,7 @@ func _unhandled_input(event: InputEvent) -> void:
 	var drag: InputEventScreenDrag = event as InputEventScreenDrag
 	if drag != null and drag.index == _touch_index:
 		var moved: Vector2 = _to_world(drag.position) - _start
+		_farthest = maxf(_farthest, moved.length())
 		if _carrot == PUMPKIN:
 			_roll(moved.x)
 		else:
@@ -80,6 +87,7 @@ func _grab(world_point: Vector2) -> bool:
 			_plot = plot
 			_carrot = carrot
 	_start = world_point
+	_farthest = 0.0
 	return _plot != null
 
 

@@ -11,8 +11,8 @@ extends Node2D
 ## Sahne açıkken büyüme gerçek zamanlı ilerler; sahne kapalıyken geçen süre geri dönüldüğünde
 ## load_state ile sessizce ileri sarılır (susamış bitki yine bekler).
 ## Hazır havuçlar parmakla tek tek çekilip çıkarılır, hazır buğday orakla biçilir, çilekler (her çalıda
-## iki tane) dokununca tek tek kopar, balkabağı parmakla yana yuvarlanarak parselden çıkarılır. Hasat
-## bitince parsel
+## iki tane) dokununca tek tek kopar, balkabağı parmakla yana yuvarlanarak parselden çıkarılır (hazır
+## balkabağı arada bir ve dokunulunca yerinde sallanır). Hasat bitince parsel
 ## tamamen başa dönmez: toprak yarı sürülmüş kalır, üstünde birkaç ot çıkar.
 ## Her aşamanın sonunda parsel sevinçle zıplar.
 
@@ -86,6 +86,13 @@ const PUMPKIN_RADIUS: float = 52.0
 ## Geniş sarmaşık susayınca bütün bitkiler kadar eğilmez, yalnızca biraz.
 const VINE_DROOP_DEGREES: float = 4.0
 const PUMPKIN_OUT_PITCH: float = 0.7
+## Hazır balkabağı arada bir yerinde bir o yana bir bu yana yuvarlanır ("beni yuvarla" ipucu); dokunulunca da.
+const PUMPKIN_ROCK_DEGREES: Array[float] = [9.0, -7.0, 4.0, 0.0]
+const PUMPKIN_ROCK_STEP_TIME: float = 0.14
+const PUMPKIN_ROCK_INTERVAL_MIN: float = 3.5
+const PUMPKIN_ROCK_INTERVAL_MAX: float = 6.0
+const PUMPKIN_TAP_PITCH: float = 0.75
+const PUMPKIN_TAP_VOLUME_DB: float = -6.0
 ## Orağın ucu bir başağa bu kadar (yerel px) yaklaşınca başak kesilir.
 const REAP_RADIUS: float = 60.0
 const STALK_FALL_DEGREES: float = 80.0
@@ -187,6 +194,10 @@ var _berry_spots: Dictionary[Node2D, Node2D] = {}
 var _pumpkin_sown: bool = false
 var _pumpkin_ready: bool = false
 var _pumpkin_rest: Vector2
+## Parmak balkabağını tutuyor (yuvarlıyor); kendi kendine sallanmaz.
+var _pumpkin_held: bool = false
+var _pumpkin_rock_left: float = 0.0
+var _pumpkin_tween: Tween
 var _wheat_seeds_left: Array[Node2D] = []
 var _last_sprinkle_ms: int = -SPRINKLE_SOUND_INTERVAL_MS
 var _chop_sound: AudioStream
@@ -241,6 +252,10 @@ func _ready() -> void:
 
 func _process(delta: float) -> void:
 	_sway_wheat(delta)
+	if _pumpkin_ready and not _pumpkin_held:
+		_pumpkin_rock_left -= delta
+		if _pumpkin_rock_left <= 0.0:
+			_rock_pumpkin()
 	if state != State.SOWN or thirsty:
 		return
 	_stage_time_left -= delta
@@ -489,6 +504,7 @@ func _step_stage() -> void:
 				_ready_berries = _berries.duplicate()
 			Crop.PUMPKIN:
 				_pumpkin_ready = true
+				_pumpkin_rock_left = randf_range(PUMPKIN_ROCK_INTERVAL_MIN, PUMPKIN_ROCK_INTERVAL_MAX)
 			_:
 				_stalks_left = _plants.duplicate()
 	elif stage in THIRSTY_STAGES:
@@ -687,16 +703,56 @@ func pumpkin_at(global_point: Vector2) -> bool:
 ## Balkabağı parmakla yana itiliyor: sideways, parmağın yana kayması (dünya px). Kabak gittiği yöne
 ## doğru yuvarlanır.
 func roll_pumpkin(sideways: float) -> void:
-	var offset: float = sideways / global_scale.x
-	_pumpkin.position = _pumpkin_rest + Vector2(offset, 0.0)
-	_pumpkin.rotation = offset / PUMPKIN_RADIUS
+	_hold_pumpkin()
+	_set_pumpkin_roll(sideways / global_scale.x)
 
 
 ## Erken bırakıldı: balkabağı geri yuvarlanıp yerine oturur.
 func release_pumpkin() -> void:
-	var tween: Tween = create_tween().set_parallel().set_trans(Tween.TRANS_ELASTIC).set_ease(Tween.EASE_OUT)
-	tween.tween_property(_pumpkin, ^"position", _pumpkin_rest, SNAP_BACK_TIME)
-	tween.tween_property(_pumpkin, ^"rotation", 0.0, SNAP_BACK_TIME)
+	_hold_pumpkin()
+	_pumpkin_held = false
+	_pumpkin_rock_left = randf_range(PUMPKIN_ROCK_INTERVAL_MIN, PUMPKIN_ROCK_INTERVAL_MAX)
+	_pumpkin_tween = create_tween().set_parallel().set_trans(Tween.TRANS_ELASTIC).set_ease(Tween.EASE_OUT)
+	_pumpkin_tween.tween_property(_pumpkin, ^"position", _pumpkin_rest, SNAP_BACK_TIME)
+	_pumpkin_tween.tween_property(_pumpkin, ^"rotation", 0.0, SNAP_BACK_TIME)
+
+
+## Balkabağına kaydırmadan dokunuldu: "tok" diye yerinde sallanır.
+func tap_pumpkin() -> void:
+	if not _pumpkin_ready:
+		return
+	_pumpkin_held = false
+	_play_sound(_plop_sound, PUMPKIN_TAP_VOLUME_DB, PUMPKIN_TAP_PITCH + randf_range(-seed_pitch_variation, seed_pitch_variation))
+	_rock_pumpkin()
+
+
+## Parmak balkabağını tuttu: süren sallanma ya da geri dönüş durur.
+func _hold_pumpkin() -> void:
+	_pumpkin_held = true
+	if _pumpkin_tween != null:
+		_pumpkin_tween.kill()
+
+
+## Balkabağı yerinde bir o yana bir bu yana yuvarlanıp durur.
+func _rock_pumpkin() -> void:
+	_pumpkin_rock_left = randf_range(PUMPKIN_ROCK_INTERVAL_MIN, PUMPKIN_ROCK_INTERVAL_MAX)
+	if _pumpkin_tween != null:
+		_pumpkin_tween.kill()
+	_pumpkin_tween = create_tween().set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	var angle: float = _pumpkin.rotation
+	for degrees: float in PUMPKIN_ROCK_DEGREES:
+		_pumpkin_tween.tween_method(_set_pumpkin_roll_angle, angle, deg_to_rad(degrees), PUMPKIN_ROCK_STEP_TIME)
+		angle = deg_to_rad(degrees)
+
+
+## offset: balkabağının yerinden yana kayması (yerel px); kayan kabak kayma kadar döner.
+func _set_pumpkin_roll(offset: float) -> void:
+	_pumpkin.position = _pumpkin_rest + Vector2(offset, 0.0)
+	_pumpkin.rotation = offset / PUMPKIN_RADIUS
+
+
+func _set_pumpkin_roll_angle(angle: float) -> void:
+	_set_pumpkin_roll(angle * PUMPKIN_RADIUS)
 
 
 ## Balkabağı sapından kopup parselden yuvarlanarak çıktı; sarmaşık yerinde kalır, sonra solar.
@@ -704,6 +760,8 @@ func roll_out_pumpkin() -> void:
 	if not _pumpkin_ready:
 		return
 	_pumpkin_ready = false
+	_hold_pumpkin()
+	_pumpkin_held = false
 	var from: Vector2 = _pumpkin.global_position
 	_pumpkin.hide()
 	_play_sound(_carrot_pop_sound, 0.0, PUMPKIN_OUT_PITCH + randf_range(-seed_pitch_variation, seed_pitch_variation))
