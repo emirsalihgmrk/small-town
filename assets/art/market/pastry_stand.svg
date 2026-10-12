@@ -16,10 +16,9 @@
 <path d="M64 -248 L96 -248 Q80 -230 64 -248 Z"/><path d="M96 -248 L128 -248 Q112 -230 96 -248 Z"/>
 </g>
 <rect x="-142" y="-118" width="284" height="106" rx="6" fill="#ffe4ec" stroke="#c9758f" stroke-width="5"/>
-<rect x="-126" y="-88" width="116" height="62" rx="10" fill="none" stroke="#f2a7bb" stroke-width="4"/>
-<rect x="10" y="-88" width="116" height="62" rx="10" fill="none" stroke="#f2a7bb" stroke-width="4"/>
-<circle cx="-22" cy="-57" r="5" fill="#c9758f"/>
-<circle cx="22" cy="-57" r="5" fill="#c9758f"/>
+<rect x="-130" y="-104" width="260" height="86" rx="6" fill="#fff4f7" stroke="#e3a3b6" stroke-width="4"/>
+<g fill="#ffdbe5"><circle cx="-100" cy="-70" r="7"/><circle cx="-34" cy="-80" r="7"/><circle cx="34" cy="-70" r="7"/><circle cx="100" cy="-80" r="7"/></g>
+<rect x="-138" y="-24" width="276" height="10" rx="4" fill="#fbe3ea" stroke="#c9758f" stroke-width="4"/>
 <g stroke-width="3" stroke-linejoin="round">
 <path d="M-140 -118 L-105 -118 Q-122 -98 -140 -118 Z" fill="#f48fb1" stroke="#d26a8f"/>
 <path d="M-105 -118 L-70 -118 Q-88 -98 -105 -118 Z" fill="#ffffff" stroke="#f2a7bb"/>

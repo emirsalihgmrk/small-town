@@ -16,6 +16,11 @@
 [ext_resource type="Texture2D" path="res://assets/art/bakery/cookie.svg" id="cookie"]
 [ext_resource type="Texture2D" path="res://assets/art/bakery/carrot_cake.svg" id="carrot_cake"]
 [ext_resource type="Texture2D" path="res://assets/art/bakery/birthday_cake.svg" id="birthday_cake"]
+[ext_resource type="Texture2D" path="res://assets/art/ui/icons/field/strawberry.svg" id="strawberry"]
+[ext_resource type="Texture2D" path="res://assets/art/ui/icons/field/pumpkin.svg" id="pumpkin"]
+[ext_resource type="Texture2D" path="res://assets/art/bakery/simit.svg" id="simit"]
+[ext_resource type="Texture2D" path="res://assets/art/bakery/strawberry_cake.svg" id="strawberry_cake"]
+[ext_resource type="Texture2D" path="res://assets/art/bakery/pumpkin_pie.svg" id="pumpkin_pie"]
 
 [node name="RequestBubble" type="Node2D"]
 script = ExtResource("1_script")
@@ -27,7 +32,12 @@ item_icons = Dictionary[StringName, Texture2D]({
 &"bread": ExtResource("bread"),
 &"cookie": ExtResource("cookie"),
 &"carrot_cake": ExtResource("carrot_cake"),
-&"birthday_cake": ExtResource("birthday_cake")
+&"birthday_cake": ExtResource("birthday_cake"),
+&"strawberry": ExtResource("strawberry"),
+&"pumpkin": ExtResource("pumpkin"),
+&"simit": ExtResource("simit"),
+&"strawberry_cake": ExtResource("strawberry_cake"),
+&"pumpkin_pie": ExtResource("pumpkin_pie")
 })
 bubble_textures = Array[Texture2D]([ExtResource("2_bubble_1"), ExtResource("3_bubble_2"), ExtResource("4_bubble_3")])
 slot_texture = ExtResource("5_slot")

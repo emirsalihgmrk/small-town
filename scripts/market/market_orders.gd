@@ -5,11 +5,13 @@ extends RefCounted
 ## yoksa ham ürünlerden olur. Aynı ürünler balonda yan yana dursun diye istek ürün sırasına göre dizilir.
 
 const MAX_ITEMS: int = 3
-const BAKED: Array[StringName] = [Items.BREAD, Items.COOKIE, Items.CARROT_CAKE, Items.BIRTHDAY_CAKE]
-const RAW: Array[StringName] = [Items.CARROT, Items.WHEAT, Items.EGG, Items.MILK]
+const BAKED: Array[StringName] = [Items.BREAD, Items.COOKIE, Items.SIMIT, Items.CARROT_CAKE, Items.BIRTHDAY_CAKE,
+		Items.STRAWBERRY_CAKE, Items.PUMPKIN_PIE]
+const RAW: Array[StringName] = [Items.CARROT, Items.WHEAT, Items.STRAWBERRY, Items.PUMPKIN, Items.EGG, Items.MILK]
 ## Ürünlerin sırası (balonda soldan sağa da bu sırayla durur).
-const ALL: Array[StringName] = [Items.BREAD, Items.COOKIE, Items.CARROT_CAKE, Items.BIRTHDAY_CAKE, Items.CARROT,
-		Items.WHEAT, Items.EGG, Items.MILK]
+const ALL: Array[StringName] = [Items.BREAD, Items.COOKIE, Items.SIMIT, Items.CARROT_CAKE, Items.BIRTHDAY_CAKE,
+		Items.STRAWBERRY_CAKE, Items.PUMPKIN_PIE, Items.CARROT, Items.WHEAT, Items.STRAWBERRY, Items.PUMPKIN, Items.EGG,
+		Items.MILK]
 
 
 static func has_anything() -> bool:
