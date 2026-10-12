@@ -2,6 +2,7 @@ extends CanvasLayer
 ## GEÇİCİ geliştirici paneli (autoload: DebugPanel). Sepetteki ürünleri, parayı, dükkândan alınanları ve
 ## kızın taktığı aksesuarı elle değiştirmeye yarar. Sağ üst köşedeki küçük düğmeyle ya da F1 ile açılır.
 ## Değerler hemen kayda geçer; panel kapanınca sahne yeniden yüklenir ki her şey yeni değerlerle görünsün.
+## Yalnız editörde ve debug export'ta çalışır; release export'ta kendini hemen siler, çocuk göremez.
 ## Silmek için: bu dosyayı (ve .uid'ini) sil, project.godot'taki [autoload] altından DebugPanel satırını kaldır.
 
 const BASKET_ITEMS: Array[StringName] = [
@@ -23,6 +24,10 @@ var _refreshing: bool = false
 
 
 func _ready() -> void:
+	if not OS.is_debug_build():
+		set_process_input(false)
+		queue_free()
+		return
 	layer = 90
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	var theme: Theme = Theme.new()
