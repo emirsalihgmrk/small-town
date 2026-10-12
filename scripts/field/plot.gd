@@ -138,9 +138,9 @@ const MAX_SOUND_PAN: float = 0.6
 @export_group("Büyüme")
 ## Sulamayı bekleme süresi hariç, tohumdan hazır olana kadar geçen süre.
 @export_range(1.0, 600.0, 1.0, "suffix:s") var carrot_grow_time: float = 35.0
-@export_range(1.0, 600.0, 1.0, "suffix:s") var wheat_grow_time: float = 55.0
+@export_range(1.0, 600.0, 1.0, "suffix:s") var wheat_grow_time: float = 45.0
 @export_range(1.0, 600.0, 1.0, "suffix:s") var strawberry_grow_time: float = 45.0
-@export_range(1.0, 600.0, 1.0, "suffix:s") var pumpkin_grow_time: float = 80.0
+@export_range(1.0, 600.0, 1.0, "suffix:s") var pumpkin_grow_time: float = 50.0
 ## Susamış parsel kova altında bu kadar kalınca sulanmış olur.
 @export_range(0.1, 5.0, 0.1, "suffix:s") var water_needed: float = 1.0
 
