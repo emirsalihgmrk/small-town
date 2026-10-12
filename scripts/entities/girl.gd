@@ -57,6 +57,8 @@ var _wave_timer: Timer
 @onready var _body: Node2D = $Body
 @onready var _torso: Node2D = $Body/Torso
 @onready var _arms: Array[Node2D] = [$Body/Torso/ArmL, $Body/Torso/ArmR]
+@onready var _legs: Array[Node2D] = [$Body/LegL, $Body/LegR]
+@onready var _shadow: CanvasItem = $Shadow
 @onready var _eyes_open: CanvasItem = $Body/Torso/Head/Eyes/Open
 @onready var _eyes_closed: CanvasItem = $Body/Torso/Head/Eyes/Closed
 @onready var _mouth_smile: CanvasItem = $Body/Torso/Head/Mouth/Smile
@@ -151,8 +153,9 @@ func _on_tapped(_global_tap_position: Vector2) -> void:
 
 
 ## Sevinir: zıplar, kalpler ve yıldızlar saçar; with_sound ise (yalnızca kıza dokunulunca) "fırt" sesi
-## de çalar. Tepki sürerken gelen istek yok sayılır; animasyonlar üst üste binmez.
-func cheer(with_sound: bool = false) -> void:
+## de çalar. hop kapalıysa (salıncakta) yerinden zıplamaz, yalnızca yüzü güler ve kalpler çıkar.
+## Tepki sürerken gelen istek yok sayılır; animasyonlar üst üste binmez.
+func cheer(with_sound: bool = false, hop: bool = true) -> void:
 	if _reacting:
 		return
 	_reacting = true
@@ -164,9 +167,10 @@ func cheer(with_sound: bool = false) -> void:
 	_stars.restart()
 	_set_eyes_closed(true)
 	_set_mouth_open(true)
-	var jump: Tween = create_tween()
-	jump.tween_property(_body, ^"position:y", -jump_height, JUMP_UP_TIME).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
-	jump.tween_property(_body, ^"position:y", 0.0, JUMP_DOWN_TIME).set_trans(Tween.TRANS_BOUNCE).set_ease(Tween.EASE_OUT)
+	if hop:
+		var jump: Tween = create_tween()
+		jump.tween_property(_body, ^"position:y", -jump_height, JUMP_UP_TIME).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+		jump.tween_property(_body, ^"position:y", 0.0, JUMP_DOWN_TIME).set_trans(Tween.TRANS_BOUNCE).set_ease(Tween.EASE_OUT)
 	var face: Tween = create_tween()
 	face.tween_interval(REACTION_TIME)
 	face.tween_callback(func() -> void:
@@ -213,6 +217,19 @@ func yawn() -> bool:
 		_set_mouth_open(false)
 		_reacting = false)
 	return true
+
+
+## Salıncağa oturur (gölgesi gizlenir; salıncağın kendi gölgesi vardır) ya da kalkar.
+func sit(seated: bool) -> void:
+	_shadow.visible = not seated
+	if not seated:
+		kick(0.0)
+
+
+## Oturduğunda bacaklarını kalçadan sallar (salıncakta harekete göre geride kalırlar).
+func kick(radians: float) -> void:
+	for leg: Node2D in _legs:
+		leg.rotation = radians
 
 
 func _set_eyes_closed(closed: bool) -> void:

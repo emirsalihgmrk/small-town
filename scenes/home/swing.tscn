@@ -1,0 +1,37 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/home/play_swing.gd" id="1_swing"]
+[ext_resource type="Texture2D" path="res://assets/art/character/girl/shadow.svg" id="2_shadow"]
+[ext_resource type="Texture2D" path="res://assets/art/environment/playground/swing_frame.svg" id="3_frame"]
+[ext_resource type="Texture2D" path="res://assets/art/environment/playground/swing_seat.svg" id="4_seat"]
+[ext_resource type="Script" path="res://scripts/input/tappable.gd" id="5_tappable"]
+
+[node name="Swing" type="Node2D"]
+script = ExtResource("1_swing")
+
+[node name="SeatShadow" type="Sprite2D" parent="."]
+texture = ExtResource("2_shadow")
+centered = false
+offset = Vector2(-82, -7)
+
+[node name="Frame" type="Sprite2D" parent="."]
+texture = ExtResource("3_frame")
+centered = false
+offset = Vector2(-234, -444)
+
+[node name="Seat" type="Node2D" parent="."]
+position = Vector2(0, -427)
+
+[node name="Sprite" type="Sprite2D" parent="Seat"]
+texture = ExtResource("4_seat")
+centered = false
+offset = Vector2(-112, -12)
+
+[node name="SeatTap" type="Node2D" parent="Seat"]
+script = ExtResource("5_tappable")
+area = Rect2(-115, 30, 230, 370)
+priority = 11
+
+[node name="FrameTap" type="Node2D" parent="."]
+script = ExtResource("5_tappable")
+area = Rect2(-230, -444, 460, 450)
