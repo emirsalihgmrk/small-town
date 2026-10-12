@@ -42,6 +42,7 @@
 [ext_resource type="Script" path="res://scripts/field/field_bird.gd" id="bird_script"]
 [ext_resource type="Script" path="res://scripts/field/field_bunny.gd" id="bunny_script"]
 [ext_resource type="Script" path="res://scripts/input/tappable.gd" id="tappable_script"]
+[ext_resource type="Script" path="res://scripts/components/hint_director.gd" id="hint_director_script"]
 [ext_resource type="Texture2D" path="res://assets/art/environment/bird_body.svg" id="bird_body"]
 [ext_resource type="Texture2D" path="res://assets/art/environment/bird_wing.svg" id="bird_wing"]
 [ext_resource type="Texture2D" path="res://assets/art/animals/bunny.svg" id="bunny"]
@@ -587,3 +588,6 @@ texture = ExtResource("23_sickle")
 layer = 2
 
 [node name="BasketMenu" parent="." instance=ExtResource("basket_menu")]
+
+[node name="HintDirector" type="Node" parent="."]
+script = ExtResource("hint_director_script")

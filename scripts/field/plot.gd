@@ -18,6 +18,7 @@ extends Node2D
 
 signal tilled
 signal sown
+signal watered
 signal ripened
 ## Topraktan bir ürün çıktı (havuç ve çilek başına bir, buğday parseli başına bir demet); görseli
 ## dinleyen çizer.
@@ -106,6 +107,8 @@ const REGROW_WEEDS: int = 2
 
 ## Toprağın dokunulabilir yüzü (yerel); ön kenarın kalınlığı da dahil.
 const AREA: Rect2 = Rect2(-165.0, -60.0, 330.0, 125.0)
+## El göstergesinde buğday serperken ve biçerken parmağın parsel ortasından iki yana gittiği yol (yerel).
+const HINT_SWEEP: float = 120.0
 const TILL_REVEAL_TIME: float = 0.25
 const WEED_RISE: float = 70.0
 const WEED_DRIFT_MIN: float = 40.0
@@ -456,6 +459,7 @@ func _show_thirst() -> void:
 ## Sulandı: toprak koyulaşır, balon söner, bitkiler dikleşir ve büyüme sürer.
 func _quench() -> void:
 	thirsty = false
+	watered.emit()
 	_dry_soil.modulate.a = 0.0
 	_play_sound(_plop_sound, 0.0, 1.0)
 	var bubble: Tween = create_tween()
@@ -647,6 +651,39 @@ func _pick(nodes: Array[Node2D], flags: Variant, wanted: bool) -> Array[Node2D]:
 		if i < list.size() and bool(list[i]) == wanted:
 			picked.append(nodes[i])
 	return picked
+
+
+## El göstergesi için bu ürünün tohumunun sıradaki düşeceği yerler (dünya koordinatı): çukurlu üründe boş
+## çukurlar, balkabağında iri çukur, buğdayda parselin bir ucundan öbürüne.
+func sow_hint_points(seed_crop: Crop) -> PackedVector2Array:
+	var points: PackedVector2Array = []
+	if SPOT_PLANTS.has(seed_crop):
+		for spot: Node2D in _spots_left:
+			points.append(spot.global_position)
+	elif seed_crop == Crop.PUMPKIN:
+		points.append(_pumpkin_spot.global_position)
+	else:
+		points.append(to_global(Vector2(-HINT_SWEEP, 0.0)))
+		points.append(to_global(Vector2(HINT_SWEEP, 0.0)))
+	return points
+
+
+## El göstergesi için hasadın başladığı yer (dünya koordinatı): ilk hazır havucun yaprakları, balkabağı ya da
+## buğdayın ortası. Çilekte ve hasat edilecek bir şey yoksa Vector2.INF.
+func harvest_hint_point() -> Vector2:
+	if state != State.READY:
+		return Vector2.INF
+	match crop:
+		Crop.CARROT:
+			if not _ready_carrots.is_empty():
+				return _ready_carrots[0].to_global(CARROT_HIT.get_center())
+		Crop.PUMPKIN:
+			if _pumpkin_ready:
+				return _pumpkin_spot.to_global(PUMPKIN_HIT.get_center())
+		Crop.WHEAT:
+			if can_reap():
+				return global_position
+	return Vector2.INF
 
 
 ## Noktadaki hazır havucun çukur sırası; yoksa -1.

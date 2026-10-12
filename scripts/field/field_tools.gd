@@ -91,6 +91,16 @@ func _ready() -> void:
 		_icon_scales[kind] = _icons[kind].scale
 
 
+## El göstergesi için aracın raftaki yeri (ekran koordinatı); araç rafta yoksa Vector2.INF.
+func slot_center(kind: Tool) -> Vector2:
+	return _slots[kind].get_global_rect().get_center() if _slots.has(kind) else Vector2.INF
+
+
+## El göstergesinin taşıyacağı, aracın raftaki resmi; araç rafta yoksa null.
+func slot_icon(kind: Tool) -> Node2D:
+	return _icons.get(kind)
+
+
 ## Parmak kıpırdamasa da süre ilerlesin (torba çukurun üstünde bekletilince tohum düşsün, kova döksün).
 func _process(delta: float) -> void:
 	if _tool != null:

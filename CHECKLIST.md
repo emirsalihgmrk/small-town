@@ -41,6 +41,14 @@ Minik Kasaba'yı Google Play'e hazırlarken yapılacaklar. Bitenler `[x]` ile i�
 - [ ] **8. Sürüm numarası** — ⏸ _Export sırasında ayarlanacak, 2. maddeye taşındı._
 - [ ] **9. Gerçek cihaz testi** — tablette ve telefonda dokunma, performans, farklı ekran oranları, kenar boşlukları.
 - [ ] **10. Sıfır kayıtla baştan sona oynanış** — yeni yükleyen çocuk yolunu bulabiliyor mu?
+	  El göstergesi (`HintHand` + `HintDirector`; iş 3 kez yapılana dek ~2 sn, sonra ~10 sn beklemede çıkar,
+	  öğrenme sayıları kayıtta "hints"). Tespit ve sıra: `~/.claude/plans/golden-exploring-starlight.md`.
+	  - [x] Ortak parçalar + Tarla (çapa, tohum, sulama, havuç çekme, balkabağı itme, orak)
+	  - [ ] Kümes (sepetten buğday → yemlik, kova → suluk)
+	  - [ ] Ahır (saman → yemlik, kova → suluk, süt kovası → inek, memeye dokunma)
+	  - [ ] Fırın (tarif kartı, sepetten malzeme → kase, karıştırma, hamur → fırın)
+	  - [ ] Pazar (reyondan ürün → müşteri) ve Dükkân (kumbaradan para → etiket)
+	  - [ ] Ana ekran (ilk açılışta Tarla kartı)
 	  Fırın ürünlerinin kayıtta hep 0 görünmesinin nedeni de bakılacak.
 
 ## 🟡 Temizlik
