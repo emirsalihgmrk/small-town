@@ -151,6 +151,11 @@ func udder_contains(global_point: Vector2) -> bool:
 	return UDDER_AREA.has_point(to_local(global_point))
 
 
+## El göstergesi için memenin ortası (dünya koordinatı).
+func udder_point() -> Vector2:
+	return to_global(UDDER_AREA.get_center())
+
+
 ## Bir kez sağılır: memesi basılıp esner, kovaya süt fışkırır.
 func squirt() -> void:
 	if _udder_tween != null:

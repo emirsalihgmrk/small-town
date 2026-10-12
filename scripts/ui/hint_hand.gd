@@ -47,13 +47,14 @@ func is_playing() -> bool:
 	return _tween != null and _tween.is_running()
 
 
-func play(points: PackedVector2Array, hold: float = DEFAULT_HOLD, carry: Node2D = null) -> void:
+func play(points: PackedVector2Array, hold: float = DEFAULT_HOLD, carry: Node2D = null,
+		carry_offset: Vector2 = CARRY_OFFSET) -> void:
 	stop()
 	if points.is_empty():
 		return
 	if carry != null:
 		_carried = carry.duplicate() as Node2D
-		_carried.position = CARRY_OFFSET
+		_carried.position = carry_offset
 		_carried.scale = (carry.global_scale if carry.is_inside_tree() else carry.scale) * CARRY_SCALE
 		_carried.rotation = 0.0
 		_carried.modulate.a = CARRY_ALPHA

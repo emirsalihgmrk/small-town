@@ -6,8 +6,18 @@ extends Node2D
 ## Yemlik, suluk ve inek açılışta kayıttan geri yüklenir; sahne kapalıyken geçen oyun süresi kadar ineğin
 ## döngüsü ileri sarılır (Cow.load_state). Yemlik ya da suluk dolunca, süt hazır olunca, inek sağılınca,
 ## sahneden çıkarken ve SaveGame diske yazmadan hemen önce durum kayda geçer.
+## El göstergesi (HintDirector) sırayla şunları gösterir: süt hazırsa kovayı ineğin altına götürmeyi ya da
+## kova yerindeyse memeye dokunmayı, yemlik boşsa yığından saman çekmeyi, suluk dolu değilse kovayla su
+## dökmeyi.
 
 const SECTION: String = "barn"
+## El göstergesindeki işlerin kimlikleri (öğrenme sayısı kayıtta bu adlarla tutulur).
+const HINT_HAY: StringName = &"barn_hay"
+const HINT_WATER: StringName = &"barn_water"
+const HINT_PAIL: StringName = &"barn_pail"
+const HINT_MILK: StringName = &"barn_milk"
+## Kova suluğun üstünde bu kadar bekler (Trough.water_needed'dan biraz uzun).
+const HINT_WATER_HOLD: float = 1.6
 ## Kızın ahıra (sağa) bakan kolu.
 const GIRL_BARN_ARM: int = 1
 ## Esneme zamanı geldiğinde kız başka bir hareketteyse bu kadar sonra yeniden denenir.
@@ -24,8 +34,16 @@ const YAWN_RETRY_TIME: float = 2.0
 @onready var _cow: Cow = $World/Cow
 @onready var _girl: Girl = $World/Girl
 @onready var _milk_hand: MilkHand = $MilkHand
+@onready var _hay_hand: HayHand = $HayHand
+@onready var _hay_pile: HayPile = $World/HayPile
+@onready var _bucket: Node2D = $World/Bucket
+@onready var _pail: MilkPail = $World/MilkPail
+@onready var _hints: HintDirector = $HintDirector
 
 var _idle_time: float = 0.0
+## El göstergesinin taşıdığı saman tutamı ve boş süt kovası (sahnede değil, yalnızca örnek).
+var _hint_hay: Sprite2D
+var _hint_pail: Sprite2D
 
 
 func _ready() -> void:
@@ -41,6 +59,17 @@ func _ready() -> void:
 	_cow.milk_ready.connect(SaveGame.request_save)
 	_milk_hand.milked.connect(SaveGame.request_save)
 	SaveGame.before_save.connect(_store)
+	_hint_hay = Sprite2D.new()
+	_hint_hay.texture = _hay_hand.tuft_texture
+	_hint_hay.scale = Vector2.ONE * HayHand.CARRY_SCALE / HintHand.CARRY_SCALE
+	var pail_sprite: Sprite2D = _pail.get_node(^"Body/Sprite") as Sprite2D
+	_hint_pail = pail_sprite.duplicate() as Sprite2D
+	_hint_pail.scale = pail_sprite.global_scale / HintHand.CARRY_SCALE
+	_hints.provider = _current_hint
+	_manger.filled.connect(_hints.learned.bind(HINT_HAY))
+	_trough.filled.connect(_hints.learned.bind(HINT_WATER))
+	_milk_hand.placed.connect(_hints.learned.bind(HINT_PAIL))
+	_milk_hand.milked.connect(_hints.learned.bind(HINT_MILK))
 
 
 func _process(delta: float) -> void:
@@ -57,6 +86,33 @@ func _input(event: InputEvent) -> void:
 func _exit_tree() -> void:
 	_store()
 	SaveGame.save_now()
+	_hint_hay.free()
+	_hint_pail.free()
+
+
+## El göstergesi için o an yapılabilecek ilk iş (bkz. HintDirector.provider).
+func _current_hint() -> Dictionary:
+	if _basket_menu.is_open:
+		return {}
+	if _cow.is_milk_ready():
+		if _milk_hand.is_pail_placed():
+			return {"id": HINT_MILK, "points": PackedVector2Array([_to_screen(_cow.udder_point())])}
+		if _milk_hand.is_pail_resting():
+			return {"id": HINT_PAIL, "carry": _hint_pail, "carry_offset": MilkHand.HOLD_OFFSET,
+					"points": PackedVector2Array([_to_screen(_milk_hand.pail_grip(_pail.global_position)),
+					_to_screen(_milk_hand.pail_grip(_cow.pail_spot()))])}
+	if _manger.can_fill():
+		return {"id": HINT_HAY, "carry": _hint_hay, "points": PackedVector2Array([
+				_to_screen(_hay_pile.to_global(_hay_pile.grab_area.get_center())),
+				_to_screen(_manger.to_global(_manger.drop_area.get_center()))])}
+	if _trough.needs_water():
+		return {"id": HINT_WATER, "carry": _bucket, "hold": HINT_WATER_HOLD, "points": PackedVector2Array([
+				_to_screen(_bucket.global_position), _to_screen(_trough.to_global(_trough.pour_area.get_center()))])}
+	return {}
+
+
+func _to_screen(world_point: Vector2) -> Vector2:
+	return get_viewport().get_canvas_transform() * world_point
 
 
 func _store() -> void:

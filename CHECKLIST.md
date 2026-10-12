@@ -46,7 +46,7 @@ Minik Kasaba'yı Google Play'e hazırlarken yapılacaklar. Bitenler `[x]` ile i�
 	  dokununca başa döner; öğrenme sayıları kayıtta "hints"). Tespit ve sıra: `~/.claude/plans/golden-exploring-starlight.md`.
 	  - [x] Ortak parçalar + Tarla (çapa, tohum, sulama, havuç çekme, balkabağı itme, orak)
 	  - [x] Kümes (sepetten buğday → yemlik, kova → suluk)
-	  - [ ] Ahır (saman → yemlik, kova → suluk, süt kovası → inek, memeye dokunma)
+	  - [x] Ahır (saman → yemlik, kova → suluk, süt kovası → inek, memeye dokunma)
 	  - [ ] Fırın (tarif kartı, sepetten malzeme → kase, karıştırma, hamur → fırın)
 	  - [ ] Pazar (reyondan ürün → müşteri) ve Dükkân (kumbaradan para → etiket)
 	  - [ ] Ana ekran (ilk açılışta Tarla kartı)

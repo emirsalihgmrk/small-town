@@ -20,6 +20,7 @@
 [ext_resource type="Texture2D" path="res://assets/art/ui/icons/tools/bucket.svg" id="bucket_icon"]
 [ext_resource type="PackedScene" path="res://scenes/barn/milk_pail.tscn" id="milk_pail"]
 [ext_resource type="Script" path="res://scripts/barn/milk_hand.gd" id="milk_hand_script"]
+[ext_resource type="Script" path="res://scripts/components/hint_director.gd" id="hint_director_script"]
 [ext_resource type="Texture2D" path="res://assets/art/barn/lantern.svg" id="lantern"]
 [ext_resource type="Texture2D" path="res://assets/art/barn/lantern_glow.svg" id="lantern_glow"]
 [ext_resource type="Texture2D" path="res://assets/art/barn/dust_mote.svg" id="dust_mote"]
@@ -226,3 +227,6 @@ texture = ExtResource("7_home")
 layer = 2
 
 [node name="BasketMenu" parent="." instance=ExtResource("basket_menu")]
+
+[node name="HintDirector" type="Node" parent="."]
+script = ExtResource("hint_director_script")

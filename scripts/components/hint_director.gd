@@ -22,7 +22,8 @@ const HAND_SCENE: PackedScene = preload("res://scenes/ui/hint_hand.tscn")
 @export_range(1, 16) var max_backoff: int = 4
 
 ## O an gösterilecek iş: {"id": StringName, "points": PackedVector2Array (ekran), "hold": float (isteğe bağlı),
-## "carry": Node2D (isteğe bağlı; elin taşıdığı görünen şeyin örneği)}; gösterilecek iş yoksa boş sözlük.
+## "carry": Node2D (isteğe bağlı; elin taşıdığı görünen şeyin örneği), "carry_offset": Vector2 (isteğe bağlı;
+## taşınanın parmağa göre yeri)}; gösterilecek iş yoksa boş sözlük.
 var provider: Callable
 
 var _hand: HintHand
@@ -51,7 +52,8 @@ func _process(delta: float) -> void:
 		return
 	if _idle < (learned_delay if is_learned(hint["id"]) else first_delay) * _backoff:
 		return
-	_hand.play(hint["points"], hint.get("hold", HintHand.DEFAULT_HOLD), hint.get("carry"))
+	_hand.play(hint["points"], hint.get("hold", HintHand.DEFAULT_HOLD), hint.get("carry"),
+			hint.get("carry_offset", HintHand.CARRY_OFFSET))
 	shown.emit(hint["id"])
 
 

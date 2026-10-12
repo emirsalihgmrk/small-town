@@ -10,6 +10,8 @@ extends Node
 ## Bu düğüm sahnede TapRouter'dan sonra gelmeli ki kovaya basış önce buraya ulaşsın.
 
 signal milked
+## Kova ineğin altına oturdu.
+signal placed
 
 enum Phase { RESTING, DRAGGING, MOVING, PLACED }
 
@@ -101,7 +103,8 @@ func _place() -> void:
 	tween.tween_property(pail, ^"global_position", cow.pail_spot(), PLACE_TIME)
 	tween.tween_callback(func() -> void:
 		_phase = Phase.PLACED
-		pail.squash())
+		pail.squash()
+		placed.emit())
 
 
 func _return_to_rest() -> void:
@@ -140,6 +143,21 @@ func _on_full() -> void:
 	cow.milked()
 	milked.emit()
 	_return_to_rest()
+
+
+## Kova yerinde duruyor (taşınmıyor, ineğin altında değil).
+func is_pail_resting() -> bool:
+	return _phase == Phase.RESTING
+
+
+## Kova ineğin altında, sağılmayı bekliyor.
+func is_pail_placed() -> bool:
+	return _phase == Phase.PLACED
+
+
+## El göstergesi için kovanın tutulduğu nokta (dünya koordinatı): parmak kovayı ortasından tutar.
+func pail_grip(pail_root: Vector2) -> Vector2:
+	return pail_root - HOLD_OFFSET
 
 
 ## Kova yerdeyken ve inek sağılmaya hazırken kova zıplayarak çağırır (kayıttan kurulunca da çağrılır).
