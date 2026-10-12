@@ -47,7 +47,7 @@ Minik Kasaba'yı Google Play'e hazırlarken yapılacaklar. Bitenler `[x]` ile i�
 	  - [x] Ortak parçalar + Tarla (çapa, tohum, sulama, havuç çekme, balkabağı itme, orak)
 	  - [x] Kümes (sepetten buğday → yemlik, kova → suluk)
 	  - [x] Ahır (saman → yemlik, kova → suluk, süt kovası → inek, memeye dokunma)
-	  - [ ] Fırın (tarif kartı, sepetten malzeme → kase, karıştırma, hamur → fırın)
+	  - [x] Fırın (tarif kartı, sepetten malzeme → kase, karıştırma, hamur → fırın)
 	  - [ ] Pazar (reyondan ürün → müşteri) ve Dükkân (kumbaradan para → etiket)
 	  - [ ] Ana ekran (ilk açılışta Tarla kartı)
 	  Fırın ürünlerinin kayıtta hep 0 görünmesinin nedeni de bakılacak.

@@ -17,6 +17,7 @@
 [ext_resource type="Script" path="res://scripts/bakery/ingredient_hand.gd" id="ingredient_hand_script"]
 [ext_resource type="Script" path="res://scripts/bakery/stir_hand.gd" id="stir_hand_script"]
 [ext_resource type="Script" path="res://scripts/bakery/dough_hand.gd" id="dough_hand_script"]
+[ext_resource type="Script" path="res://scripts/components/hint_director.gd" id="hint_director_script"]
 [ext_resource type="PackedScene" path="res://scenes/entities/girl.tscn" id="8_girl"]
 [ext_resource type="Texture2D" path="res://assets/art/ui/icons/home.svg" id="9_home"]
 [ext_resource type="PackedScene" path="res://scenes/entities/basket.tscn" id="basket_scene"]
@@ -256,3 +257,6 @@ texture = ExtResource("9_home")
 layer = 2
 
 [node name="BasketMenu" parent="." instance=ExtResource("basket_menu")]
+
+[node name="HintDirector" type="Node" parent="."]
+script = ExtResource("hint_director_script")
