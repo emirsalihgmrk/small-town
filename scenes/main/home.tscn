@@ -36,6 +36,9 @@
 [ext_resource type="PackedScene" path="res://scenes/home/pond.tscn" id="play_pond"]
 [ext_resource type="Script" path="res://scripts/components/sway_component.gd" id="sway_script"]
 [ext_resource type="Script" path="res://scripts/home/play_kite.gd" id="play_kite"]
+[ext_resource type="Script" path="res://scripts/ui/parent_gate_button.gd" id="parent_gate_script"]
+[ext_resource type="Texture2D" path="res://assets/art/ui/icons/gear.svg" id="gear_icon"]
+[ext_resource type="PackedScene" path="res://scenes/ui/parent_menu.tscn" id="parent_menu"]
 
 [node name="Home" type="Node2D" node_paths=PackedStringArray("decorations")]
 script = ExtResource("home_script")
@@ -568,3 +571,14 @@ section_id = &"bakery"
 title = "Fırın"
 icon_scene = ExtResource("26_bakery_icon")
 card_color = Color(0.965, 0.863, 0.761, 1)
+
+[node name="ParentGateButton" type="Control" parent="UI/Root"]
+layout_mode = 0
+offset_left = 40.0
+offset_top = 4.0
+offset_right = 96.0
+offset_bottom = 60.0
+script = ExtResource("parent_gate_script")
+icon = ExtResource("gear_icon")
+
+[node name="ParentMenu" parent="." instance=ExtResource("parent_menu")]

@@ -2,12 +2,17 @@ extends Node2D
 ## Ana ekran: bölüm kartına basılınca o bölüme geçer (henüz yapılmamış bölümlerin kartı tepkisizdir).
 ## Dükkân'dan alınan süsler (kuş evi, uçurtma, salıncak, küçük havuz) kendi sabit yerlerinde görünür;
 ## alınmamışlar gizlidir. Süs düğümünün adı ürün kimliğinin PascalCase hâlidir (birdhouse -> Birdhouse).
+## Sol üst köşedeki çark basılı tutulunca ebeveyn köşesi açılır.
 
 ## Ana ekrandaki bütün süs düğümleri.
 @export var decorations: Array[Node2D] = []
 
+@onready var _parent_gate: ParentGateButton = $UI/Root/ParentGateButton
+@onready var _parent_menu: ParentMenu = $ParentMenu
+
 
 func _ready() -> void:
+	_parent_gate.opened.connect(_parent_menu.open)
 	for node: Node in find_children("*", "Button"):
 		var card: SectionCard = node as SectionCard
 		if card != null:
