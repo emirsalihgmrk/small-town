@@ -428,7 +428,7 @@ centered = false
 offset = Vector2(-68, -48)
 
 [node name="Strawberry" type="Node2D" parent="World/Stall/Crates"]
-position = Vector2(-150, 170)
+position = Vector2(-80, 166)
 script = ExtResource("stock_bin_script")
 item = &"strawberry"
 texture = ExtResource("item_strawberry")
@@ -467,7 +467,7 @@ centered = false
 offset = Vector2(-68, -48)
 
 [node name="Pumpkin" type="Node2D" parent="World/Stall/Crates"]
-position = Vector2(0, 170)
+position = Vector2(80, 166)
 script = ExtResource("stock_bin_script")
 item = &"pumpkin"
 texture = ExtResource("item_pumpkin")
