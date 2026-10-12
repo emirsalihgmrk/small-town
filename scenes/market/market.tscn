@@ -15,7 +15,7 @@
 [ext_resource type="Texture2D" path="res://assets/art/environment/flower_red.svg" id="14_flower_red"]
 [ext_resource type="Texture2D" path="res://assets/art/market/stall_frame.svg" id="15_frame"]
 [ext_resource type="Texture2D" path="res://assets/art/market/stall_awning.svg" id="16_awning"]
-[ext_resource type="Texture2D" path="res://assets/art/market/stall_counter.svg" id="17_counter"]
+[ext_resource type="Texture2D" path="res://assets/art/market/stall_tiers.svg" id="17_counter"]
 [ext_resource type="Script" path="res://scripts/market/coin_jar.gd" id="18_jar_script"]
 [ext_resource type="Texture2D" path="res://assets/art/market/coin_jar_back.svg" id="jar_back"]
 [ext_resource type="Texture2D" path="res://assets/art/market/coin_jar_front.svg" id="jar_front"]
@@ -275,12 +275,12 @@ period = 2.6
 [node name="Counter" type="Sprite2D" parent="World/Stall"]
 texture = ExtResource("17_counter")
 centered = false
-offset = Vector2(-370, -32)
+offset = Vector2(-400, -32)
 
 [node name="Crates" type="Node2D" parent="World/Stall"]
 
 [node name="Carrot" type="Node2D" parent="World/Stall/Crates"]
-position = Vector2(-110, -22)
+position = Vector2(-85, -22)
 script = ExtResource("stock_bin_script")
 item = &"carrot"
 texture = ExtResource("item_carrot")
@@ -319,7 +319,7 @@ centered = false
 offset = Vector2(-68, -48)
 
 [node name="Wheat" type="Node2D" parent="World/Stall/Crates"]
-position = Vector2(20, -22)
+position = Vector2(55, -22)
 script = ExtResource("stock_bin_script")
 item = &"wheat"
 texture = ExtResource("item_wheat")
@@ -358,7 +358,7 @@ centered = false
 offset = Vector2(-68, -48)
 
 [node name="Egg" type="Node2D" parent="World/Stall/Crates"]
-position = Vector2(150, -22)
+position = Vector2(0, 116)
 script = ExtResource("stock_bin_script")
 item = &"egg"
 texture = ExtResource("item_egg")
@@ -397,7 +397,7 @@ centered = false
 offset = Vector2(-68, -48)
 
 [node name="Milk" type="Node2D" parent="World/Stall/Crates"]
-position = Vector2(280, -22)
+position = Vector2(150, 116)
 script = ExtResource("stock_bin_script")
 item = &"milk"
 texture = ExtResource("item_milk")
@@ -428,7 +428,7 @@ centered = false
 offset = Vector2(-68, -48)
 
 [node name="Strawberry" type="Node2D" parent="World/Stall/Crates"]
-position = Vector2(-80, 166)
+position = Vector2(195, -22)
 script = ExtResource("stock_bin_script")
 item = &"strawberry"
 texture = ExtResource("item_strawberry")
@@ -467,7 +467,7 @@ centered = false
 offset = Vector2(-68, -48)
 
 [node name="Pumpkin" type="Node2D" parent="World/Stall/Crates"]
-position = Vector2(80, 166)
+position = Vector2(-150, 116)
 script = ExtResource("stock_bin_script")
 item = &"pumpkin"
 texture = ExtResource("item_pumpkin")
@@ -498,7 +498,7 @@ centered = false
 offset = Vector2(-68, -48)
 
 [node name="CoinJar" type="Node2D" parent="World/Stall" node_paths=PackedStringArray("flights")]
-position = Vector2(-250, -24)
+position = Vector2(-235, -24)
 script = ExtResource("18_jar_script")
 coin_texture = ExtResource("coin")
 coin_flat_texture = ExtResource("coin_flat")
