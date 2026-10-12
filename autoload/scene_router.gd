@@ -2,8 +2,13 @@ extends CanvasLayer
 ## Sahneler arası geçiş (autoload: SceneRouter).
 ## Ekranı yumuşakça bir perdeyle kapatır, sahneyi değiştirir, yeni sahne hazır olunca perdeyi açar.
 ## Geçiş sürerken gelen istekler ve dokunuşlar yok sayılır; çift basma iki geçiş başlatmaz.
+## Android geri tuşu: önce açık bir pencere (BACK_HANDLERS grubunda, go_back() true dönen) kapanır;
+## yoksa bölümden ana ekrana dönülür. Ana ekranda geri tuşu hiçbir şey yapmaz, çocuk oyundan
+## yanlışlıkla çıkmasın (project.godot'ta quit_on_go_back kapalı).
 
 const HOME_SCENE: String = "res://scenes/main/home.tscn"
+## Bu gruptaki düğümlerin go_back() -> bool yöntemi olur; geri tuşunu kendisi karşıladıysa true döner.
+const BACK_HANDLERS: StringName = &"back_handlers"
 ## Henüz yapılmamış bölümler burada yoktur; kartları basılınca hiçbir şey olmaz.
 const SECTION_SCENES: Dictionary[StringName, String] = {
 	&"field": "res://scenes/field/field.tscn",
@@ -38,6 +43,23 @@ func _ready() -> void:
 func _input(_event: InputEvent) -> void:
 	if _busy:
 		get_viewport().set_input_as_handled()
+
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_WM_GO_BACK_REQUEST:
+		go_back()
+
+
+## Android geri tuşunun yaptığı iş.
+func go_back() -> void:
+	if _busy:
+		return
+	for handler: Node in get_tree().get_nodes_in_group(BACK_HANDLERS):
+		if handler.call(&"go_back"):
+			return
+	var current: Node = get_tree().current_scene
+	if current != null and current.scene_file_path != HOME_SCENE:
+		go_home()
 
 
 func has_section(section_id: StringName) -> bool:

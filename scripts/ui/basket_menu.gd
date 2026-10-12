@@ -4,7 +4,7 @@ extends CanvasLayer
 ## sayısıyla durur; sepette olmayan ürün soluk görünür, sayısı 0'dır. Menü açıkken sepet değişirse
 ## sayılar hemen güncellenir.
 ## Açılınca arkadaki her şey kararır ve dokunuşları yutar: menü açıkken tarlada iş yapılmaz.
-## Çarpıya ya da karartılmış arka plana dokununca kapanır.
+## Çarpıya, karartılmış arka plana dokununca ya da Android geri tuşuyla kapanır.
 ## Kutular, sahnedeki gizli şablon kutudan (Template) item_icons sırasıyla çoğaltılır ve ortalanmış
 ## satırlara dizilir: bir satırda en fazla MAX_PER_ROW kutu olur, satırlar eşit dolar (8 ürün 4 + 4,
 ## 13 ürün 7 + 6); row_starts'taki ürün her zaman yeni bir satıra başlar. Kutunun kendisini satır
@@ -41,6 +41,7 @@ var _tween: Tween
 
 
 func _ready() -> void:
+	add_to_group(SceneRouter.BACK_HANDLERS)
 	_root.hide()
 	_template.hide()
 	var row_count: int = ceili(item_icons.size() / float(MAX_PER_ROW))
@@ -93,6 +94,14 @@ func close() -> void:
 	_tween.tween_property(_panel, ^"modulate:a", 0.0, CLOSE_TIME)
 	_tween.tween_property(_panel, ^"scale", Vector2.ONE * CLOSE_SCALE, CLOSE_TIME).set_ease(Tween.EASE_IN)
 	_tween.chain().tween_callback(_root.hide)
+
+
+## SceneRouter geri tuşunda çağırır: menü açıksa kapatır ve tuşu karşıladığını bildirir.
+func go_back() -> bool:
+	if not is_open:
+		return false
+	close()
+	return true
 
 
 func _add_row() -> HBoxContainer:
