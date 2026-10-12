@@ -30,7 +30,7 @@
 [ext_resource type="Script" path="res://scripts/input/tap_router.gd" id="tap_router_script"]
 [ext_resource type="Script" path="res://scripts/components/pause_when_inactive.gd" id="pause_script"]
 [ext_resource type="Script" path="res://scripts/home/home.gd" id="home_script"]
-[ext_resource type="Texture2D" path="res://assets/art/shop/birdhouse.svg" id="decor_birdhouse"]
+[ext_resource type="PackedScene" path="res://scenes/home/birdhouse.tscn" id="play_birdhouse"]
 [ext_resource type="Texture2D" path="res://assets/art/shop/kite.svg" id="decor_kite"]
 [ext_resource type="PackedScene" path="res://scenes/home/swing.tscn" id="play_swing"]
 [ext_resource type="PackedScene" path="res://scenes/home/pond.tscn" id="play_pond"]
@@ -458,13 +458,10 @@ offset = Vector2(-257, -25)
 
 [node name="Decorations" type="Node2D" parent="World"]
 
-[node name="Birdhouse" type="Sprite2D" parent="World/Decorations"]
+[node name="Birdhouse" parent="World/Decorations" node_paths=PackedStringArray("girl") instance=ExtResource("play_birdhouse")]
 visible = false
 position = Vector2(340, 905)
-scale = Vector2(0.85, 0.85)
-texture = ExtResource("decor_birdhouse")
-centered = false
-offset = Vector2(-56, -226)
+girl = NodePath("../../Girl")
 
 [node name="Pond" parent="World/Decorations" node_paths=PackedStringArray("girl") instance=ExtResource("play_pond")]
 visible = false
