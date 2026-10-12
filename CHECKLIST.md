@@ -16,6 +16,8 @@ Minik Kasaba'yı Google Play'e hazırlarken yapılacaklar. Bitenler `[x]` ile i�
 		(`android/` klasörü zaten `.gitignore`'da).
 	  - Mimari: `arm64-v8a` (+ isteğe bağlı `armeabi-v7a`). İnternet izni gerekmiyor, hiçbir izin açılmasın.
 	  - Keystore şifreleri `export_presets.cfg`'ye değil `.godot/export_credentials.cfg`'ye yazılır (repoya girmez).
+	  - Sürüm (8. madde buraya taşındı): preset'te `version/name` (ör. `1.0.0`, görünen sürüm) ve
+		`version/code` (`1`'den başlar, Play'e her yüklemede bir artmalı).
 	  - Bittiğinde 1. maddeyi release APK'da cihazda doğrula.
 - [ ] **3. Uygulama simgesi ve açılış ekranı** — `config/icon`, Android adaptif simge (ön + arka plan katmanı),
 	  Godot logosu yerine kendi boot splash'ı.
@@ -33,8 +35,10 @@ Minik Kasaba'yı Google Play'e hazırlarken yapılacaklar. Bitenler `[x]` ile i�
 	  açılır, bozuk dosya `save.json.corrupt` olarak saklanır (silinmez); yazma hatasında (ör. disk dolu) eski kayıt
 	  korunur; sürüm geçişleri `SaveGame._migrate`'e eklenecek. 5 senaryo (normal, asıl bozuk, ikisi bozuk,
 	  asıl yok, yeni sürüm) denendi.
-- [ ] **7. Ebeveyn ses ayarı** — müzik/efekt aç-kapa; 5. maddedeki Ebeveyn Köşesi'nin ana sayfasına eklenecek.
-- [ ] **8. Sürüm numarası** — `application/config/version` ve Android `version/code`.
+- [x] **7. Ebeveyn ses ayarı** — Ebeveyn Köşesi'nde "Müzik ve doğa sesleri" (Music + Ambience kanalları) ve
+	  "Oyun sesleri" (SFX) düğmeleri; durum kayıtta "audio" bölümünde, açılışta geri yüklenir
+	  (SaveGame artık autoload listesinin başında, AudioManager kaydı okuyabilsin diye).
+- [ ] **8. Sürüm numarası** — ⏸ _Export sırasında ayarlanacak, 2. maddeye taşındı._
 - [ ] **9. Gerçek cihaz testi** — tablette ve telefonda dokunma, performans, farklı ekran oranları, kenar boşlukları.
 - [ ] **10. Sıfır kayıtla baştan sona oynanış** — yeni yükleyen çocuk yolunu bulabiliyor mu?
 	  Fırın ürünlerinin kayıtta hep 0 görünmesinin nedeni de bakılacak.

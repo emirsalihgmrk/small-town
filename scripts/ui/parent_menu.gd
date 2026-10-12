@@ -2,6 +2,8 @@ class_name ParentMenu
 extends CanvasLayer
 ## Ebeveyn köşesi: yetişkinler için ayarlar ve lisanslar. Ana ekrandaki ParentGateButton basılı
 ## tutulunca açılır. Açıkken arkadaki her şey kararır ve dokunuşları yutar.
+## Ses düğmeleri: "Müzik ve doğa sesleri" müzik ile ortam (rüzgâr, kuşlar) kanallarını, "Oyun sesleri"
+## efekt kanalını açıp kapar. Durum AudioManager'da saklanır, düğmeler açılışta ondan okunur.
 ## İki sayfası var: ana sayfa ve lisanslar. Geri düğmesi ya da Android geri tuşu lisanslardan ana sayfaya,
 ## ana sayfadan oyuna döner; çarpı ya da karartılmış arka plan her zaman kapatır.
 ## Lisans metni Godot'nun kendisinden (Engine.get_license_text/get_copyright_info/get_license_info)
@@ -31,6 +33,8 @@ var _tween: Tween
 @onready var _licenses_page: ScrollContainer = %LicensesPage
 @onready var _licenses_text: RichTextLabel = %LicensesText
 @onready var _licenses_button: Button = %LicensesButton
+@onready var _music_toggle: Button = %MusicToggle
+@onready var _sounds_toggle: Button = %SoundsToggle
 
 
 func _ready() -> void:
@@ -41,6 +45,8 @@ func _ready() -> void:
 	_close_button.pressed.connect(close)
 	_back_button.pressed.connect(_show_main)
 	_licenses_button.pressed.connect(_show_licenses)
+	_music_toggle.toggled.connect(_on_music_toggled)
+	_sounds_toggle.toggled.connect(_on_sounds_toggled)
 
 
 func open() -> void:
@@ -81,6 +87,9 @@ func go_back() -> bool:
 
 
 func _show_main() -> void:
+	_music_toggle.set_pressed_no_signal(AudioManager.is_music_enabled())
+	_sounds_toggle.set_pressed_no_signal(AudioManager.is_sfx_enabled())
+	_update_toggle_texts()
 	_title.text = "Ebeveyn Köşesi"
 	_back_button.hide()
 	_licenses_page.hide()
@@ -137,6 +146,22 @@ func _heading(text: RichTextLabel, title: String, font_size: int) -> void:
 
 func _paragraph(text: RichTextLabel, body: String) -> void:
 	text.add_text(body.strip_edges() + "\n\n")
+
+
+func _on_music_toggled(on: bool) -> void:
+	AudioManager.set_music_enabled(on)
+	AudioManager.set_ambience_enabled(on)
+	_update_toggle_texts()
+
+
+func _on_sounds_toggled(on: bool) -> void:
+	AudioManager.set_sfx_enabled(on)
+	_update_toggle_texts()
+
+
+func _update_toggle_texts() -> void:
+	_music_toggle.text = "Müzik ve doğa sesleri: " + ("Açık" if _music_toggle.button_pressed else "Kapalı")
+	_sounds_toggle.text = "Oyun sesleri: " + ("Açık" if _sounds_toggle.button_pressed else "Kapalı")
 
 
 func _restart_tween() -> void:

@@ -5,6 +5,10 @@ extends Node
 ## - Tek atımlık sesler için sabit boyutlu oynatıcı havuzu (pan destekli). Havuz doluysa ses atlanır.
 ## - Uygulama arka plana gidince / odak kaybolunca her şey duraklar, dönünce yumuşakça açılır.
 ## - Ses dosyası null ise (eksik dosya) çağrılar sessizce hiçbir şey yapmaz.
+## - Kanalların açık/kapalı durumu (ebeveyn köşesinden değişir) SaveGame'in "audio" bölümünde saklanır
+##   ve açılışta geri yüklenir; bu yüzden SaveGame, autoload listesinde bundan önce gelir.
+
+const SETTINGS_SECTION: String = "audio"
 
 const BUS_MASTER: StringName = &"Master"
 const BUS_MUSIC: StringName = &"Music"
@@ -45,6 +49,7 @@ func _ready() -> void:
 		player.panning_strength = SFX_PANNING_STRENGTH
 		add_child(player)
 		_sfx_pool.append(player)
+	_restore_settings()
 
 
 func _notification(what: int) -> void:
@@ -208,8 +213,27 @@ func _set_master_volume(volume_db: float) -> void:
 
 func _set_bus_enabled(bus: StringName, enabled: bool) -> void:
 	var index: int = _bus_index(bus)
-	if index >= 0:
-		AudioServer.set_bus_mute(index, not enabled)
+	if index < 0 or AudioServer.is_bus_mute(index) == not enabled:
+		return
+	AudioServer.set_bus_mute(index, not enabled)
+	_store_settings()
+
+
+func _restore_settings() -> void:
+	var saved: Dictionary = SaveGame.get_section(SETTINGS_SECTION)
+	for bus: StringName in [BUS_MUSIC, BUS_AMBIENCE, BUS_SFX]:
+		var index: int = _bus_index(bus)
+		if index >= 0:
+			AudioServer.set_bus_mute(index, not bool(saved.get(String(bus), true)))
+
+
+func _store_settings() -> void:
+	SaveGame.set_section(SETTINGS_SECTION, {
+		String(BUS_MUSIC): is_music_enabled(),
+		String(BUS_AMBIENCE): is_ambience_enabled(),
+		String(BUS_SFX): is_sfx_enabled(),
+	})
+	SaveGame.request_save()
 
 
 func _bus_index(bus: StringName) -> int:

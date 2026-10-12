@@ -81,6 +81,44 @@ shadow_offset = Vector2(0, 4)
 
 [sub_resource type="StyleBoxEmpty" id="button_focus"]
 
+[sub_resource type="StyleBoxFlat" id="toggle_off"]
+content_margin_left = 40.0
+content_margin_top = 22.0
+content_margin_right = 40.0
+content_margin_bottom = 22.0
+bg_color = Color(0.91, 0.886, 0.851, 1)
+border_width_left = 6
+border_width_top = 6
+border_width_right = 6
+border_width_bottom = 6
+border_color = Color(1, 1, 1, 1)
+corner_radius_top_left = 50
+corner_radius_top_right = 50
+corner_radius_bottom_right = 50
+corner_radius_bottom_left = 50
+shadow_color = Color(0, 0, 0, 0.2)
+shadow_size = 6
+shadow_offset = Vector2(0, 4)
+
+[sub_resource type="StyleBoxFlat" id="toggle_on"]
+content_margin_left = 40.0
+content_margin_top = 22.0
+content_margin_right = 40.0
+content_margin_bottom = 22.0
+bg_color = Color(0.82, 0.941, 0.722, 1)
+border_width_left = 6
+border_width_top = 6
+border_width_right = 6
+border_width_bottom = 6
+border_color = Color(1, 1, 1, 1)
+corner_radius_top_left = 50
+corner_radius_top_right = 50
+corner_radius_bottom_right = 50
+corner_radius_bottom_left = 50
+shadow_color = Color(0, 0, 0, 0.2)
+shadow_size = 6
+shadow_offset = Vector2(0, 4)
+
 [node name="ParentMenu" type="CanvasLayer"]
 layer = 4
 script = ExtResource("1_menu")
@@ -187,6 +225,49 @@ theme_override_colors/font_color = Color(0.36, 0.24, 0.13, 1)
 theme_override_font_sizes/font_size = 32
 text = "Bu bölüm yetişkinler içindir."
 horizontal_alignment = 1
+
+[node name="MusicToggle" type="Button" parent="Root/Panel/VBox/MainPage"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(760, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+focus_mode = 0
+theme_override_colors/font_color = Color(0.36, 0.24, 0.13, 1)
+theme_override_colors/font_hover_color = Color(0.36, 0.24, 0.13, 1)
+theme_override_colors/font_pressed_color = Color(0.36, 0.24, 0.13, 1)
+theme_override_colors/font_hover_pressed_color = Color(0.36, 0.24, 0.13, 1)
+theme_override_font_sizes/font_size = 36
+theme_override_styles/focus = SubResource("button_focus")
+theme_override_styles/hover_pressed = SubResource("toggle_on")
+theme_override_styles/hover = SubResource("toggle_off")
+theme_override_styles/pressed = SubResource("toggle_on")
+theme_override_styles/normal = SubResource("toggle_off")
+toggle_mode = true
+text = "Müzik ve doğa sesleri: Açık"
+
+[node name="SoundsToggle" type="Button" parent="Root/Panel/VBox/MainPage"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(760, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+focus_mode = 0
+theme_override_colors/font_color = Color(0.36, 0.24, 0.13, 1)
+theme_override_colors/font_hover_color = Color(0.36, 0.24, 0.13, 1)
+theme_override_colors/font_pressed_color = Color(0.36, 0.24, 0.13, 1)
+theme_override_colors/font_hover_pressed_color = Color(0.36, 0.24, 0.13, 1)
+theme_override_font_sizes/font_size = 36
+theme_override_styles/focus = SubResource("button_focus")
+theme_override_styles/hover_pressed = SubResource("toggle_on")
+theme_override_styles/hover = SubResource("toggle_off")
+theme_override_styles/pressed = SubResource("toggle_on")
+theme_override_styles/normal = SubResource("toggle_off")
+toggle_mode = true
+text = "Oyun sesleri: Açık"
+
+[node name="Spacer" type="Control" parent="Root/Panel/VBox/MainPage"]
+custom_minimum_size = Vector2(0, 20)
+layout_mode = 2
+mouse_filter = 2
 
 [node name="LicensesButton" type="Button" parent="Root/Panel/VBox/MainPage"]
 unique_name_in_owner = true
