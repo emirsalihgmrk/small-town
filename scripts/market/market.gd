@@ -17,7 +17,9 @@ extends Node2D
 ## tarlaya gidilir. Sepete ürün girince balon kapanır ve müşteri yola çıkar.
 ## Sıradaki müşterinin kim olduğu ve isteği tamamlanmamış müşteri (görünüşü, isteği, verilmiş yuvaları)
 ## kayda geçer: müşteri gelince, ona ürün verilince, müşteri gidince, sahneden çıkarken ve SaveGame diske
-## yazmadan hemen önce. Paralar Pazar'ın değil Wallet'ın kaydındadır. Açılışta müşteri yürümeden tezgâhın önünde, balonu verilmiş yuvalarıyla belirir. Sepette artık
+## yazmadan hemen önce. Paralar Pazar'ın değil Wallet'ın kaydındadır.
+## El göstergesi (HintDirector): müşteri beklerken istediği ve reyonda bulunan ilk ürünü reyondan müşteriye
+## götürmeyi gösterir. Açılışta müşteri yürümeden tezgâhın önünde, balonu verilmiş yuvalarıyla belirir. Sepette artık
 ## bulunmayan istekler (ör. arada fırında kullanıldıysa) istekten çıkarılır; geriye yalnızca verilmişler
 ## kaldıysa müşteri hemen öder ve gider.
 
@@ -38,6 +40,8 @@ const THANK_DELAY: float = 0.5
 const COIN_INTERVAL: float = 0.3
 ## Son para atıldıktan sonra müşterinin yola çıkmasına kadar geçen süre.
 const LEAVE_DELAY: float = 0.7
+## El göstergesindeki işin kimliği (öğrenme sayısı kayıtta bu adla tutulur).
+const HINT_GIVE: StringName = &"market_give"
 
 ## Sahne açıldıktan ya da sepete ürün girdikten sonra müşterinin yola çıkmasına kadar geçen süre.
 @export_range(0.0, 30.0, 0.5, "suffix:s") var customer_delay: float = 1.5
@@ -61,6 +65,11 @@ var _empty_bubble_tween: Tween
 @onready var _coin_jar: CoinJar = $World/Stall/CoinJar
 @onready var _empty_bubble: Node2D = $World/Stall/EmptyBubble
 @onready var _empty_bubble_tap: Tappable = $World/Stall/EmptyBubble/TapArea
+@onready var _sell_hand: SellHand = $SellHand
+@onready var _hints: HintDirector = $HintDirector
+
+## El göstergesinin taşıdığı ürün (sahnede değil; resmi her soruda güncellenir).
+var _hint_item: Sprite2D
 
 
 func _ready() -> void:
@@ -84,6 +93,9 @@ func _ready() -> void:
 	SaveGame.before_save.connect(_store)
 	_restore()
 	_refresh()
+	_hint_item = Sprite2D.new()
+	_hints.provider = _current_hint
+	_customer.item_received.connect(func(_slot: int) -> void: _hints.learned(HINT_GIVE))
 
 
 func _process(delta: float) -> void:
@@ -100,6 +112,25 @@ func _input(event: InputEvent) -> void:
 func _exit_tree() -> void:
 	_store()
 	SaveGame.save_now()
+	_hint_item.free()
+
+
+## El göstergesi için o an yapılabilecek iş (bkz. HintDirector.provider).
+func _current_hint() -> Dictionary:
+	if _basket_menu.is_open or not _customer.can_receive():
+		return {}
+	for slot: int in _customer.open_slots():
+		for bin: StockBin in _sell_hand.bins:
+			if bin.item == _customer.wanted(slot) and bin.has_stock():
+				_hint_item.texture = bin.texture
+				_hint_item.scale = bin.size_scale(SellHand.CARRY_SIZE) / HintHand.CARRY_SCALE
+				return {"id": HINT_GIVE, "carry": _hint_item, "points": PackedVector2Array([
+						_to_screen(bin.top_point()), _to_screen(_customer.hand_point())])}
+	return {}
+
+
+func _to_screen(world_point: Vector2) -> Vector2:
+	return get_viewport().get_canvas_transform() * world_point
 
 
 func _store() -> void:

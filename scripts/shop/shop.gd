@@ -19,8 +19,12 @@ extends Node2D
 ## yetmiyorsa balon sürekli açık durur. Balona dokununca Pazar'a gidilir.
 ## Canlılık: dükkâna girilince kapının zili çalar, zile dokununca yine çalar (ShopBell); tilkiye dokununca
 ## tüy sesiyle zıplar ve kalpler çıkar; tabela hafifçe sallanır; uzun süre dokunulmazsa kız esner.
+## El göstergesi (HintDirector): kumbarada para varken, kalan parası yeten alınmamış bir ürüne (önce yarım
+## ödenmiş, sonra en ucuz) kumbaradan para götürmeyi gösterir.
 
 const MARKET_SECTION: StringName = &"market"
+## El göstergesindeki işin kimliği (öğrenme sayısı kayıtta bu adla tutulur).
+const HINT_PAY: StringName = &"shop_pay"
 ## Esneme zamanı geldiğinde kız başka bir hareketteyse bu kadar sonra yeniden denenir.
 const YAWN_RETRY_TIME: float = 2.0
 const BUBBLE_POP_TIME: float = 0.25
@@ -76,9 +80,12 @@ var _idle_time: float = 0.0
 @onready var _hook_hat: Sprite2D = $World/HatHook/Hat
 @onready var _hook_tap: Tappable = $World/HatHook/TapArea
 @onready var _door_window: Marker2D = $World/DoorWindow
+@onready var _hints: HintDirector = $HintDirector
 
 var _dressing: bool = false
 var _hook_hat_scale: Vector2
+## El göstergesinin taşıdığı para (sahnede değil, yalnızca örnek).
+var _hint_coin: Sprite2D
 
 
 func _ready() -> void:
@@ -102,6 +109,41 @@ func _ready() -> void:
 	Wallet.changed.connect(func(_count: int) -> void: _refresh_bubble())
 	Owned.purchased.connect(func(_item: StringName) -> void: _refresh_bubble())
 	_refresh_bubble()
+	_hint_coin = Sprite2D.new()
+	_hint_coin.texture = _coin_hand.coin_texture
+	_hint_coin.scale = Vector2.ONE * CoinHand.CARRY_SCALE / HintHand.CARRY_SCALE
+	_hints.provider = _current_hint
+	_coin_hand.coin_placed.connect(func(_item: ShelfItem) -> void: _hints.learned(HINT_PAY))
+
+
+func _exit_tree() -> void:
+	_hint_coin.free()
+
+
+## El göstergesi için o an yapılabilecek iş (bkz. HintDirector.provider).
+func _current_hint() -> Dictionary:
+	if _basket_menu.is_open or _dressing or not _coin_jar.has_coin():
+		return {}
+	# Sıralama anahtarı (yarım ödenmemiş mi, kalan para): önce yarım ödenmiş, sonra en az parası kalan.
+	var best: ShelfItem = null
+	var best_key: Vector2i
+	for node: Node in _shelf_items.get_children():
+		var item: ShelfItem = node as ShelfItem
+		var remaining: int = item.remaining()
+		if not Owned.is_offered(item.item) or remaining <= 0 or remaining > Wallet.count():
+			continue
+		var key: Vector2i = Vector2i(0 if remaining < ShopItems.price(item.item) else 1, remaining)
+		if best == null or key < best_key:
+			best = item
+			best_key = key
+	if best == null:
+		return {}
+	return {"id": HINT_PAY, "carry": _hint_coin, "points": PackedVector2Array([
+			_to_screen(_coin_jar.grab_center()), _to_screen(best.art_center())])}
+
+
+func _to_screen(world_point: Vector2) -> Vector2:
+	return get_viewport().get_canvas_transform() * world_point
 
 
 func _process(delta: float) -> void:

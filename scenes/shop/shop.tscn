@@ -40,6 +40,7 @@
 [ext_resource type="Script" path="res://scripts/input/tappable.gd" id="tappable_script"]
 [ext_resource type="Script" path="res://scripts/shop/shopkeeper.gd" id="shopkeeper_script"]
 [ext_resource type="Script" path="res://scripts/shop/coin_hand.gd" id="coin_hand_script"]
+[ext_resource type="Script" path="res://scripts/components/hint_director.gd" id="hint_director_script"]
 [ext_resource type="Texture2D" path="res://assets/art/shop/gift.svg" id="gift"]
 [ext_resource type="Texture2D" path="res://assets/art/shop/hat_hook.svg" id="hat_hook"]
 [ext_resource type="Texture2D" path="res://assets/art/character/girl/hat.svg" id="straw_hat"]
@@ -381,3 +382,6 @@ texture = ExtResource("10_home")
 layer = 2
 
 [node name="BasketMenu" parent="." instance=ExtResource("basket_menu")]
+
+[node name="HintDirector" type="Node" parent="."]
+script = ExtResource("hint_director_script")

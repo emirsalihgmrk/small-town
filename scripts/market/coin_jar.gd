@@ -91,6 +91,11 @@ func contains(global_point: Vector2) -> bool:
 	return GRAB_AREA.has_point(to_local(global_point))
 
 
+## El göstergesi için paranın çekildiği yer: tutma alanının ortası (dünya konumu).
+func grab_center() -> Vector2:
+	return to_global(GRAB_AREA.get_center())
+
+
 ## Kapaktaki delik (dünya konumu); çekilen para buradan çıkar, buraya döner.
 func mouth() -> Vector2:
 	return to_global(SLOT)

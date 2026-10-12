@@ -34,6 +34,7 @@
 [ext_resource type="PackedScene" path="res://scenes/ui/icons/field_icon.tscn" id="field_icon"]
 [ext_resource type="Script" path="res://scripts/input/tappable.gd" id="tappable_script"]
 [ext_resource type="Script" path="res://scripts/market/sell_hand.gd" id="sell_hand_script"]
+[ext_resource type="Script" path="res://scripts/components/hint_director.gd" id="hint_director_script"]
 [ext_resource type="Script" path="res://scripts/components/pulse_component.gd" id="pulse_script"]
 [ext_resource type="Script" path="res://scripts/field/field_bird.gd" id="bird_script"]
 [ext_resource type="Texture2D" path="res://assets/art/environment/bird_body.svg" id="bird_body"]
@@ -846,3 +847,6 @@ texture = ExtResource("20_home")
 layer = 2
 
 [node name="BasketMenu" parent="." instance=ExtResource("basket_menu")]
+
+[node name="HintDirector" type="Node" parent="."]
+script = ExtResource("hint_director_script")
