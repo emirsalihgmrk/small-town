@@ -29,7 +29,10 @@ Minik Kasaba'yı Google Play'e hazırlarken yapılacaklar. Bitenler `[x]` ile i�
 
 ## 🟠 Önemli
 
-- [ ] **6. Kayıt güvenliği** — bozuk kayıtta `.bak` yedekten dönülsün; sürüm geçişi (migration) yeri hazır olsun.
+- [x] **6. Kayıt güvenliği** — her yazışta önceki kayıt `save.json.bak` olur; asıl kayıt okunamazsa yedekten
+	  açılır, bozuk dosya `save.json.corrupt` olarak saklanır (silinmez); yazma hatasında (ör. disk dolu) eski kayıt
+	  korunur; sürüm geçişleri `SaveGame._migrate`'e eklenecek. 5 senaryo (normal, asıl bozuk, ikisi bozuk,
+	  asıl yok, yeni sürüm) denendi.
 - [ ] **7. Ebeveyn ses ayarı** — müzik/efekt aç-kapa; 5. maddedeki Ebeveyn Köşesi'nin ana sayfasına eklenecek.
 - [ ] **8. Sürüm numarası** — `application/config/version` ve Android `version/code`.
 - [ ] **9. Gerçek cihaz testi** — tablette ve telefonda dokunma, performans, farklı ekran oranları, kenar boşlukları.

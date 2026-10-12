@@ -5,11 +5,17 @@ extends Node
 ## sahneler güncel durumlarını o an bölümlerine yazar.
 ## Oyunun açık kaldığı süreyi de (play_time) sayar; uygulama arka plandayken saymaz. Tarla, en son ne
 ## zaman kaydedildiğini bununla tutar ve dönüldüğünde aradan geçen süre kadar büyümeyi ileri sarar.
-## Kayıt bozuksa sessizce sıfırdan başlanır (oyun açılmaya devam etsin).
+## Her yazışta bir önceki kayıt save.json.bak olarak saklanır. Kayıt okunamazsa yedekten açılır; bozuk
+## dosya silinmez, save.json.corrupt adıyla kenara konur. İkisi de okunamazsa sıfırdan başlanır (oyun
+## açılmaya devam etsin).
+## Kayıt biçimi değişirse FORMAT_VERSION artırılır ve _migrate'e eski sürümden geçiş adımı eklenir.
 
 signal before_save
 
 const SAVE_PATH: String = "user://save.json"
+const TEMP_PATH: String = SAVE_PATH + ".tmp"
+const BACKUP_PATH: String = SAVE_PATH + ".bak"
+const CORRUPT_PATH: String = SAVE_PATH + ".corrupt"
 const FORMAT_VERSION: int = 1
 ## Art arda gelen kayıt istekleri birleştirilir; en geç bu kadar sonra diske yazılır.
 const SAVE_DELAY: float = 1.0
@@ -60,29 +66,66 @@ func request_save() -> void:
 		_save_timer.start(SAVE_DELAY)
 
 
-## Önce geçici dosyaya yazar, sonra asıl dosyanın yerine koyar: yazarken kapanırsa eski kayıt bozulmaz.
+## Önce geçici dosyaya yazar; yazma başarılıysa eski kaydı yedeğe çevirip yenisini yerine koyar.
+## Yazarken kapanır ya da yazamazsa (ör. disk dolu) eski kayıt bozulmaz.
 func save_now() -> void:
 	_save_timer.stop()
 	before_save.emit()
 	var data: Dictionary = {"version": FORMAT_VERSION, "play_time": play_time, "sections": _sections}
-	var temp_path: String = SAVE_PATH + ".tmp"
-	var file: FileAccess = FileAccess.open(temp_path, FileAccess.WRITE)
+	var file: FileAccess = FileAccess.open(TEMP_PATH, FileAccess.WRITE)
 	if file == null:
 		push_error("Kayıt yazılamadı: %s" % error_string(FileAccess.get_open_error()))
 		return
 	file.store_string(JSON.stringify(data, "\t"))
+	var write_err: Error = file.get_error()
 	file.close()
-	var err: Error = DirAccess.rename_absolute(temp_path, SAVE_PATH)
+	if write_err != OK:
+		push_error("Kayıt yazılamadı: %s" % error_string(write_err))
+		return
+	if FileAccess.file_exists(SAVE_PATH):
+		var backup_err: Error = DirAccess.rename_absolute(SAVE_PATH, BACKUP_PATH)
+		if backup_err != OK:
+			push_warning("Kayıt yedeklenemedi: %s" % error_string(backup_err))
+	var err: Error = DirAccess.rename_absolute(TEMP_PATH, SAVE_PATH)
 	if err != OK:
 		push_error("Kayıt yerine konamadı: %s" % error_string(err))
 
 
+## Önce asıl kaydı, okunamazsa yedeği açar. Okunamayan asıl kayıt CORRUPT_PATH'e taşınır ki sonraki
+## yazış yedeği onunla ezmesin.
 func _load() -> void:
-	if not FileAccess.file_exists(SAVE_PATH):
-		return
-	var data: Variant = JSON.parse_string(FileAccess.get_file_as_string(SAVE_PATH))
+	var data: Dictionary = _read(SAVE_PATH)
+	if data.is_empty() and FileAccess.file_exists(SAVE_PATH):
+		push_warning("Kayıt okunamadı, yedeğe bakılıyor: %s" % SAVE_PATH)
+		DirAccess.rename_absolute(SAVE_PATH, CORRUPT_PATH)
+	if data.is_empty():
+		data = _read(BACKUP_PATH)
+		if data.is_empty():
+			if FileAccess.file_exists(BACKUP_PATH):
+				push_warning("Yedek de okunamadı, sıfırdan başlanıyor: %s" % BACKUP_PATH)
+			return
+	data = _migrate(data)
+	play_time = float(data.get("play_time", 0.0))
+	_sections = data["sections"]
+
+
+## Dosya yoksa ya da geçerli bir kayıt değilse boş sözlük döner.
+func _read(path: String) -> Dictionary:
+	if not FileAccess.file_exists(path):
+		return {}
+	var data: Variant = JSON.parse_string(FileAccess.get_file_as_string(path))
 	if typeof(data) != TYPE_DICTIONARY or typeof((data as Dictionary).get("sections")) != TYPE_DICTIONARY:
-		push_warning("Kayıt okunamadı, sıfırdan başlanıyor: %s" % SAVE_PATH)
-		return
-	play_time = float((data as Dictionary).get("play_time", 0.0))
-	_sections = (data as Dictionary)["sections"]
+		return {}
+	return data
+
+
+## Eski sürümlerin kaydını bugünkü biçime getirir. Biçim değiştiğinde FORMAT_VERSION'ı artır ve buraya
+## bir önceki sürümden geçiren adımı ekle, ör.:
+##     if version < 2:
+##         (data["sections"] as Dictionary)["basket"] = ...
+## Tanınmayan bölümlere dokunulmaz; daha yeni bir sürümün kaydı da olduğu gibi açılır.
+func _migrate(data: Dictionary) -> Dictionary:
+	var version: int = int(data.get("version", 1))
+	if version > FORMAT_VERSION:
+		push_warning("Kayıt bu oyundan yeni bir sürümle yazılmış (%d > %d)." % [version, FORMAT_VERSION])
+	return data
