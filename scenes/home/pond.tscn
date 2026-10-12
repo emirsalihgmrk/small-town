@@ -1,0 +1,46 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/home/play_pond.gd" id="1_pond"]
+[ext_resource type="PackedScene" path="res://scenes/field/effects/heart_burst.tscn" id="2_hearts"]
+[ext_resource type="Texture2D" path="res://assets/art/environment/playground/pond_basin.svg" id="3_basin"]
+[ext_resource type="Script" path="res://scripts/home/pond_ripples.gd" id="4_ripples"]
+[ext_resource type="Script" path="res://scripts/home/pond_duck.gd" id="5_duck"]
+[ext_resource type="Texture2D" path="res://assets/art/environment/playground/duck.svg" id="6_duck"]
+[ext_resource type="Texture2D" path="res://assets/art/environment/playground/fish.svg" id="7_fish"]
+[ext_resource type="Script" path="res://scripts/input/tappable.gd" id="8_tappable"]
+
+[node name="Pond" type="Node2D"]
+script = ExtResource("1_pond")
+heart_scene = ExtResource("2_hearts")
+
+[node name="Basin" type="Sprite2D" parent="."]
+texture = ExtResource("3_basin")
+centered = false
+offset = Vector2(-157, -145)
+
+[node name="Ripples" type="Node2D" parent="."]
+script = ExtResource("4_ripples")
+
+[node name="Duck" type="Node2D" parent="."]
+position = Vector2(34, -54)
+script = ExtResource("5_duck")
+
+[node name="Body" type="Node2D" parent="Duck"]
+
+[node name="Sprite" type="Sprite2D" parent="Duck/Body"]
+texture = ExtResource("6_duck")
+centered = false
+offset = Vector2(-42, -46)
+
+[node name="TapArea" type="Node2D" parent="Duck"]
+script = ExtResource("8_tappable")
+area = Rect2(-44, -48, 100, 72)
+priority = 5
+
+[node name="Fish" type="Sprite2D" parent="."]
+visible = false
+texture = ExtResource("7_fish")
+
+[node name="WaterTap" type="Node2D" parent="."]
+script = ExtResource("8_tappable")
+area = Rect2(-131, -87, 262, 78)
