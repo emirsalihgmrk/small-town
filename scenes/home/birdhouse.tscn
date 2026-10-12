@@ -3,18 +3,15 @@
 [ext_resource type="Script" path="res://scripts/home/play_birdhouse.gd" id="1_birdhouse"]
 [ext_resource type="Texture2D" path="res://assets/art/shop/birdhouse.svg" id="2_house"]
 [ext_resource type="Texture2D" path="res://assets/art/field/wheat_grain.svg" id="3_grain"]
-[ext_resource type="Texture2D" path="res://assets/art/field/wheat_bundle.svg" id="4_bundle"]
 [ext_resource type="Script" path="res://scripts/home/house_bird.gd" id="5_bird"]
 [ext_resource type="Texture2D" path="res://assets/art/environment/bird_body.svg" id="6_bird_body"]
 [ext_resource type="Texture2D" path="res://assets/art/environment/bird_wing.svg" id="7_bird_wing"]
 [ext_resource type="Script" path="res://scripts/input/tappable.gd" id="8_tappable"]
-[ext_resource type="Texture2D" path="res://assets/art/field/thought_bubble.svg" id="9_bubble"]
-[ext_resource type="PackedScene" path="res://scenes/ui/icons/field_icon.tscn" id="10_field_icon"]
+[ext_resource type="Texture2D" path="res://assets/art/environment/playground/seed_sack.svg" id="9_sack"]
 
 [node name="Birdhouse" type="Node2D"]
 script = ExtResource("1_birdhouse")
 grain_texture = ExtResource("3_grain")
-bundle_texture = ExtResource("4_bundle")
 
 [node name="House" type="Node2D" parent="."]
 
@@ -23,6 +20,20 @@ scale = Vector2(0.85, 0.85)
 texture = ExtResource("2_house")
 centered = false
 offset = Vector2(-56, -226)
+
+[node name="Sack" type="Node2D" parent="House"]
+position = Vector2(9, -68)
+scale = Vector2(1.1, 1.1)
+
+[node name="Sprite" type="Sprite2D" parent="House/Sack"]
+texture = ExtResource("9_sack")
+centered = false
+offset = Vector2(-30, -10)
+
+[node name="TapArea" type="Node2D" parent="House/Sack"]
+script = ExtResource("8_tappable")
+area = Rect2(-24, -8, 48, 66)
+priority = 1
 
 [node name="HouseTap" type="Node2D" parent="."]
 script = ExtResource("8_tappable")
@@ -95,20 +106,3 @@ script = ExtResource("8_tappable")
 area = Rect2(-40, -45, 80, 55)
 priority = 5
 
-[node name="Bubble" type="Node2D" parent="."]
-position = Vector2(80, -215)
-scale = Vector2(1.3, 1.3)
-
-[node name="Cloud" type="Sprite2D" parent="Bubble"]
-texture = ExtResource("9_bubble")
-centered = false
-offset = Vector2(-46, -44)
-
-[node name="Field" parent="Bubble" instance=ExtResource("10_field_icon")]
-position = Vector2(0, -2)
-scale = Vector2(0.28, 0.28)
-
-[node name="TapArea" type="Node2D" parent="Bubble"]
-script = ExtResource("8_tappable")
-area = Rect2(-46, -44, 96, 96)
-priority = 6
