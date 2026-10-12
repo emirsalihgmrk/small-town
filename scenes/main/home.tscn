@@ -39,6 +39,7 @@
 [ext_resource type="Script" path="res://scripts/ui/parent_gate_button.gd" id="parent_gate_script"]
 [ext_resource type="Texture2D" path="res://assets/art/ui/icons/gear.svg" id="gear_icon"]
 [ext_resource type="PackedScene" path="res://scenes/ui/parent_menu.tscn" id="parent_menu"]
+[ext_resource type="Script" path="res://scripts/components/hint_director.gd" id="hint_director_script"]
 
 [node name="Home" type="Node2D" node_paths=PackedStringArray("decorations")]
 script = ExtResource("home_script")
@@ -582,3 +583,6 @@ script = ExtResource("parent_gate_script")
 icon = ExtResource("gear_icon")
 
 [node name="ParentMenu" parent="." instance=ExtResource("parent_menu")]
+
+[node name="HintDirector" type="Node" parent="."]
+script = ExtResource("hint_director_script")

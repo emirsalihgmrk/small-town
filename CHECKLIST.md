@@ -49,7 +49,8 @@ Minik Kasaba'yı Google Play'e hazırlarken yapılacaklar. Bitenler `[x]` ile i�
 	  - [x] Ahır (saman → yemlik, kova → suluk, süt kovası → inek, memeye dokunma)
 	  - [x] Fırın (tarif kartı, sepetten malzeme → kase, karıştırma, hamur → fırın)
 	  - [x] Pazar (reyondan ürün → müşteri) ve Dükkân (kumbaradan para → ürün)
-	  - [ ] Ana ekran (ilk açılışta Tarla kartı)
+	  - [x] Ana ekran (tarlada hiç parsel çapalanmadıysa Tarla kartı)
+	  - [ ] Fırın ürünlerinin kayıtta hep 0 görünmesinin nedeni
 	  Fırın ürünlerinin kayıtta hep 0 görünmesinin nedeni de bakılacak.
 
 ## 🟡 Temizlik

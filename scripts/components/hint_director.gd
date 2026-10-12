@@ -91,4 +91,9 @@ func learned(id: StringName) -> void:
 
 
 func is_learned(id: StringName) -> bool:
-	return int(_counts.get(String(id), 0)) >= learned_after
+	return times(id) >= learned_after
+
+
+## Çocuğun bu işi (herhangi bir bölümde) kaç kez yaptığı.
+func times(id: StringName) -> int:
+	return int(_counts.get(String(id), 0))
