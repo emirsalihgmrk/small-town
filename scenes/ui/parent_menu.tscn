@@ -269,10 +269,15 @@ custom_minimum_size = Vector2(0, 20)
 layout_mode = 2
 mouse_filter = 2
 
-[node name="LicensesButton" type="Button" parent="Root/Panel/VBox/MainPage"]
-unique_name_in_owner = true
+[node name="InfoButtons" type="HBoxContainer" parent="Root/Panel/VBox/MainPage"]
 layout_mode = 2
 size_flags_horizontal = 4
+mouse_filter = 2
+theme_override_constants/separation = 24
+
+[node name="LicensesButton" type="Button" parent="Root/Panel/VBox/MainPage/InfoButtons"]
+unique_name_in_owner = true
+layout_mode = 2
 focus_mode = 0
 theme_override_colors/font_color = Color(0.36, 0.24, 0.13, 1)
 theme_override_colors/font_hover_color = Color(0.36, 0.24, 0.13, 1)
@@ -283,6 +288,20 @@ theme_override_styles/hover = SubResource("button_hover")
 theme_override_styles/pressed = SubResource("button_pressed")
 theme_override_styles/normal = SubResource("button_normal")
 text = "Lisanslar ve emeği geçenler"
+
+[node name="PrivacyButton" type="Button" parent="Root/Panel/VBox/MainPage/InfoButtons"]
+unique_name_in_owner = true
+layout_mode = 2
+focus_mode = 0
+theme_override_colors/font_color = Color(0.36, 0.24, 0.13, 1)
+theme_override_colors/font_hover_color = Color(0.36, 0.24, 0.13, 1)
+theme_override_colors/font_pressed_color = Color(0.36, 0.24, 0.13, 1)
+theme_override_font_sizes/font_size = 36
+theme_override_styles/focus = SubResource("button_focus")
+theme_override_styles/hover = SubResource("button_hover")
+theme_override_styles/pressed = SubResource("button_pressed")
+theme_override_styles/normal = SubResource("button_normal")
+text = "Gizlilik politikası"
 
 [node name="LicensesPage" type="ScrollContainer" parent="Root/Panel/VBox"]
 unique_name_in_owner = true
@@ -302,3 +321,21 @@ theme_override_font_sizes/bold_font_size = 26
 bbcode_enabled = false
 fit_content = true
 threaded = true
+
+[node name="PrivacyPage" type="ScrollContainer" parent="Root/Panel/VBox"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="PrivacyText" type="RichTextLabel" parent="Root/Panel/VBox/PrivacyPage"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 1
+theme_override_colors/default_color = Color(0.36, 0.24, 0.13, 1)
+theme_override_font_sizes/normal_font_size = 30
+theme_override_font_sizes/bold_font_size = 30
+bbcode_enabled = false
+fit_content = true

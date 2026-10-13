@@ -1,11 +1,12 @@
 class_name ParentMenu
 extends CanvasLayer
-## Ebeveyn köşesi: yetişkinler için ayarlar ve lisanslar. Ana ekrandaki ParentGateButton basılı
-## tutulunca açılır. Açıkken arkadaki her şey kararır ve dokunuşları yutar.
+## Ebeveyn köşesi: yetişkinler için ayarlar, lisanslar ve gizlilik politikası. Ana ekrandaki ParentGateButton
+## basılı tutulunca açılır. Açıkken arkadaki her şey kararır ve dokunuşları yutar.
 ## Ses düğmeleri: "Müzik ve doğa sesleri" müzik ile ortam (rüzgâr, kuşlar) kanallarını, "Oyun sesleri"
 ## efekt kanalını açıp kapar. Durum AudioManager'da saklanır, düğmeler açılışta ondan okunur.
-## İki sayfası var: ana sayfa ve lisanslar. Geri düğmesi ya da Android geri tuşu lisanslardan ana sayfaya,
-## ana sayfadan oyuna döner; çarpı ya da karartılmış arka plan her zaman kapatır.
+## Üç sayfası var: ana sayfa, lisanslar ve gizlilik politikası (PrivacyPolicy; telefonun diline göre Türkçe ya da
+## İngilizce). Geri düğmesi ya da Android geri tuşu alt sayfalardan ana sayfaya, ana sayfadan oyuna döner;
+## çarpı ya da karartılmış arka plan her zaman kapatır.
 ## Lisans metni Godot'nun kendisinden (Engine.get_license_text/get_copyright_info/get_license_info)
 ## alınır; motor güncellenince liste kendiliğinden güncel kalır. Uzun olduğu için ilk açılışta doldurulur.
 
@@ -17,10 +18,12 @@ const CLOSE_SCALE: float = 0.85
 const CLOSE_TIME: float = 0.15
 const HEADING_SIZE: int = 40
 const SUBHEADING_SIZE: int = 30
+const PRIVACY_HEADING_SIZE: int = 36
 
 var is_open: bool = false
 
 var _licenses_filled: bool = false
+var _privacy_filled: bool = false
 var _tween: Tween
 
 @onready var _root: Control = $Root
@@ -33,6 +36,9 @@ var _tween: Tween
 @onready var _licenses_page: ScrollContainer = %LicensesPage
 @onready var _licenses_text: RichTextLabel = %LicensesText
 @onready var _licenses_button: Button = %LicensesButton
+@onready var _privacy_page: ScrollContainer = %PrivacyPage
+@onready var _privacy_text: RichTextLabel = %PrivacyText
+@onready var _privacy_button: Button = %PrivacyButton
 @onready var _music_toggle: Button = %MusicToggle
 @onready var _sounds_toggle: Button = %SoundsToggle
 
@@ -45,6 +51,7 @@ func _ready() -> void:
 	_close_button.pressed.connect(close)
 	_back_button.pressed.connect(_show_main)
 	_licenses_button.pressed.connect(_show_licenses)
+	_privacy_button.pressed.connect(_show_privacy)
 	_music_toggle.toggled.connect(_on_music_toggled)
 	_sounds_toggle.toggled.connect(_on_sounds_toggled)
 
@@ -75,11 +82,11 @@ func close() -> void:
 	_tween.chain().tween_callback(_root.hide)
 
 
-## SceneRouter geri tuşunda çağırır: lisanslardan ana sayfaya, ana sayfadan oyuna döner.
+## SceneRouter geri tuşunda çağırır: alt sayfalardan ana sayfaya, ana sayfadan oyuna döner.
 func go_back() -> bool:
 	if not is_open:
 		return false
-	if _licenses_page.visible:
+	if _licenses_page.visible or _privacy_page.visible:
 		_show_main()
 	else:
 		close()
@@ -93,6 +100,7 @@ func _show_main() -> void:
 	_title.text = "Ebeveyn Köşesi"
 	_back_button.hide()
 	_licenses_page.hide()
+	_privacy_page.hide()
 	_main_page.show()
 
 
@@ -103,6 +111,29 @@ func _show_licenses() -> void:
 	_main_page.hide()
 	_licenses_page.show()
 	_licenses_page.scroll_vertical = 0
+
+
+func _show_privacy() -> void:
+	var policy: Dictionary = PrivacyPolicy.for_device()
+	_fill_privacy(policy)
+	_title.text = policy["title"]
+	_back_button.show()
+	_main_page.hide()
+	_privacy_page.show()
+	_privacy_page.scroll_vertical = 0
+
+
+func _fill_privacy(policy: Dictionary) -> void:
+	if _privacy_filled:
+		return
+	_privacy_filled = true
+	var text: RichTextLabel = _privacy_text
+	text.clear()
+	_paragraph(text, policy["date"])
+	_paragraph(text, policy["intro"])
+	for section: Array in policy["sections"]:
+		_heading(text, section[0], PRIVACY_HEADING_SIZE)
+		_paragraph(text, section[1])
 
 
 func _fill_licenses() -> void:
