@@ -6,7 +6,7 @@ Lina'nın Çiftliği'ni (Lina's Farm) Google Play'e hazırlarken yapılacaklar. 
 
 - [x] **1. Debug paneli** — release export'ta görünmesin. `DebugPanel` artık yalnız editörde ve debug
 	  export'ta çalışıyor (`OS.is_debug_build()`), release'te kendini siliyor.
-	  _Release APK'da gerçekten kaybolduğu 2. maddeden sonra cihazda doğrulanacak._
+	  _Release APK'da telefonda doğrulandı (9. madde)._
 - [x] **2. Android export ayarı** — release AAB (`build/LinasFarm.aab`, ~30 MB) ve release APK
 	  (`build/LinasFarm.apk`) derlendi, ikisi de release keystore'la imzalı (jarsigner/apksigner ile doğrulandı).
 	  Komut satırından: `godot --headless --path . --export-release "Android" build/LinasFarm.aab`.
@@ -18,19 +18,18 @@ Lina'nın Çiftliği'ni (Lina's Farm) Google Play'e hazırlarken yapılacaklar. 
 	  - Release keystore: `C:\Users\emirs\Desktop\kidolab-release.keystore` (repo dışında, yedekli), alias `kidolab`.
 		Yolu ve alias `.godot/export_credentials.cfg`'de (repoya girmez); şifre iki preset için editörde
 		Proje → Dışa Aktar → Keystore → Release Password alanında (girildi).
-	  - Kalan (9. madde): 1. maddeyi release APK'da cihazda doğrula.
 - [x] **3. Uygulama simgesi ve açılış ekranı** — simge: hasır şapkalı kız (`config/icon` = `icon_512.png`, Android
 	  adaptif katmanları ve tek renkli sürümü preset'lerde); açılış: krem zeminde
 	  "kidolab" logosu, yalnız yükleme süresince. Kaynaklar `assets/branding/` (`icon_background.svg`,
 	  `kidolab_logo.svg`; kız oyundaki parça çizimlerinden birleştirilir), PNG'leri
-	  `tools/branding/render_branding.gd` üretir. _Android 12+ sistem açılışı ve gerçek görünüm 9. maddede bakılacak._
+	  `tools/branding/render_branding.gd` üretir. _Telefonda denendi (9. madde)._
 - [x] **4. Android geri tuşu** — açık sepet menüsünü kapatır; menü kapalıysa bölümden ana ekrana döner;
 	  ana ekranda hiçbir şey yapmaz (`quit_on_go_back=false`, `SceneRouter.go_back`, `back_handlers` grubu).
-	  _Benzetimle denendi; gerçek cihazda 9. maddede bakılacak._
+	  _Telefonda denendi (9. madde)._
 - [x] **5. Godot lisans bildirimi** — ana ekranın sol üstündeki soluk çark 2 sn basılı tutulunca
 	  "Ebeveyn Köşesi" açılır (`ParentGateButton`, `ParentMenu`); "Lisanslar ve emeği geçenler" sayfası metni
 	  Godot'dan alır (`Engine.get_license_text/get_copyright_info/get_license_info`), motor güncellenince kendiliğinden güncel kalır.
-	  _Lisans sayfası ilk açılışta masaüstünde ~0,26 sn'de doluyor; telefondaki süreye 9. maddede bakılacak._
+	  _Lisans sayfası masaüstünde ~0,26 sn'de doluyor; telefonda sorun bildirilmedi (9. madde)._
 
 ## 🟠 Önemli
 
@@ -43,7 +42,19 @@ Lina'nın Çiftliği'ni (Lina's Farm) Google Play'e hazırlarken yapılacaklar. 
 	  (SaveGame artık autoload listesinin başında, AudioManager kaydı okuyabilsin diye).
 - [x] **8. Sürüm numarası** — preset'lerde `version/name` = `1.0.0` (görünen sürüm), `version/code` = `1`;
 	  Play'e her yüklemede `version/code` bir artmalı (iki preset'te de).
-- [ ] **9. Gerçek cihaz testi** — tablette ve telefonda dokunma, performans, farklı ekran oranları, kenar boşlukları.
+- [x] **9. Gerçek cihaz testi** — telefonda (Xiaomi 24117RN76O, Android 15, 2400×1080) release APK ile denendi
+	  (`adb install`; Xiaomi'de Geliştirici seçenekleri → "USB üzerinden yükle" açık olmalı). Bulunanlar düzeltildi:
+	  - Ebeveyn Köşesi düğmesi 56 → 120 px, kartların sağına; basılıyken parmağın dışında büyük halka ve
+		"2 saniye basılı tutun" yazısı.
+	  - Sürüklenen nesneler parmağın ~1 cm üstünde (`Finger.lift`, 9 mm); bırakmada nesne ya da parmak hedefteyse
+		sayılır; el göstergesi de taşınanı hedefe oturtur (`HintDirector`).
+	  - Tarla: raf bölmeleri 116 → 140 px, parseller büyüdü, çit geri alındı, tohum isabet alanı genişledi.
+	  - Pazar: kasaların dokunma alanı genişledi, pastane dolabı %15 büyüdü; dükkânda küçük ürünlere en az 136 px alan.
+	  - Siyah şeritler: stretch aspect "expand" + `ScreenFit` (tasarım alanı ortada), arka planlar aynalanarak
+		her yana 320 px / altta-üstte 180 px uzuyor (21:9 telefon, 4:3 tablete kadar); dükkânın kapı ve halısı
+		ayrı resimde (`shop_room_details.svg`); müşteri, kuş ve uğur böceği görünen alanın dışından gelir.
+	  - Fırında tarif kartlarını büyütme denendi, beğenilmedi, geri alındı.
+	  _Gerçek tablette denenmedi; tablet oranları (16:10, 4:3) yalnız masaüstünde görüntüyle kontrol edildi._
 - [x] **10. Sıfır kayıtla baştan sona oynanış** — yeni yükleyen çocuk yolunu bulabiliyor mu?
 	  El göstergesi (`HintHand` + `HintDirector`; iş 3 kez yapılana dek 4 sn, sonra 15 sn beklemede çıkar,
 	  hareketi 2 kez gösterir; dokunulmadan yeniden çıkacaksa bekleme her seferinde ikiye katlanır (en fazla 4×),
