@@ -62,7 +62,9 @@ Minik Kasaba'yı Google Play'e hazırlarken yapılacaklar. Bitenler `[x]` ile i�
 - [x] **12. Boş klasörler** — `data/*`, `scenes/town`, `scripts/resources`, `tests`, `scenes/ui/theme`, `assets/fonts`
 	  silindi; yalnız `.gitkeep` içeren `scripts/town` de onlarla gitti.
 - [x] **13. CREDITS.md** — eksik `coin_clink.ogg` satırı eklendi; ses klasöründeki 32 dosyanın hepsi artık listede.
-- [ ] **14. Export filtresi** — `tools/` oyuna girmesin; `previews/` (14,6 MB) repoda kalsın mı?
+- [x] **14. Export filtresi** — `tools/` artık `.gdignore` içeriyor, oyuna girmiyor (preset'ten bağımsız).
+	  `previews/`'teki eski geliştirme görüntüleri (14,6 MB) silindi, klasör `.gitignore`'da;
+	  `tools/screenshot.gd` oraya yazarken `.gdignore`'u kendisi koyuyor.
 - [ ] **15. Yaş açıklaması** — `config/description` "5-7 yaş" diyor, tasarım 5-6.
 - [ ] **16. Uzak inek sesi** — ana ekran, tarla, kümes ve fırında hâlâ çalıyor; kalsın mı?
 

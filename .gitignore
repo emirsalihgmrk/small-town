@@ -13,3 +13,6 @@
 # İşletim sistemi
 .DS_Store
 Thumbs.db
+
+# Geliştirme ekran görüntüleri (tools/screenshot.gd)
+/previews/

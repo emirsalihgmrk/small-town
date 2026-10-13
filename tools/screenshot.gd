@@ -3,9 +3,11 @@ extends SceneTree
 ## Kullanım:
 ##   godot --path . --resolution 1920x1080 --script res://tools/screenshot.gd -- <sahne.tscn> <çıktı.png>
 ## Varsayılan: res://scenes/main/home.tscn -> res://previews/home.png
+## previews/ repoda değildir (.gitignore); içine .gdignore konur ki görüntüler içe aktarılıp oyuna girmesin.
 
 const DEFAULT_SCENE: String = "res://scenes/main/home.tscn"
-const DEFAULT_OUTPUT: String = "res://previews/home.png"
+const PREVIEW_DIR: String = "res://previews"
+const DEFAULT_OUTPUT: String = PREVIEW_DIR + "/home.png"
 ## Yerleşim ve SVG içe aktarımlarının oturması için beklenecek kare sayısı.
 const SETTLE_FRAMES: int = 10
 
@@ -29,6 +31,9 @@ func _capture(output_path: String) -> void:
 	await RenderingServer.frame_post_draw
 	var image: Image = root.get_texture().get_image()
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(output_path).get_base_dir())
+	var gdignore: String = PREVIEW_DIR + "/.gdignore"
+	if output_path.begins_with(PREVIEW_DIR + "/") and not FileAccess.file_exists(gdignore):
+		FileAccess.open(gdignore, FileAccess.WRITE)
 	var err: Error = image.save_png(output_path)
 	if err != OK:
 		push_error("PNG kaydedilemedi: %s (%s)" % [output_path, error_string(err)])
