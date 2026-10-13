@@ -17,8 +17,6 @@ const NO_TOUCH: int = -1
 const NO_SLOT: int = -1
 ## Parmak bu kadar kaymadan malzeme çıkmaz; daha azı sepete dokunmak sayılır.
 const DRAG_START_DISTANCE: float = 24.0
-## Malzemenin parmağa göre yeri: parmak malzemeyi örtmesin.
-const HOLD_OFFSET: Vector2 = Vector2(0.0, -70.0)
 ## Malzeme parmağı bu hızla yakalar (büyük = sıkı takip).
 const FOLLOW_SHARPNESS: float = 28.0
 const BASKET_SCALE: float = 0.55
@@ -54,6 +52,8 @@ var _refused: bool = false
 var _held: Sprite2D
 var _slot: int = NO_SLOT
 var _target: Vector2
+## Malzemenin parmağa göre yeri (Finger.lift): parmak malzemeyi örtmesin; kaseye bırakma malzemenin görünen yerine ya da parmağa göre.
+var _offset: Vector2
 
 
 func _process(delta: float) -> void:
@@ -97,8 +97,8 @@ func _move(point: Vector2) -> void:
 		if not _refused and point.distance_to(_start) >= DRAG_START_DISTANCE:
 			_lift(point)
 		return
-	_target = _to_screen(point) + HOLD_OFFSET
-	bowl.set_highlighted(bowl.contains(point))
+	_target = _to_screen(point) + _offset
+	bowl.set_highlighted(bowl.contains(point + _offset) or bowl.contains(point))
 
 
 func _release(point: Vector2) -> void:
@@ -106,7 +106,7 @@ func _release(point: Vector2) -> void:
 		if not _refused:
 			basket.tap()
 		return
-	if bowl.contains(point):
+	if bowl.contains(point + _offset) or bowl.contains(point):
 		_pour()
 	else:
 		bowl.set_highlighted(false)
@@ -129,12 +129,13 @@ func _lift(point: Vector2) -> void:
 		missing.emit()
 		return
 	_refused = false
+	_offset = Finger.lift(get_viewport())
 	_held = Sprite2D.new()
 	_held.texture = basket.item_textures.get(bowl.ingredient(_slot))
 	drag_layer.add_child(_held)
 	_held.position = _to_screen(basket.mouth())
 	_held.scale = Vector2.ONE * BASKET_SCALE
-	_target = _to_screen(point) + HOLD_OFFSET
+	_target = _to_screen(point) + _offset
 	create_tween().tween_property(_held, ^"scale", Vector2.ONE * CARRY_SCALE, LIFT_TIME) \
 			.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 

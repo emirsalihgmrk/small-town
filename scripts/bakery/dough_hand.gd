@@ -10,8 +10,6 @@ extends Node
 const NO_TOUCH: int = -1
 ## Parmak bu kadar kaymadan hamur çıkmaz.
 const DRAG_START_DISTANCE: float = 24.0
-## Hamurun parmağa göre yeri: parmak hamuru örtmesin.
-const HOLD_OFFSET: Vector2 = Vector2(0.0, -70.0)
 ## Hamur parmağı bu hızla yakalar (büyük = sıkı takip).
 const FOLLOW_SHARPNESS: float = 28.0
 ## Kaseden çıkarken fırındaki boyunun bu oranında başlar.
@@ -31,6 +29,8 @@ var _start: Vector2
 var _held: Sprite2D
 var _recipe: StringName
 var _target: Vector2
+## Hamurun parmağa göre yeri (Finger.lift): parmak hamuru örtmesin; fırına bırakma hamurun görünen yerine ya da parmağa göre.
+var _offset: Vector2
 
 
 func _process(delta: float) -> void:
@@ -74,13 +74,13 @@ func _move(point: Vector2) -> void:
 		if point.distance_to(_start) >= DRAG_START_DISTANCE:
 			_lift(point)
 		return
-	_target = _to_screen(point) + HOLD_OFFSET
-	oven.set_highlighted(oven.can_bake() and oven.contains(point))
+	_target = _to_screen(point) + _offset
+	oven.set_highlighted(oven.can_bake() and (oven.contains(point + _offset) or oven.contains(point)))
 
 
 func _release(point: Vector2) -> void:
 	oven.set_highlighted(false)
-	if oven.contains(point):
+	if oven.contains(point + _offset) or oven.contains(point):
 		if oven.can_bake():
 			_put_in_oven()
 			return
@@ -94,12 +94,13 @@ func _lift(point: Vector2) -> void:
 	if not bowl.lift_dough():
 		return
 	var carry: float = oven.product_scale(_recipe)
+	_offset = Finger.lift(get_viewport())
 	_held = Sprite2D.new()
 	_held.texture = oven.raw_texture(_recipe)
 	drag_layer.add_child(_held)
 	_held.position = _to_screen(bowl.dough_point())
 	_held.scale = Vector2.ONE * carry * LIFT_START_SCALE
-	_target = _to_screen(point) + HOLD_OFFSET
+	_target = _to_screen(point) + _offset
 	create_tween().tween_property(_held, ^"scale", Vector2.ONE * carry, LIFT_TIME) \
 			.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 

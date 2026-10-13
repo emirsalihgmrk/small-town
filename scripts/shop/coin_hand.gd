@@ -14,8 +14,6 @@ signal refused
 const NO_TOUCH: int = -1
 ## Parmak bu kadar kaymadan para çıkmaz.
 const DRAG_START_DISTANCE: float = 24.0
-## Paranın parmağa göre yeri: parmak parayı örtmesin.
-const HOLD_OFFSET: Vector2 = Vector2(0.0, -60.0)
 const FOLLOW_SHARPNESS: float = 28.0
 const JAR_SCALE: float = 0.6
 const CARRY_SCALE: float = 1.5
@@ -39,6 +37,8 @@ var _start: Vector2
 var _refused: bool = false
 var _held: Sprite2D
 var _target: Vector2
+## Paranın parmağa göre yeri (Finger.lift): parmak parayı örtmesin; etikete bırakma paranın görünen yerine ya da parmağa göre.
+var _offset: Vector2
 var _hovered: ShelfItem
 var _clink_sound: AudioStream
 
@@ -89,8 +89,8 @@ func _move(point: Vector2) -> void:
 		if not _refused and point.distance_to(_start) >= DRAG_START_DISTANCE:
 			_lift(point)
 		return
-	_target = _to_screen(point) + HOLD_OFFSET
-	_set_hovered(_item_at(point))
+	_target = _to_screen(point) + _offset
+	_set_hovered(_item_under(point))
 
 
 func _release(point: Vector2) -> void:
@@ -98,7 +98,7 @@ func _release(point: Vector2) -> void:
 		if not _refused:
 			jar.bounce()
 		return
-	var item: ShelfItem = _item_at(point)
+	var item: ShelfItem = _item_under(point)
 	_set_hovered(null)
 	if item != null:
 		_place(item)
@@ -114,12 +114,13 @@ func _lift(point: Vector2) -> void:
 		refused.emit()
 		return
 	_refused = false
+	_offset = Finger.lift(get_viewport())
 	_held = Sprite2D.new()
 	_held.texture = coin_texture
 	drag_layer.add_child(_held)
 	_held.position = _to_screen(jar.mouth())
 	_held.scale = Vector2.ONE * JAR_SCALE
-	_target = _to_screen(point) + HOLD_OFFSET
+	_target = _to_screen(point) + _offset
 	create_tween().tween_property(_held, ^"scale", Vector2.ONE * CARRY_SCALE, LIFT_TIME) \
 			.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 
@@ -151,6 +152,12 @@ func _return() -> void:
 	tween.chain().tween_callback(func() -> void:
 		held.queue_free()
 		jar.put_back())
+
+
+## Taşınan paranın altındaki ürün; yoksa parmağın altındaki (alttaki raflara parmakla da ulaşılsın).
+func _item_under(point: Vector2) -> ShelfItem:
+	var item: ShelfItem = _item_at(point + _offset)
+	return item if item != null else _item_at(point)
 
 
 ## Parmağın altındaki, henüz parası tamamlanmamış ürün.

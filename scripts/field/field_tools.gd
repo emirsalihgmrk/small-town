@@ -54,8 +54,6 @@ const SLOT_BOUNCE_TIME: float = 0.25
 @export var plots_root: Node2D
 ## Tutulan araç bu katmanda çizilir; araç rafının (UI) da üstünde kalmalı.
 @export var drag_layer: CanvasLayer
-## Aracın çalışan ucu parmağın bu kadar uzağında durur; parmak ucu örtmesin.
-@export var hold_offset: Vector2 = Vector2(0.0, -36.0)
 @export_range(20.0, 400.0, 5.0, "suffix:px") var stroke_distance: float = 100.0
 ## Parsele girer girmez ilk vuruş çabuk gelsin diye yolun bu oranı peşin sayılır.
 @export_range(0.0, 1.0, 0.05) var first_stroke_head_start: float = 0.6
@@ -68,6 +66,8 @@ var _icon_scales: Dictionary[Tool, Vector2] = {}
 var _returning: Dictionary[Tool, HeldTool] = {}
 var _touch_index: int = NO_TOUCH
 var _held: Tool
+## Aracın çalışan ucu parmağın bu kadar uzağında durur (Finger.lift); parmak ucu örtmesin.
+var _offset: Vector2
 var _tool: HeldTool
 var _plot: Plot
 var _stroke_progress: float = 0.0
@@ -147,9 +147,10 @@ func _pick_up(kind: Tool, index: int, screen_point: Vector2) -> void:
 	_touch_index = index
 	_held = kind
 	_icons[kind].hide()
+	_offset = Finger.lift(get_viewport())
 	_tool = _scenes[kind].instantiate() as HeldTool
 	drag_layer.add_child(_tool)
-	_tool.position = screen_point + hold_offset
+	_tool.position = screen_point + _offset
 	_tool.pop_in()
 	if HOLE_SEEDS.has(kind):
 		_set_holes_visible(true, HOLE_SEEDS[kind])
@@ -158,7 +159,7 @@ func _pick_up(kind: Tool, index: int, screen_point: Vector2) -> void:
 
 
 func _move_to(screen_point: Vector2) -> void:
-	_tool.position = screen_point + hold_offset
+	_tool.position = screen_point + _offset
 
 
 func _drop() -> void:

@@ -185,13 +185,16 @@ func _harvest_hint(plot: Plot) -> Dictionary:
 	return {}
 
 
-## Raftan aracı alıp noktalara götüren el; araç rafta yoksa boş.
+## Raftan aracı alıp noktalara götüren el; araç rafta yoksa boş. Aracın ucu parmağın üstünde (Finger.lift)
+## durduğundan parmak, ucu noktaya getirecek kadar aşağıdan geçer.
 func _tool_hint(id: StringName, tool: FieldTools.Tool, points: Array[Vector2], hold: float = HintHand.DEFAULT_HOLD) -> Dictionary:
 	var slot: Vector2 = _tools.slot_center(tool)
 	if slot == Vector2.INF:
 		return {}
+	var lift: Vector2 = Finger.lift(get_viewport())
 	var path: PackedVector2Array = [slot]
-	path.append_array(PackedVector2Array(points))
+	for point: Vector2 in points:
+		path.append(point - lift)
 	return {"id": id, "points": path, "hold": hold, "carry": _tools.slot_icon(tool)}
 
 

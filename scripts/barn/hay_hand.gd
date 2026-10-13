@@ -9,8 +9,6 @@ extends Node
 const NO_TOUCH: int = -1
 ## Parmak bu kadar kaymadan tutam çıkmaz; daha azı yığına dokunmak sayılır.
 const DRAG_START_DISTANCE: float = 24.0
-## Tutamın parmağa göre yeri: parmak tutamı örtmesin.
-const HOLD_OFFSET: Vector2 = Vector2(0.0, -60.0)
 ## Tutam parmağı bu hızla yakalar (büyük = sıkı takip).
 const FOLLOW_SHARPNESS: float = 28.0
 const PILE_SCALE: float = 0.5
@@ -35,6 +33,8 @@ var _touch_index: int = NO_TOUCH
 var _start: Vector2
 var _tuft: Sprite2D
 var _target: Vector2
+## Tutamın parmağa göre yeri (Finger.lift): parmak tutamı örtmesin; yemliğe bırakma tutamın görünen yerine ya da parmağa göre.
+var _offset: Vector2
 
 
 func _process(delta: float) -> void:
@@ -77,15 +77,15 @@ func _move(point: Vector2) -> void:
 		if point.distance_to(_start) >= DRAG_START_DISTANCE:
 			_lift(point)
 		return
-	_target = _to_screen(point) + HOLD_OFFSET
-	manger.set_highlighted(manger.can_fill() and manger.contains(point))
+	_target = _to_screen(point) + _offset
+	manger.set_highlighted(manger.can_fill() and (manger.contains(point + _offset) or manger.contains(point)))
 
 
 func _release(point: Vector2) -> void:
 	if _tuft == null:
 		hay_pile.rustle()
 		return
-	if manger.can_fill() and manger.contains(point):
+	if manger.can_fill() and (manger.contains(point + _offset) or manger.contains(point)):
 		_drop()
 	else:
 		manger.set_highlighted(false)
@@ -95,12 +95,13 @@ func _release(point: Vector2) -> void:
 ## Tutam yığının tepesinden çıkıp parmağa doğru büyüyerek gelir.
 func _lift(point: Vector2) -> void:
 	hay_pile.rustle()
+	_offset = Finger.lift(get_viewport())
 	_tuft = Sprite2D.new()
 	_tuft.texture = tuft_texture
 	drag_layer.add_child(_tuft)
 	_tuft.position = _to_screen(hay_pile.top())
 	_tuft.scale = Vector2.ONE * PILE_SCALE
-	_target = _to_screen(point) + HOLD_OFFSET
+	_target = _to_screen(point) + _offset
 	create_tween().tween_property(_tuft, ^"scale", Vector2.ONE * CARRY_SCALE, LIFT_TIME) \
 			.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 

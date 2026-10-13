@@ -16,12 +16,11 @@ const NO_TOUCH: int = -1
 ## Tutulan kova bu katmanda, dünyanın üstünde çizilir.
 @export var drag_layer: CanvasLayer
 @export var bucket_scene: PackedScene
-## Kovanın ağzı parmağın bu kadar uzağında durur; parmak kovayı örtmesin.
-@export var hold_offset: Vector2 = Vector2(0.0, -36.0)
-
 var _touch_index: int = NO_TOUCH
 var _tool: HeldTool
 var _returning: HeldTool
+## Kovanın ağzı parmağın bu kadar uzağında durur (Finger.lift); parmak kovayı örtmesin.
+var _offset: Vector2
 
 
 func _process(delta: float) -> void:
@@ -46,7 +45,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		return
 	var drag: InputEventScreenDrag = event as InputEventScreenDrag
 	if drag != null and drag.index == _touch_index:
-		_tool.position = drag.position + hold_offset
+		_tool.position = drag.position + _offset
 		get_viewport().set_input_as_handled()
 
 
@@ -63,9 +62,10 @@ func _pick_up(index: int, screen_point: Vector2) -> void:
 		_returning = null
 	_touch_index = index
 	bucket.hide()
+	_offset = Finger.lift(get_viewport())
 	_tool = bucket_scene.instantiate() as HeldTool
 	drag_layer.add_child(_tool)
-	_tool.position = screen_point + hold_offset
+	_tool.position = screen_point + _offset
 	_tool.pop_in()
 
 

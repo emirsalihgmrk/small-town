@@ -13,8 +13,6 @@ signal no_wheat
 const NO_TOUCH: int = -1
 ## Parmak bu kadar kaymadan demet çıkmaz; daha azı sepete dokunmak sayılır.
 const DRAG_START_DISTANCE: float = 24.0
-## Demetin parmağa göre yeri: parmak demeti örtmesin.
-const HOLD_OFFSET: Vector2 = Vector2(0.0, -70.0)
 ## Demet parmağı bu hızla yakalar (büyük = sıkı takip).
 const FOLLOW_SHARPNESS: float = 28.0
 const BASKET_SCALE: float = 0.55
@@ -41,6 +39,8 @@ var _start: Vector2
 var _refused: bool = false
 var _bundle: Sprite2D
 var _target: Vector2
+## Demetin parmağa göre yeri (Finger.lift): parmak demeti örtmesin; yemliğe bırakma demetin görünen yerine ya da parmağa göre.
+var _offset: Vector2
 
 
 func _process(delta: float) -> void:
@@ -84,8 +84,8 @@ func _move(point: Vector2) -> void:
 		if not _refused and point.distance_to(_start) >= DRAG_START_DISTANCE:
 			_lift(point)
 		return
-	_target = _to_screen(point) + HOLD_OFFSET
-	feeder.set_highlighted(feeder.can_fill() and feeder.contains(point))
+	_target = _to_screen(point) + _offset
+	feeder.set_highlighted(feeder.can_fill() and (feeder.contains(point + _offset) or feeder.contains(point)))
 
 
 func _release(point: Vector2) -> void:
@@ -93,7 +93,7 @@ func _release(point: Vector2) -> void:
 		if not _refused:
 			basket.tap()
 		return
-	if feeder.can_fill() and feeder.contains(point):
+	if feeder.can_fill() and (feeder.contains(point + _offset) or feeder.contains(point)):
 		_pour()
 	else:
 		feeder.set_highlighted(false)
@@ -106,12 +106,13 @@ func _lift(point: Vector2) -> void:
 		_refused = true
 		no_wheat.emit()
 		return
+	_offset = Finger.lift(get_viewport())
 	_bundle = Sprite2D.new()
 	_bundle.texture = wheat_texture
 	drag_layer.add_child(_bundle)
 	_bundle.position = _to_screen(basket.mouth())
 	_bundle.scale = Vector2.ONE * BASKET_SCALE
-	_target = _to_screen(point) + HOLD_OFFSET
+	_target = _to_screen(point) + _offset
 	create_tween().tween_property(_bundle, ^"scale", Vector2.ONE * CARRY_SCALE, LIFT_TIME) \
 			.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 

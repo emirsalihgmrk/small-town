@@ -9,8 +9,6 @@ extends Node
 ## TapRouter'dan sonra gelmeli ki reyona basış önce buraya ulaşsın.
 
 const NO_TOUCH: int = -1
-## Ürünün parmağa göre yeri: parmak ürünü örtmesin.
-const HOLD_OFFSET: Vector2 = Vector2(0.0, -70.0)
 ## Ürün parmağı bu hızla yakalar (büyük = sıkı takip).
 const FOLLOW_SHARPNESS: float = 28.0
 ## Ürünün en uzun kenarı taşınırken bu boyda görünür.
@@ -29,6 +27,8 @@ var _touch_index: int = NO_TOUCH
 var _held: Sprite2D
 var _bin: StockBin
 var _target: Vector2
+## Ürünün parmağa göre yeri (Finger.lift): parmak ürünü örtmesin; müşteriye bırakma ürünün görünen yerine ya da parmağa göre.
+var _offset: Vector2
 
 
 func _process(delta: float) -> void:
@@ -78,14 +78,14 @@ func _bin_at(point: Vector2) -> StockBin:
 func _move(point: Vector2) -> void:
 	if _held == null:
 		return
-	_target = _to_screen(point) + HOLD_OFFSET
-	customer.set_highlighted(customer.can_receive() and customer.contains(point))
+	_target = _to_screen(point) + _offset
+	customer.set_highlighted(customer.can_receive() and (customer.contains(point + _offset) or customer.contains(point)))
 
 
 func _release(point: Vector2) -> void:
 	if _held == null:
 		return
-	if not (customer.can_receive() and customer.contains(point)):
+	if not (customer.can_receive() and (customer.contains(point + _offset) or customer.contains(point))):
 		customer.set_highlighted(false)
 		_return()
 		return
@@ -103,12 +103,13 @@ func _lift(bin: StockBin, point: Vector2) -> void:
 	if not bin.take_out():
 		return
 	_bin = bin
+	_offset = Finger.lift(get_viewport())
 	_held = Sprite2D.new()
 	_held.texture = bin.texture
 	drag_layer.add_child(_held)
 	_held.position = _to_screen(start)
 	_held.scale = bin.size_scale(bin.item_size)
-	_target = _to_screen(point) + HOLD_OFFSET
+	_target = _to_screen(point) + _offset
 	create_tween().tween_property(_held, ^"scale", bin.size_scale(CARRY_SIZE), LIFT_TIME) \
 			.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 

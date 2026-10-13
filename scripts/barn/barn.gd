@@ -107,7 +107,8 @@ func _current_hint() -> Dictionary:
 				_to_screen(_manger.to_global(_manger.drop_area.get_center()))])}
 	if _trough.needs_water():
 		return {"id": HINT_WATER, "carry": _bucket, "hold": HINT_WATER_HOLD, "points": PackedVector2Array([
-				_to_screen(_bucket.global_position), _to_screen(_trough.to_global(_trough.pour_area.get_center()))])}
+				_to_screen(_bucket.global_position),
+				_to_screen(_trough.to_global(_trough.pour_area.get_center())) - Finger.lift(get_viewport())])}
 	return {}
 
 
