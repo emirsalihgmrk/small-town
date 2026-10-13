@@ -40,7 +40,7 @@ Minik Kasaba'yı Google Play'e hazırlarken yapılacaklar. Bitenler `[x]` ile i�
 	  (SaveGame artık autoload listesinin başında, AudioManager kaydı okuyabilsin diye).
 - [ ] **8. Sürüm numarası** — ⏸ _Export sırasında ayarlanacak, 2. maddeye taşındı._
 - [ ] **9. Gerçek cihaz testi** — tablette ve telefonda dokunma, performans, farklı ekran oranları, kenar boşlukları.
-- [ ] **10. Sıfır kayıtla baştan sona oynanış** — yeni yükleyen çocuk yolunu bulabiliyor mu?
+- [x] **10. Sıfır kayıtla baştan sona oynanış** — yeni yükleyen çocuk yolunu bulabiliyor mu?
 	  El göstergesi (`HintHand` + `HintDirector`; iş 3 kez yapılana dek 4 sn, sonra 15 sn beklemede çıkar,
 	  hareketi 2 kez gösterir; dokunulmadan yeniden çıkacaksa bekleme her seferinde ikiye katlanır (en fazla 4×),
 	  dokununca başa döner; öğrenme sayıları kayıtta "hints"). Tespit ve sıra: `~/.claude/plans/golden-exploring-starlight.md`.
@@ -50,13 +50,15 @@ Minik Kasaba'yı Google Play'e hazırlarken yapılacaklar. Bitenler `[x]` ile i�
 	  - [x] Fırın (tarif kartı, sepetten malzeme → kase, karıştırma, hamur → fırın)
 	  - [x] Pazar (reyondan ürün → müşteri) ve Dükkân (kumbaradan para → ürün)
 	  - [x] Ana ekran (tarlada hiç parsel çapalanmadıysa Tarla kartı)
-	  - [ ] Fırın ürünlerinin kayıtta hep 0 görünmesinin nedeni
-	  Fırın ürünlerinin kayıtta hep 0 görünmesinin nedeni de bakılacak.
+	  - [x] Fırın ürünlerinin kayıtta hep 0 görünmesinin nedeni — hata değil: pazarda sepette fırın ürünü
+		varken müşteriler yalnız fırın ürünü ister (`MarketOrders.make`), başka hiçbir yer fırın ürünü harcamaz.
+		Pişen her ürün pazarda ilk satılanlar arasında olur; kayıtta anahtarların bulunması eklenip yazıldıklarını gösterir.
 
 ## 🟡 Temizlik
 
-- [ ] **11. Kullanılmayan çizimler** — `assets/art/animals/` içindeki `chick`, `chicken_body`, `chicken_head`,
-	  `lamb_body`, `lamb_head`, `cat_sleep`, `cat_tail`.
+- [x] **11. Kullanılmayan çizimler** — `assets/art/animals/` içindeki `chick`, `chicken_body`, `chicken_head`,
+	  `lamb_body`, `lamb_head`, `cat_sleep`, `cat_tail` silindi (yolla da `uid://` ile de hiçbir yerde geçmiyorlardı;
+	  uyuyan kedi `assets/art/coop/` altındaki kopyaları kullanıyor). Klasörde yalnız tarladaki `bunny` kaldı.
 - [ ] **12. Boş klasörler** — `data/*`, `scenes/town`, `scripts/resources`, `tests`, `scenes/ui/theme`, `assets/fonts`.
 - [ ] **13. CREDITS.md** — eksik `coin_clink.ogg` satırı.
 - [ ] **14. Export filtresi** — `tools/` oyuna girmesin; `previews/` (14,6 MB) repoda kalsın mı?
