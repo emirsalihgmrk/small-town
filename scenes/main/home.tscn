@@ -41,6 +41,17 @@
 [ext_resource type="Script" uid="uid://dgxnk2dyxvsvr" path="res://scripts/components/sway_component.gd" id="sway_script"]
 [ext_resource type="Script" uid="uid://djmxknef0ijit" path="res://scripts/input/tap_router.gd" id="tap_router_script"]
 
+[sub_resource type="StyleBoxFlat" id="parent_hint_box"]
+content_margin_left = 24.0
+content_margin_top = 10.0
+content_margin_right = 24.0
+content_margin_bottom = 10.0
+bg_color = Color(1, 0.973, 0.906, 0.94)
+corner_radius_top_left = 30
+corner_radius_top_right = 30
+corner_radius_bottom_right = 30
+corner_radius_bottom_left = 30
+
 [node name="Home" type="Node2D" unique_id=552806990 node_paths=PackedStringArray("decorations")]
 script = ExtResource("home_script")
 decorations = [NodePath("World/Kite"), NodePath("World/Decorations/Birdhouse"), NodePath("World/Decorations/Pond"), NodePath("World/Decorations/Swing")]
@@ -573,14 +584,29 @@ title = "Fırın"
 icon_scene = ExtResource("26_bakery_icon")
 card_color = Color(0.965, 0.863, 0.761, 1)
 
-[node name="ParentGateButton" type="Control" parent="UI/Root" unique_id=1018105611]
+[node name="ParentGateButton" type="Control" parent="UI/Root" unique_id=1018105611 node_paths=PackedStringArray("hint")]
 anchors_preset = 0
-offset_left = 40.0
-offset_top = 4.0
-offset_right = 96.0
-offset_bottom = 60.0
+offset_left = 296.0
+offset_top = 80.0
+offset_right = 416.0
+offset_bottom = 200.0
 script = ExtResource("parent_gate_script")
 icon = ExtResource("gear_icon")
+hint = NodePath("Hint")
+
+[node name="Hint" type="Label" parent="UI/Root/ParentGateButton" unique_id=1630284117]
+visible = false
+layout_mode = 0
+offset_left = 212.0
+offset_top = 22.0
+offset_right = 212.0
+offset_bottom = 88.0
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.36, 0.24, 0.13, 1)
+theme_override_font_sizes/font_size = 40
+theme_override_styles/normal = SubResource("parent_hint_box")
+text = "Ebeveynler için: 2 saniye basılı tutun"
+vertical_alignment = 1
 
 [node name="ParentMenu" parent="." unique_id=2123840122 instance=ExtResource("parent_menu")]
 
