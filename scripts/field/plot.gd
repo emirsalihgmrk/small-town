@@ -81,7 +81,7 @@ const BUSH_WIGGLE_TIME: float = 0.4
 const PLANT_FADE_TIME: float = 0.3
 ## Hazır balkabağının dokunulabilir alanı (balkabağı çukuruna göre yerel).
 const PUMPKIN_HIT: Rect2 = Rect2(-76.0, -112.0, 152.0, 122.0)
-const PUMPKIN_SOW_RADIUS: float = 70.0
+const PUMPKIN_SOW_RADIUS: float = 85.0
 ## Balkabağı yuvarlanırken bu kadar (yerel px) yol bir radyan döndürür.
 const PUMPKIN_RADIUS: float = 52.0
 ## Geniş sarmaşık susayınca bütün bitkiler kadar eğilmez, yalnızca biraz.
@@ -95,7 +95,7 @@ const PUMPKIN_ROCK_INTERVAL_MAX: float = 6.0
 const PUMPKIN_TAP_PITCH: float = 0.75
 const PUMPKIN_TAP_VOLUME_DB: float = -6.0
 ## Orağın ucu bir başağa bu kadar (yerel px) yaklaşınca başak kesilir.
-const REAP_RADIUS: float = 60.0
+const REAP_RADIUS: float = 72.0
 const STALK_FALL_DEGREES: float = 80.0
 const STALK_FALL_TIME: float = 0.35
 const SWISH_SOUND_INTERVAL_MS: int = 70
@@ -117,9 +117,10 @@ const WEED_SPIN_DEGREES: float = 50.0
 const WEED_RISE_TIME: float = 0.18
 const WEED_FALL_TIME: float = 0.24
 const WEED_END_SCALE: float = 0.6
-## Torbanın ağzı bir çukura / tohum noktasına bu kadar (yerel px) yaklaşınca tohum düşer.
-const SPOT_SOW_RADIUS: float = 50.0
-const WHEAT_SOW_RADIUS: float = 60.0
+## Torbanın ağzı bir çukura / tohum noktasına bu kadar (yerel px) yaklaşınca tohum düşer. Çukurlar 100 px
+## aralıklı; alanlar kesiştiğinde en yakın çukur seçilir.
+const SPOT_SOW_RADIUS: float = 65.0
+const WHEAT_SOW_RADIUS: float = 72.0
 const HOLE_FADE_TIME: float = 0.2
 const SEED_FALL_TIME: float = 0.16
 const SEED_POP_TIME: float = 0.25
@@ -336,13 +337,17 @@ func sow_at(global_point: Vector2, seed_crop: Crop) -> bool:
 
 
 func _sow_spot(local_point: Vector2, seed_crop: Crop) -> bool:
+	var nearest: Node2D = null
 	for spot: Node2D in _spots_left:
-		if spot.position.distance_to(local_point) <= SPOT_SOW_RADIUS:
-			_spots_left.erase(spot)
-			crop = seed_crop
-			_drop_seed(local_point, spot)
-			return true
-	return false
+		var distance: float = spot.position.distance_to(local_point)
+		if distance <= SPOT_SOW_RADIUS and (nearest == null or distance < nearest.position.distance_to(local_point)):
+			nearest = spot
+	if nearest == null:
+		return false
+	_spots_left.erase(nearest)
+	crop = seed_crop
+	_drop_seed(local_point, nearest)
+	return true
 
 
 func _sow_pumpkin(local_point: Vector2) -> bool:

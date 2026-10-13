@@ -129,6 +129,7 @@ script = ExtResource("field_script")
 [node name="World" type="Node2D" parent="."]
 
 [node name="Backdrop" type="Sprite2D" parent="World"]
+position = Vector2(0, -110)
 texture = ExtResource("1_backdrop")
 centered = false
 
@@ -166,73 +167,74 @@ texture = ExtResource("4_cloud")
 [node name="Trees" type="Node2D" parent="World"]
 
 [node name="Tree1" type="Sprite2D" parent="World/Trees"]
-position = Vector2(110, 640)
+position = Vector2(110, 530)
 scale = Vector2(0.5, 0.5)
 texture = ExtResource("5_tree")
 centered = false
 offset = Vector2(-160, -400)
 
 [node name="AppleTree1" type="Sprite2D" parent="World/Trees"]
-position = Vector2(330, 630)
+position = Vector2(330, 520)
 scale = Vector2(0.38, 0.38)
 texture = ExtResource("6_tree_apple")
 centered = false
 offset = Vector2(-160, -400)
 
 [node name="Tree2" type="Sprite2D" parent="World/Trees"]
-position = Vector2(790, 615)
+position = Vector2(790, 505)
 scale = Vector2(0.3, 0.3)
 texture = ExtResource("5_tree")
 centered = false
 offset = Vector2(-160, -400)
 
 [node name="AppleTree2" type="Sprite2D" parent="World/Trees"]
-position = Vector2(1170, 615)
+position = Vector2(1170, 505)
 scale = Vector2(0.32, 0.32)
 texture = ExtResource("6_tree_apple")
 centered = false
 offset = Vector2(-160, -400)
 
 [node name="Tree3" type="Sprite2D" parent="World/Trees"]
-position = Vector2(1490, 628)
+position = Vector2(1490, 518)
 scale = Vector2(0.4, 0.4)
 texture = ExtResource("5_tree")
 centered = false
 offset = Vector2(-160, -400)
 
 [node name="AppleTree3" type="Sprite2D" parent="World/Trees"]
-position = Vector2(1800, 640)
+position = Vector2(1800, 530)
 scale = Vector2(0.55, 0.55)
 texture = ExtResource("6_tree_apple")
 centered = false
 offset = Vector2(-160, -400)
 
 [node name="Ground" type="Sprite2D" parent="World"]
-position = Vector2(0, 600)
+position = Vector2(0, 490)
+scale = Vector2(1, 1.23)
 texture = ExtResource("7_ground")
 centered = false
 
 [node name="Fence" type="Sprite2D" parent="World"]
-position = Vector2(0, 552)
+position = Vector2(0, 442)
 texture = ExtResource("8_fence")
 centered = false
 
 [node name="Bushes" type="Node2D" parent="World"]
 
 [node name="Bush1" type="Sprite2D" parent="World/Bushes"]
-position = Vector2(110, 706)
+position = Vector2(110, 596)
 texture = ExtResource("9_bush")
 centered = false
 offset = Vector2(-68, -88)
 
 [node name="Bush2" type="Sprite2D" parent="World/Bushes"]
-position = Vector2(215, 714)
+position = Vector2(215, 604)
 texture = ExtResource("9_bush")
 centered = false
 offset = Vector2(-68, -88)
 
 [node name="Bunny" type="Node2D" parent="World/Bushes" node_paths=PackedStringArray("basket_view")]
-position = Vector2(1700, 712)
+position = Vector2(1700, 602)
 script = ExtResource("bunny_script")
 basket_view = NodePath("../../Basket")
 heart_scene = ExtResource("heart_burst")
@@ -274,13 +276,13 @@ area = Rect2(-75, -200, 150, 150)
 priority = 5
 
 [node name="Bush3" type="Sprite2D" parent="World/Bushes"]
-position = Vector2(1650, 706)
+position = Vector2(1650, 596)
 texture = ExtResource("9_bush")
 centered = false
 offset = Vector2(-68, -88)
 
 [node name="Bush4" type="Sprite2D" parent="World/Bushes"]
-position = Vector2(1755, 714)
+position = Vector2(1755, 604)
 texture = ExtResource("9_bush")
 centered = false
 offset = Vector2(-68, -88)
@@ -374,25 +376,28 @@ offset = Vector2(-14, -28)
 [node name="Plots" type="Node2D" parent="World"]
 
 [node name="Plot1" parent="World/Plots" instance=ExtResource("14_plot")]
-position = Vector2(610, 690)
-scale = Vector2(0.92, 0.92)
+position = Vector2(590, 608)
+scale = Vector2(1.04, 1.04)
 
 [node name="Plot2" parent="World/Plots" instance=ExtResource("14_plot")]
-position = Vector2(960, 690)
-scale = Vector2(0.92, 0.92)
+position = Vector2(960, 608)
+scale = Vector2(1.04, 1.04)
 
 [node name="Plot3" parent="World/Plots" instance=ExtResource("14_plot")]
-position = Vector2(1310, 690)
-scale = Vector2(0.92, 0.92)
+position = Vector2(1330, 608)
+scale = Vector2(1.04, 1.04)
 
 [node name="Plot4" parent="World/Plots" instance=ExtResource("14_plot")]
-position = Vector2(590, 820)
+position = Vector2(570, 760)
+scale = Vector2(1.1, 1.1)
 
 [node name="Plot5" parent="World/Plots" instance=ExtResource("14_plot")]
-position = Vector2(960, 820)
+position = Vector2(960, 760)
+scale = Vector2(1.1, 1.1)
 
 [node name="Plot6" parent="World/Plots" instance=ExtResource("14_plot")]
-position = Vector2(1330, 820)
+position = Vector2(1350, 760)
+scale = Vector2(1.1, 1.1)
 
 [node name="Ladybug" parent="World" node_paths=PackedStringArray("plots_root") instance=ExtResource("ladybug")]
 scale = Vector2(0.7, 0.7)
@@ -402,6 +407,7 @@ plots_root = NodePath("../Plots")
 scale = Vector2(1.3, 1.3)
 script = ExtResource("bird_script")
 plots_root = NodePath("../Plots")
+fence_top_y = 474.0
 
 [node name="Body" type="Node2D" parent="World/Bird"]
 position = Vector2(0, -14)
@@ -496,9 +502,9 @@ anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
-offset_left = -266.0
-offset_top = -172.0
-offset_right = 406.0
+offset_left = -382.0
+offset_top = -196.0
+offset_right = 682.0
 offset_bottom = -20.0
 grow_horizontal = 2
 grow_vertical = 0
@@ -508,80 +514,80 @@ theme_override_styles/panel = SubResource("tray")
 [node name="Slots" type="HBoxContainer" parent="UI/Root/ToolTray"]
 layout_mode = 2
 mouse_filter = 2
-theme_override_constants/separation = 14
+theme_override_constants/separation = 12
 alignment = 1
 
 [node name="Hoe" type="Panel" parent="UI/Root/ToolTray/Slots"]
-custom_minimum_size = Vector2(116, 116)
+custom_minimum_size = Vector2(140, 140)
 layout_mode = 2
 mouse_filter = 2
 theme_override_styles/panel = SubResource("slot")
 
 [node name="Icon" type="Sprite2D" parent="UI/Root/ToolTray/Slots/Hoe"]
-position = Vector2(58, 58)
-scale = Vector2(0.5, 0.5)
+position = Vector2(70, 70)
+scale = Vector2(0.6, 0.6)
 texture = ExtResource("19_hoe")
 
 [node name="CarrotSeeds" type="Panel" parent="UI/Root/ToolTray/Slots"]
-custom_minimum_size = Vector2(116, 116)
+custom_minimum_size = Vector2(140, 140)
 layout_mode = 2
 mouse_filter = 2
 theme_override_styles/panel = SubResource("slot")
 
 [node name="Icon" parent="UI/Root/ToolTray/Slots/CarrotSeeds" instance=ExtResource("20_seed_carrot")]
-position = Vector2(58, 58)
-scale = Vector2(0.5, 0.5)
+position = Vector2(70, 70)
+scale = Vector2(0.6, 0.6)
 
 [node name="WheatSeeds" type="Panel" parent="UI/Root/ToolTray/Slots"]
-custom_minimum_size = Vector2(116, 116)
+custom_minimum_size = Vector2(140, 140)
 layout_mode = 2
 mouse_filter = 2
 theme_override_styles/panel = SubResource("slot")
 
 [node name="Icon" parent="UI/Root/ToolTray/Slots/WheatSeeds" instance=ExtResource("21_seed_wheat")]
-position = Vector2(58, 58)
-scale = Vector2(0.5, 0.5)
+position = Vector2(70, 70)
+scale = Vector2(0.6, 0.6)
 
 [node name="StrawberrySeeds" type="Panel" parent="UI/Root/ToolTray/Slots"]
-custom_minimum_size = Vector2(116, 116)
+custom_minimum_size = Vector2(140, 140)
 layout_mode = 2
 mouse_filter = 2
 theme_override_styles/panel = SubResource("slot")
 
 [node name="Icon" parent="UI/Root/ToolTray/Slots/StrawberrySeeds" instance=ExtResource("seed_strawberry")]
-position = Vector2(58, 58)
-scale = Vector2(0.5, 0.5)
+position = Vector2(70, 70)
+scale = Vector2(0.6, 0.6)
 
 [node name="PumpkinSeeds" type="Panel" parent="UI/Root/ToolTray/Slots"]
-custom_minimum_size = Vector2(116, 116)
+custom_minimum_size = Vector2(140, 140)
 layout_mode = 2
 mouse_filter = 2
 theme_override_styles/panel = SubResource("slot")
 
 [node name="Icon" parent="UI/Root/ToolTray/Slots/PumpkinSeeds" instance=ExtResource("seed_pumpkin")]
-position = Vector2(58, 58)
-scale = Vector2(0.5, 0.5)
+position = Vector2(70, 70)
+scale = Vector2(0.6, 0.6)
 
 [node name="Bucket" type="Panel" parent="UI/Root/ToolTray/Slots"]
-custom_minimum_size = Vector2(116, 116)
+custom_minimum_size = Vector2(140, 140)
 layout_mode = 2
 mouse_filter = 2
 theme_override_styles/panel = SubResource("slot")
 
 [node name="Icon" type="Sprite2D" parent="UI/Root/ToolTray/Slots/Bucket"]
-position = Vector2(58, 58)
-scale = Vector2(0.5, 0.5)
+position = Vector2(70, 70)
+scale = Vector2(0.6, 0.6)
 texture = ExtResource("22_bucket")
 
 [node name="Sickle" type="Panel" parent="UI/Root/ToolTray/Slots"]
-custom_minimum_size = Vector2(116, 116)
+custom_minimum_size = Vector2(140, 140)
 layout_mode = 2
 mouse_filter = 2
 theme_override_styles/panel = SubResource("slot")
 
 [node name="Icon" type="Sprite2D" parent="UI/Root/ToolTray/Slots/Sickle"]
-position = Vector2(58, 58)
-scale = Vector2(0.5, 0.5)
+position = Vector2(70, 70)
+scale = Vector2(0.6, 0.6)
 texture = ExtResource("23_sickle")
 
 [node name="DragLayer" type="CanvasLayer" parent="."]
