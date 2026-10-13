@@ -13,8 +13,8 @@ config_version=5
 config/name="Minik Kasaba"
 config/description="5-6 yaş için sakin, ödüllendirici bir kasaba/çiftlik oyunu."
 run/main_scene="res://scenes/main/home.tscn"
-config/features=PackedStringArray("4.7", "GL Compatibility")
 config/quit_on_go_back=false
+config/features=PackedStringArray("4.7", "GL Compatibility")
 
 [autoload]
 
