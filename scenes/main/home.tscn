@@ -1,23 +1,23 @@
-[gd_scene format=3]
+[gd_scene format=3 uid="uid://cgsucc710dvoh"]
 
-[ext_resource type="Texture2D" path="res://assets/art/environment/backdrop.svg" id="1_backdrop"]
-[ext_resource type="Texture2D" path="res://assets/art/environment/sun_glow.svg" id="2_sun_glow"]
-[ext_resource type="Texture2D" path="res://assets/art/environment/sun.svg" id="3_sun"]
-[ext_resource type="Texture2D" path="res://assets/art/environment/cloud.svg" id="4_cloud"]
-[ext_resource type="Texture2D" path="res://assets/art/environment/tree_apple.svg" id="5_tree_apple"]
-[ext_resource type="Texture2D" path="res://assets/art/environment/tree.svg" id="6_tree"]
-[ext_resource type="Texture2D" path="res://assets/art/environment/ground.svg" id="7_ground"]
-[ext_resource type="Texture2D" path="res://assets/art/environment/garden_bed.svg" id="8_garden_bed"]
-[ext_resource type="Texture2D" path="res://assets/art/environment/flower_pink.svg" id="9_flower_pink"]
-[ext_resource type="Texture2D" path="res://assets/art/environment/grass_tuft.svg" id="10_grass_tuft"]
-[ext_resource type="Texture2D" path="res://assets/art/environment/flower_orange.svg" id="11_flower_orange"]
-[ext_resource type="Texture2D" path="res://assets/art/environment/flower_red.svg" id="12_flower_red"]
-[ext_resource type="Texture2D" path="res://assets/art/environment/bush.svg" id="13_bush"]
-[ext_resource type="Texture2D" path="res://assets/art/environment/house/house.svg" id="14_house"]
-[ext_resource type="Texture2D" path="res://assets/art/environment/house/shutter.svg" id="15_shutter"]
-[ext_resource type="Texture2D" path="res://assets/art/environment/house/window.svg" id="16_window"]
-[ext_resource type="Texture2D" path="res://assets/art/environment/house/door.svg" id="17_door"]
-[ext_resource type="Texture2D" path="res://assets/art/environment/house/porch.svg" id="18_porch"]
+[ext_resource type="Texture2D" uid="uid://bh1w1tf5a2h76" path="res://assets/art/environment/backdrop.svg" id="1_backdrop"]
+[ext_resource type="Texture2D" uid="uid://b73s2wnalwati" path="res://assets/art/environment/sun_glow.svg" id="2_sun_glow"]
+[ext_resource type="Texture2D" uid="uid://ltd2rwgj0xvu" path="res://assets/art/environment/sun.svg" id="3_sun"]
+[ext_resource type="Texture2D" uid="uid://cijjypwyor4gh" path="res://assets/art/environment/cloud.svg" id="4_cloud"]
+[ext_resource type="Texture2D" uid="uid://cr4liuw1dpwp4" path="res://assets/art/environment/tree_apple.svg" id="5_tree_apple"]
+[ext_resource type="Texture2D" uid="uid://ll4qaq47clvx" path="res://assets/art/environment/tree.svg" id="6_tree"]
+[ext_resource type="Texture2D" uid="uid://c6etbl6c3f1u" path="res://assets/art/environment/ground.svg" id="7_ground"]
+[ext_resource type="Texture2D" uid="uid://dhw2wa3br2sti" path="res://assets/art/environment/garden_bed.svg" id="8_garden_bed"]
+[ext_resource type="Texture2D" uid="uid://bx5xoxc00l4xh" path="res://assets/art/environment/flower_pink.svg" id="9_flower_pink"]
+[ext_resource type="Texture2D" uid="uid://d2253fpm3nuwx" path="res://assets/art/environment/grass_tuft.svg" id="10_grass_tuft"]
+[ext_resource type="Texture2D" uid="uid://ddow0pbbb87in" path="res://assets/art/environment/flower_orange.svg" id="11_flower_orange"]
+[ext_resource type="Texture2D" uid="uid://c4gdaian0sq35" path="res://assets/art/environment/flower_red.svg" id="12_flower_red"]
+[ext_resource type="Texture2D" uid="uid://c24q25qlkjhcs" path="res://assets/art/environment/bush.svg" id="13_bush"]
+[ext_resource type="Texture2D" uid="uid://oc7icbl6mvko" path="res://assets/art/environment/house/house.svg" id="14_house"]
+[ext_resource type="Texture2D" uid="uid://6sjea12q5ls1" path="res://assets/art/environment/house/shutter.svg" id="15_shutter"]
+[ext_resource type="Texture2D" uid="uid://clfg82kbj4bba" path="res://assets/art/environment/house/window.svg" id="16_window"]
+[ext_resource type="Texture2D" uid="uid://dw4n2xa651cpt" path="res://assets/art/environment/house/door.svg" id="17_door"]
+[ext_resource type="Texture2D" uid="uid://cknrxu8it2pvp" path="res://assets/art/environment/house/porch.svg" id="18_porch"]
 [ext_resource type="PackedScene" path="res://scenes/entities/girl.tscn" id="19_girl"]
 [ext_resource type="PackedScene" path="res://scenes/ui/section_card.tscn" id="20_section_card"]
 [ext_resource type="PackedScene" path="res://scenes/ui/icons/field_icon.tscn" id="21_field_icon"]
@@ -26,472 +26,472 @@
 [ext_resource type="PackedScene" path="res://scenes/ui/icons/shop_icon.tscn" id="24_shop_icon"]
 [ext_resource type="PackedScene" path="res://scenes/ui/icons/market_icon.tscn" id="25_market_icon"]
 [ext_resource type="PackedScene" path="res://scenes/ui/icons/bakery_icon.tscn" id="26_bakery_icon"]
-[ext_resource type="Script" path="res://scripts/components/scene_ambience.gd" id="ambience_script"]
-[ext_resource type="Script" path="res://scripts/input/tap_router.gd" id="tap_router_script"]
-[ext_resource type="Script" path="res://scripts/components/pause_when_inactive.gd" id="pause_script"]
-[ext_resource type="Script" path="res://scripts/home/home.gd" id="home_script"]
-[ext_resource type="PackedScene" path="res://scenes/home/birdhouse.tscn" id="play_birdhouse"]
-[ext_resource type="Texture2D" path="res://assets/art/shop/kite.svg" id="decor_kite"]
-[ext_resource type="PackedScene" path="res://scenes/home/swing.tscn" id="play_swing"]
-[ext_resource type="PackedScene" path="res://scenes/home/pond.tscn" id="play_pond"]
-[ext_resource type="Script" path="res://scripts/components/sway_component.gd" id="sway_script"]
-[ext_resource type="Script" path="res://scripts/home/play_kite.gd" id="play_kite"]
-[ext_resource type="Script" path="res://scripts/ui/parent_gate_button.gd" id="parent_gate_script"]
-[ext_resource type="Texture2D" path="res://assets/art/ui/icons/gear.svg" id="gear_icon"]
+[ext_resource type="Script" uid="uid://b5c2wrg8ndc32" path="res://scripts/components/scene_ambience.gd" id="ambience_script"]
+[ext_resource type="Texture2D" uid="uid://blob0f7rsv6jv" path="res://assets/art/shop/kite.svg" id="decor_kite"]
+[ext_resource type="Texture2D" uid="uid://cknbyth0f5iuh" path="res://assets/art/ui/icons/gear.svg" id="gear_icon"]
+[ext_resource type="Script" uid="uid://ca14cchykyepq" path="res://scripts/components/hint_director.gd" id="hint_director_script"]
+[ext_resource type="Script" uid="uid://yqftvckoj8y" path="res://scripts/home/home.gd" id="home_script"]
+[ext_resource type="Script" uid="uid://bgequxcitsfo5" path="res://scripts/ui/parent_gate_button.gd" id="parent_gate_script"]
 [ext_resource type="PackedScene" path="res://scenes/ui/parent_menu.tscn" id="parent_menu"]
-[ext_resource type="Script" path="res://scripts/components/hint_director.gd" id="hint_director_script"]
+[ext_resource type="Script" uid="uid://ccktb4k86sik5" path="res://scripts/components/pause_when_inactive.gd" id="pause_script"]
+[ext_resource type="PackedScene" path="res://scenes/home/birdhouse.tscn" id="play_birdhouse"]
+[ext_resource type="Script" uid="uid://dmins1xyj8eyl" path="res://scripts/home/play_kite.gd" id="play_kite"]
+[ext_resource type="PackedScene" path="res://scenes/home/pond.tscn" id="play_pond"]
+[ext_resource type="PackedScene" path="res://scenes/home/swing.tscn" id="play_swing"]
+[ext_resource type="Script" uid="uid://dgxnk2dyxvsvr" path="res://scripts/components/sway_component.gd" id="sway_script"]
+[ext_resource type="Script" uid="uid://djmxknef0ijit" path="res://scripts/input/tap_router.gd" id="tap_router_script"]
 
-[node name="Home" type="Node2D" node_paths=PackedStringArray("decorations")]
+[node name="Home" type="Node2D" unique_id=552806990 node_paths=PackedStringArray("decorations")]
 script = ExtResource("home_script")
 decorations = [NodePath("World/Kite"), NodePath("World/Decorations/Birdhouse"), NodePath("World/Decorations/Pond"), NodePath("World/Decorations/Swing")]
 
-[node name="World" type="Node2D" parent="."]
+[node name="World" type="Node2D" parent="." unique_id=1855370899]
 
-[node name="Backdrop" type="Sprite2D" parent="World"]
+[node name="Backdrop" type="Sprite2D" parent="World" unique_id=574868827]
 texture = ExtResource("1_backdrop")
 centered = false
 
-[node name="Sun" type="Node2D" parent="World"]
+[node name="Sun" type="Node2D" parent="World" unique_id=436639284]
 position = Vector2(1400, 160)
 
-[node name="Glow" type="Sprite2D" parent="World/Sun"]
+[node name="Glow" type="Sprite2D" parent="World/Sun" unique_id=642635223]
 texture = ExtResource("2_sun_glow")
 
-[node name="Disc" type="Sprite2D" parent="World/Sun"]
+[node name="Disc" type="Sprite2D" parent="World/Sun" unique_id=559317930]
 texture = ExtResource("3_sun")
 
-[node name="Clouds" type="Node2D" parent="World"]
+[node name="Clouds" type="Node2D" parent="World" unique_id=649291430]
 
-[node name="Cloud1" type="Sprite2D" parent="World/Clouds"]
+[node name="Cloud1" type="Sprite2D" parent="World/Clouds" unique_id=2097231754]
 position = Vector2(530, 152.5)
 texture = ExtResource("4_cloud")
 
-[node name="Cloud2" type="Sprite2D" parent="World/Clouds"]
+[node name="Cloud2" type="Sprite2D" parent="World/Clouds" unique_id=1954587085]
 position = Vector2(1048.5, 100.125)
 scale = Vector2(0.85, 0.85)
 texture = ExtResource("4_cloud")
 
-[node name="Cloud3" type="Sprite2D" parent="World/Clouds"]
+[node name="Cloud3" type="Sprite2D" parent="World/Clouds" unique_id=1445196676]
 position = Vector2(1726.9474, 217.8421)
 scale = Vector2(0.6947, 0.6947)
 texture = ExtResource("4_cloud")
 
-[node name="Cloud4" type="Sprite2D" parent="World/Clouds"]
+[node name="Cloud4" type="Sprite2D" parent="World/Clouds" unique_id=443138796]
 position = Vector2(236, 249.5)
 scale = Vector2(0.6, 0.6)
 texture = ExtResource("4_cloud")
 
-[node name="Kite" type="Node2D" parent="World" node_paths=PackedStringArray("girl")]
+[node name="Kite" type="Node2D" parent="World" unique_id=1285990597 node_paths=PackedStringArray("girl")]
 visible = false
 position = Vector2(1200, 300)
 script = ExtResource("play_kite")
 girl = NodePath("../Girl")
 
-[node name="String" type="Line2D" parent="World/Kite"]
+[node name="String" type="Line2D" parent="World/Kite" unique_id=83566695]
 points = PackedVector2Array(0, 0, 40, 90, 95, 200, 170, 330)
 width = 3.0
 default_color = Color(0.541, 0.353, 0.212, 0.85)
 
-[node name="Tilt" type="Node2D" parent="World/Kite"]
+[node name="Tilt" type="Node2D" parent="World/Kite" unique_id=586431541]
 
-[node name="Spin" type="Node2D" parent="World/Kite/Tilt"]
+[node name="Spin" type="Node2D" parent="World/Kite/Tilt" unique_id=572723660]
 position = Vector2(0, -62)
 
-[node name="Body" type="Node2D" parent="World/Kite/Tilt/Spin"]
+[node name="Body" type="Node2D" parent="World/Kite/Tilt/Spin" unique_id=1412847149]
 position = Vector2(0, 62)
 
-[node name="Sprite" type="Sprite2D" parent="World/Kite/Tilt/Spin/Body"]
+[node name="Sprite" type="Sprite2D" parent="World/Kite/Tilt/Spin/Body" unique_id=1060603418]
 scale = Vector2(0.8, 0.8)
 texture = ExtResource("decor_kite")
 centered = false
 offset = Vector2(-70, -160)
 
-[node name="Sway" type="Node" parent="World/Kite/Tilt/Spin/Body"]
+[node name="Sway" type="Node" parent="World/Kite/Tilt/Spin/Body" unique_id=2072951119]
 script = ExtResource("sway_script")
 amplitude_degrees = 6.0
 period = 4.0
 
-[node name="Trees" type="Node2D" parent="World"]
+[node name="Trees" type="Node2D" parent="World" unique_id=1776302410]
 
-[node name="AppleTreeLeft" type="Sprite2D" parent="World/Trees"]
+[node name="AppleTreeLeft" type="Sprite2D" parent="World/Trees" unique_id=447718405]
 position = Vector2(540, 770)
 texture = ExtResource("5_tree_apple")
 centered = false
 offset = Vector2(-160, -400)
 
-[node name="TreeRight" type="Sprite2D" parent="World/Trees"]
+[node name="TreeRight" type="Sprite2D" parent="World/Trees" unique_id=820269445]
 position = Vector2(1390, 770)
 scale = Vector2(1.05, 1.05)
 texture = ExtResource("6_tree")
 centered = false
 offset = Vector2(-160, -400)
 
-[node name="SmallTreeLeft" type="Sprite2D" parent="World/Trees"]
+[node name="SmallTreeLeft" type="Sprite2D" parent="World/Trees" unique_id=1999954645]
 position = Vector2(390, 720)
 scale = Vector2(0.6, 0.6)
 texture = ExtResource("6_tree")
 centered = false
 offset = Vector2(-160, -400)
 
-[node name="SmallAppleTreeRight" type="Sprite2D" parent="World/Trees"]
+[node name="SmallAppleTreeRight" type="Sprite2D" parent="World/Trees" unique_id=1150388995]
 position = Vector2(1530, 720)
 scale = Vector2(0.65, 0.65)
 texture = ExtResource("5_tree_apple")
 centered = false
 offset = Vector2(-160, -400)
 
-[node name="Ground" type="Sprite2D" parent="World"]
+[node name="Ground" type="Sprite2D" parent="World" unique_id=1445397749]
 position = Vector2(0, 690)
 texture = ExtResource("7_ground")
 centered = false
 
-[node name="Garden" type="Node2D" parent="World"]
+[node name="Garden" type="Node2D" parent="World" unique_id=1083163813]
 
-[node name="BedLeft" type="Sprite2D" parent="World/Garden"]
+[node name="BedLeft" type="Sprite2D" parent="World/Garden" unique_id=1678454321]
 position = Vector2(770, 812)
 texture = ExtResource("8_garden_bed")
 centered = false
 offset = Vector2(-132, -52)
 
-[node name="BedRight" type="Sprite2D" parent="World/Garden"]
+[node name="BedRight" type="Sprite2D" parent="World/Garden" unique_id=564851868]
 position = Vector2(1150, 812)
 texture = ExtResource("8_garden_bed")
 centered = false
 offset = Vector2(-132, -52)
 
-[node name="Plants" type="Node2D" parent="World/Garden"]
+[node name="Plants" type="Node2D" parent="World/Garden" unique_id=796109494]
 
-[node name="Flower01" type="Sprite2D" parent="World/Garden/Plants"]
+[node name="Flower01" type="Sprite2D" parent="World/Garden/Plants" unique_id=330160]
 position = Vector2(398, 882)
 texture = ExtResource("9_flower_pink")
 centered = false
 offset = Vector2(-15, -29)
 
-[node name="Tuft01" type="Sprite2D" parent="World/Garden/Plants"]
+[node name="Tuft01" type="Sprite2D" parent="World/Garden/Plants" unique_id=1689783809]
 position = Vector2(1397, 874)
 texture = ExtResource("10_grass_tuft")
 centered = false
 offset = Vector2(-14, -28)
 
-[node name="Flower02" type="Sprite2D" parent="World/Garden/Plants"]
+[node name="Flower02" type="Sprite2D" parent="World/Garden/Plants" unique_id=1877883380]
 position = Vector2(418, 993)
 texture = ExtResource("11_flower_orange")
 centered = false
 offset = Vector2(-15, -29)
 
-[node name="Tuft02" type="Sprite2D" parent="World/Garden/Plants"]
+[node name="Tuft02" type="Sprite2D" parent="World/Garden/Plants" unique_id=250839198]
 position = Vector2(739, 859)
 texture = ExtResource("10_grass_tuft")
 centered = false
 offset = Vector2(-14, -28)
 
-[node name="Flower03" type="Sprite2D" parent="World/Garden/Plants"]
+[node name="Flower03" type="Sprite2D" parent="World/Garden/Plants" unique_id=366106196]
 position = Vector2(476, 975)
 texture = ExtResource("12_flower_red")
 centered = false
 offset = Vector2(-15, -29)
 
-[node name="Tuft03" type="Sprite2D" parent="World/Garden/Plants"]
+[node name="Tuft03" type="Sprite2D" parent="World/Garden/Plants" unique_id=218704225]
 position = Vector2(1156, 867)
 texture = ExtResource("10_grass_tuft")
 centered = false
 offset = Vector2(-14, -28)
 
-[node name="Flower04" type="Sprite2D" parent="World/Garden/Plants"]
+[node name="Flower04" type="Sprite2D" parent="World/Garden/Plants" unique_id=1262591183]
 position = Vector2(1428, 972)
 texture = ExtResource("9_flower_pink")
 centered = false
 offset = Vector2(-15, -29)
 
-[node name="Tuft04" type="Sprite2D" parent="World/Garden/Plants"]
+[node name="Tuft04" type="Sprite2D" parent="World/Garden/Plants" unique_id=1023669660]
 position = Vector2(553, 907)
 texture = ExtResource("10_grass_tuft")
 centered = false
 offset = Vector2(-14, -28)
 
-[node name="Flower05" type="Sprite2D" parent="World/Garden/Plants"]
+[node name="Flower05" type="Sprite2D" parent="World/Garden/Plants" unique_id=894416687]
 position = Vector2(1591, 1024)
 texture = ExtResource("11_flower_orange")
 centered = false
 offset = Vector2(-15, -29)
 
-[node name="Tuft05" type="Sprite2D" parent="World/Garden/Plants"]
+[node name="Tuft05" type="Sprite2D" parent="World/Garden/Plants" unique_id=1497267925]
 position = Vector2(1493, 865)
 texture = ExtResource("10_grass_tuft")
 centered = false
 offset = Vector2(-14, -28)
 
-[node name="Flower06" type="Sprite2D" parent="World/Garden/Plants"]
+[node name="Flower06" type="Sprite2D" parent="World/Garden/Plants" unique_id=1545009609]
 position = Vector2(1481, 1013)
 texture = ExtResource("12_flower_red")
 centered = false
 offset = Vector2(-15, -29)
 
-[node name="Tuft06" type="Sprite2D" parent="World/Garden/Plants"]
+[node name="Tuft06" type="Sprite2D" parent="World/Garden/Plants" unique_id=1552230960]
 position = Vector2(595, 988)
 texture = ExtResource("10_grass_tuft")
 centered = false
 offset = Vector2(-14, -28)
 
-[node name="Flower07" type="Sprite2D" parent="World/Garden/Plants"]
+[node name="Flower07" type="Sprite2D" parent="World/Garden/Plants" unique_id=1743675312]
 position = Vector2(670, 890)
 texture = ExtResource("9_flower_pink")
 centered = false
 offset = Vector2(-15, -29)
 
-[node name="Tuft07" type="Sprite2D" parent="World/Garden/Plants"]
+[node name="Tuft07" type="Sprite2D" parent="World/Garden/Plants" unique_id=1122982233]
 position = Vector2(1608, 898)
 texture = ExtResource("10_grass_tuft")
 centered = false
 offset = Vector2(-14, -28)
 
-[node name="Flower08" type="Sprite2D" parent="World/Garden/Plants"]
+[node name="Flower08" type="Sprite2D" parent="World/Garden/Plants" unique_id=782279663]
 position = Vector2(1421, 1046)
 texture = ExtResource("11_flower_orange")
 centered = false
 offset = Vector2(-15, -29)
 
-[node name="Tuft08" type="Sprite2D" parent="World/Garden/Plants"]
+[node name="Tuft08" type="Sprite2D" parent="World/Garden/Plants" unique_id=119128337]
 position = Vector2(668, 1028)
 texture = ExtResource("10_grass_tuft")
 centered = false
 offset = Vector2(-14, -28)
 
-[node name="Flower09" type="Sprite2D" parent="World/Garden/Plants"]
+[node name="Flower09" type="Sprite2D" parent="World/Garden/Plants" unique_id=1793898993]
 position = Vector2(799, 884)
 texture = ExtResource("12_flower_red")
 centered = false
 offset = Vector2(-15, -29)
 
-[node name="Tuft09" type="Sprite2D" parent="World/Garden/Plants"]
+[node name="Tuft09" type="Sprite2D" parent="World/Garden/Plants" unique_id=2047155517]
 position = Vector2(1219, 923)
 texture = ExtResource("10_grass_tuft")
 centered = false
 offset = Vector2(-14, -28)
 
-[node name="Flower10" type="Sprite2D" parent="World/Garden/Plants"]
+[node name="Flower10" type="Sprite2D" parent="World/Garden/Plants" unique_id=1392601225]
 position = Vector2(1301, 971)
 texture = ExtResource("9_flower_pink")
 centered = false
 offset = Vector2(-15, -29)
 
-[node name="Tuft10" type="Sprite2D" parent="World/Garden/Plants"]
+[node name="Tuft10" type="Sprite2D" parent="World/Garden/Plants" unique_id=472653438]
 position = Vector2(458, 1045)
 texture = ExtResource("10_grass_tuft")
 centered = false
 offset = Vector2(-14, -28)
 
-[node name="Flower11" type="Sprite2D" parent="World/Garden/Plants"]
+[node name="Flower11" type="Sprite2D" parent="World/Garden/Plants" unique_id=1153304342]
 position = Vector2(1270, 1042)
 texture = ExtResource("11_flower_orange")
 centered = false
 offset = Vector2(-15, -29)
 
-[node name="Tuft11" type="Sprite2D" parent="World/Garden/Plants"]
+[node name="Tuft11" type="Sprite2D" parent="World/Garden/Plants" unique_id=690610169]
 position = Vector2(465, 892)
 texture = ExtResource("10_grass_tuft")
 centered = false
 offset = Vector2(-14, -28)
 
-[node name="Flower12" type="Sprite2D" parent="World/Garden/Plants"]
+[node name="Flower12" type="Sprite2D" parent="World/Garden/Plants" unique_id=975510265]
 position = Vector2(580, 1073)
 texture = ExtResource("12_flower_red")
 centered = false
 offset = Vector2(-15, -29)
 
-[node name="Tuft12" type="Sprite2D" parent="World/Garden/Plants"]
+[node name="Tuft12" type="Sprite2D" parent="World/Garden/Plants" unique_id=1719188986]
 position = Vector2(609, 871)
 texture = ExtResource("10_grass_tuft")
 centered = false
 offset = Vector2(-14, -28)
 
-[node name="Flower13" type="Sprite2D" parent="World/Garden/Plants"]
+[node name="Flower13" type="Sprite2D" parent="World/Garden/Plants" unique_id=181984267]
 position = Vector2(1355, 1022)
 texture = ExtResource("9_flower_pink")
 centered = false
 offset = Vector2(-15, -29)
 
-[node name="Tuft13" type="Sprite2D" parent="World/Garden/Plants"]
+[node name="Tuft13" type="Sprite2D" parent="World/Garden/Plants" unique_id=470610437]
 position = Vector2(727, 962)
 texture = ExtResource("10_grass_tuft")
 centered = false
 offset = Vector2(-14, -28)
 
-[node name="Flower14" type="Sprite2D" parent="World/Garden/Plants"]
+[node name="Flower14" type="Sprite2D" parent="World/Garden/Plants" unique_id=587140934]
 position = Vector2(300, 1009)
 texture = ExtResource("11_flower_orange")
 centered = false
 offset = Vector2(-15, -29)
 
-[node name="Tuft14" type="Sprite2D" parent="World/Garden/Plants"]
+[node name="Tuft14" type="Sprite2D" parent="World/Garden/Plants" unique_id=534870827]
 position = Vector2(1556, 856)
 texture = ExtResource("10_grass_tuft")
 centered = false
 offset = Vector2(-14, -28)
 
-[node name="Flower15" type="Sprite2D" parent="World/Garden/Plants"]
+[node name="Flower15" type="Sprite2D" parent="World/Garden/Plants" unique_id=815199965]
 position = Vector2(1557, 960)
 texture = ExtResource("12_flower_red")
 centered = false
 offset = Vector2(-15, -29)
 
-[node name="Tuft15" type="Sprite2D" parent="World/Garden/Plants"]
+[node name="Tuft15" type="Sprite2D" parent="World/Garden/Plants" unique_id=737342472]
 position = Vector2(1271, 881)
 texture = ExtResource("10_grass_tuft")
 centered = false
 offset = Vector2(-14, -28)
 
-[node name="Flower16" type="Sprite2D" parent="World/Garden/Plants"]
+[node name="Flower16" type="Sprite2D" parent="World/Garden/Plants" unique_id=70265029]
 position = Vector2(536, 988)
 texture = ExtResource("9_flower_pink")
 centered = false
 offset = Vector2(-15, -29)
 
-[node name="Tuft16" type="Sprite2D" parent="World/Garden/Plants"]
+[node name="Tuft16" type="Sprite2D" parent="World/Garden/Plants" unique_id=1957174239]
 position = Vector2(347, 902)
 texture = ExtResource("10_grass_tuft")
 centered = false
 offset = Vector2(-14, -28)
 
-[node name="Flower17" type="Sprite2D" parent="World/Garden/Plants"]
+[node name="Flower17" type="Sprite2D" parent="World/Garden/Plants" unique_id=244589636]
 position = Vector2(665, 975)
 texture = ExtResource("11_flower_orange")
 centered = false
 offset = Vector2(-15, -29)
 
-[node name="Tuft17" type="Sprite2D" parent="World/Garden/Plants"]
+[node name="Tuft17" type="Sprite2D" parent="World/Garden/Plants" unique_id=1978653054]
 position = Vector2(329, 1054)
 texture = ExtResource("10_grass_tuft")
 centered = false
 offset = Vector2(-14, -28)
 
-[node name="Flower18" type="Sprite2D" parent="World/Garden/Plants"]
+[node name="Flower18" type="Sprite2D" parent="World/Garden/Plants" unique_id=1351957482]
 position = Vector2(1494, 1072)
 texture = ExtResource("12_flower_red")
 centered = false
 offset = Vector2(-15, -29)
 
-[node name="Tuft18" type="Sprite2D" parent="World/Garden/Plants"]
+[node name="Tuft18" type="Sprite2D" parent="World/Garden/Plants" unique_id=746546496]
 position = Vector2(1335, 885)
 texture = ExtResource("10_grass_tuft")
 centered = false
 offset = Vector2(-14, -28)
 
-[node name="Bushes" type="Node2D" parent="World/Garden"]
+[node name="Bushes" type="Node2D" parent="World/Garden" unique_id=193946182]
 
-[node name="Bush1" type="Sprite2D" parent="World/Garden/Bushes"]
+[node name="Bush1" type="Sprite2D" parent="World/Garden/Bushes" unique_id=1827590495]
 position = Vector2(360, 844)
 texture = ExtResource("13_bush")
 centered = false
 offset = Vector2(-68, -88)
 
-[node name="Bush2" type="Sprite2D" parent="World/Garden/Bushes"]
+[node name="Bush2" type="Sprite2D" parent="World/Garden/Bushes" unique_id=377801949]
 position = Vector2(470, 844)
 texture = ExtResource("13_bush")
 centered = false
 offset = Vector2(-68, -88)
 
-[node name="Bush3" type="Sprite2D" parent="World/Garden/Bushes"]
+[node name="Bush3" type="Sprite2D" parent="World/Garden/Bushes" unique_id=967272085]
 position = Vector2(1480, 844)
 texture = ExtResource("13_bush")
 centered = false
 offset = Vector2(-68, -88)
 
-[node name="Bush4" type="Sprite2D" parent="World/Garden/Bushes"]
+[node name="Bush4" type="Sprite2D" parent="World/Garden/Bushes" unique_id=880708841]
 position = Vector2(1580, 844)
 texture = ExtResource("13_bush")
 centered = false
 offset = Vector2(-68, -88)
 
-[node name="House" type="Node2D" parent="World"]
+[node name="House" type="Node2D" parent="World" unique_id=750867112]
 position = Vector2(960, 790)
 
-[node name="Body" type="Sprite2D" parent="World/House"]
+[node name="Body" type="Sprite2D" parent="World/House" unique_id=1147228082]
 texture = ExtResource("14_house")
 centered = false
 offset = Vector2(-310, -600)
 
-[node name="Shutters" type="Node2D" parent="World/House"]
+[node name="Shutters" type="Node2D" parent="World/House" unique_id=423262669]
 
-[node name="Window1Left" type="Sprite2D" parent="World/House/Shutters"]
+[node name="Window1Left" type="Sprite2D" parent="World/House/Shutters" unique_id=2065635800]
 position = Vector2(-200, -215)
 texture = ExtResource("15_shutter")
 centered = false
 offset = Vector2(-32.5, -62.5)
 
-[node name="Window1Right" type="Sprite2D" parent="World/House/Shutters"]
+[node name="Window1Right" type="Sprite2D" parent="World/House/Shutters" unique_id=950215739]
 position = Vector2(-80, -215)
 scale = Vector2(-1, 1)
 texture = ExtResource("15_shutter")
 centered = false
 offset = Vector2(-32.5, -62.5)
 
-[node name="Window2Left" type="Sprite2D" parent="World/House/Shutters"]
+[node name="Window2Left" type="Sprite2D" parent="World/House/Shutters" unique_id=114667050]
 position = Vector2(80, -215)
 texture = ExtResource("15_shutter")
 centered = false
 offset = Vector2(-32.5, -62.5)
 
-[node name="Window2Right" type="Sprite2D" parent="World/House/Shutters"]
+[node name="Window2Right" type="Sprite2D" parent="World/House/Shutters" unique_id=169588211]
 position = Vector2(200, -215)
 scale = Vector2(-1, 1)
 texture = ExtResource("15_shutter")
 centered = false
 offset = Vector2(-32.5, -62.5)
 
-[node name="Window1" type="Sprite2D" parent="World/House"]
+[node name="Window1" type="Sprite2D" parent="World/House" unique_id=1417576361]
 texture = ExtResource("16_window")
 centered = false
 offset = Vector2(-215, -278)
 
-[node name="Window2" type="Sprite2D" parent="World/House"]
+[node name="Window2" type="Sprite2D" parent="World/House" unique_id=1656885483]
 position = Vector2(280, 0)
 texture = ExtResource("16_window")
 centered = false
 offset = Vector2(-215, -278)
 
-[node name="Door" type="Sprite2D" parent="World/House"]
+[node name="Door" type="Sprite2D" parent="World/House" unique_id=788700578]
 texture = ExtResource("17_door")
 centered = false
 offset = Vector2(-65, -210)
 
-[node name="Porch" type="Sprite2D" parent="World/House"]
+[node name="Porch" type="Sprite2D" parent="World/House" unique_id=131990523]
 texture = ExtResource("18_porch")
 centered = false
 offset = Vector2(-257, -25)
 
-[node name="Decorations" type="Node2D" parent="World"]
+[node name="Decorations" type="Node2D" parent="World" unique_id=191508842]
 
-[node name="Birdhouse" parent="World/Decorations" node_paths=PackedStringArray("girl") instance=ExtResource("play_birdhouse")]
+[node name="Birdhouse" parent="World/Decorations" unique_id=1185082419 node_paths=PackedStringArray("girl") instance=ExtResource("play_birdhouse")]
 visible = false
 position = Vector2(340, 905)
 girl = NodePath("../../Girl")
 
-[node name="Pond" parent="World/Decorations" node_paths=PackedStringArray("girl") instance=ExtResource("play_pond")]
+[node name="Pond" parent="World/Decorations" unique_id=1243591495 node_paths=PackedStringArray("girl") instance=ExtResource("play_pond")]
 visible = false
 position = Vector2(530, 1000)
 girl = NodePath("../../Girl")
 
-[node name="Swing" parent="World/Decorations" node_paths=PackedStringArray("girl") instance=ExtResource("play_swing")]
+[node name="Swing" parent="World/Decorations" unique_id=1220867305 node_paths=PackedStringArray("girl") instance=ExtResource("play_swing")]
 visible = false
 position = Vector2(1360, 1000)
 girl = NodePath("../../Girl")
 
-[node name="Girl" parent="World" instance=ExtResource("19_girl")]
+[node name="Girl" parent="World" unique_id=1262966041 instance=ExtResource("19_girl")]
 position = Vector2(1110, 1000)
 
-[node name="PauseWhenInactive" type="Node" parent="."]
+[node name="PauseWhenInactive" type="Node" parent="." unique_id=601105392]
 script = ExtResource("pause_script")
 
-[node name="TapRouter" type="Node" parent="."]
+[node name="TapRouter" type="Node" parent="." unique_id=1069553284]
 script = ExtResource("tap_router_script")
 
-[node name="Ambience" type="Node" parent="."]
+[node name="Ambience" type="Node" parent="." unique_id=53990819]
 script = ExtResource("ambience_script")
 
-[node name="UI" type="CanvasLayer" parent="."]
+[node name="UI" type="CanvasLayer" parent="." unique_id=583861327]
 
-[node name="Root" type="Control" parent="UI"]
+[node name="Root" type="Control" parent="UI" unique_id=80442074]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -500,7 +500,7 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
-[node name="LeftCards" type="VBoxContainer" parent="UI/Root"]
+[node name="LeftCards" type="VBoxContainer" parent="UI/Root" unique_id=1209738508]
 layout_mode = 1
 anchors_preset = 4
 anchor_top = 0.5
@@ -514,28 +514,28 @@ mouse_filter = 2
 theme_override_constants/separation = 40
 alignment = 1
 
-[node name="FieldCard" parent="UI/Root/LeftCards" instance=ExtResource("20_section_card")]
+[node name="FieldCard" parent="UI/Root/LeftCards" unique_id=5801804 instance=ExtResource("20_section_card")]
 layout_mode = 2
 section_id = &"field"
 title = "Tarla"
 icon_scene = ExtResource("21_field_icon")
 card_color = Color(1, 0.886, 0.659, 1)
 
-[node name="BarnCard" parent="UI/Root/LeftCards" instance=ExtResource("20_section_card")]
+[node name="BarnCard" parent="UI/Root/LeftCards" unique_id=1010153629 instance=ExtResource("20_section_card")]
 layout_mode = 2
 section_id = &"barn"
 title = "Ahır"
 icon_scene = ExtResource("22_barn_icon")
 card_color = Color(1, 0.816, 0.78, 1)
 
-[node name="CoopCard" parent="UI/Root/LeftCards" instance=ExtResource("20_section_card")]
+[node name="CoopCard" parent="UI/Root/LeftCards" unique_id=624086016 instance=ExtResource("20_section_card")]
 layout_mode = 2
 section_id = &"coop"
 title = "Kümes"
 icon_scene = ExtResource("23_coop_icon")
 card_color = Color(1, 0.945, 0.722, 1)
 
-[node name="RightCards" type="VBoxContainer" parent="UI/Root"]
+[node name="RightCards" type="VBoxContainer" parent="UI/Root" unique_id=1520485856]
 layout_mode = 1
 anchors_preset = 6
 anchor_left = 1.0
@@ -552,29 +552,29 @@ mouse_filter = 2
 theme_override_constants/separation = 40
 alignment = 1
 
-[node name="ShopCard" parent="UI/Root/RightCards" instance=ExtResource("20_section_card")]
+[node name="ShopCard" parent="UI/Root/RightCards" unique_id=367629916 instance=ExtResource("20_section_card")]
 layout_mode = 2
 section_id = &"shop"
 title = "Dükkân"
 icon_scene = ExtResource("24_shop_icon")
 card_color = Color(0.894, 0.851, 1, 1)
 
-[node name="MarketCard" parent="UI/Root/RightCards" instance=ExtResource("20_section_card")]
+[node name="MarketCard" parent="UI/Root/RightCards" unique_id=684900629 instance=ExtResource("20_section_card")]
 layout_mode = 2
 section_id = &"market"
 title = "Pazar"
 icon_scene = ExtResource("25_market_icon")
 card_color = Color(0.851, 0.961, 0.78, 1)
 
-[node name="BakeryCard" parent="UI/Root/RightCards" instance=ExtResource("20_section_card")]
+[node name="BakeryCard" parent="UI/Root/RightCards" unique_id=533088907 instance=ExtResource("20_section_card")]
 layout_mode = 2
 section_id = &"bakery"
 title = "Fırın"
 icon_scene = ExtResource("26_bakery_icon")
 card_color = Color(0.965, 0.863, 0.761, 1)
 
-[node name="ParentGateButton" type="Control" parent="UI/Root"]
-layout_mode = 0
+[node name="ParentGateButton" type="Control" parent="UI/Root" unique_id=1018105611]
+anchors_preset = 0
 offset_left = 40.0
 offset_top = 4.0
 offset_right = 96.0
@@ -582,7 +582,7 @@ offset_bottom = 60.0
 script = ExtResource("parent_gate_script")
 icon = ExtResource("gear_icon")
 
-[node name="ParentMenu" parent="." instance=ExtResource("parent_menu")]
+[node name="ParentMenu" parent="." unique_id=2123840122 instance=ExtResource("parent_menu")]
 
-[node name="HintDirector" type="Node" parent="."]
+[node name="HintDirector" type="Node" parent="." unique_id=892774945]
 script = ExtResource("hint_director_script")
