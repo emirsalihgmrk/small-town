@@ -37,6 +37,7 @@ Yeniden üretmek için proje kökünden: `python tools/audio/generate_audio.py`
 | `assets/audio/sfx/hay_rustle.ogg` | Saman tutamı: kuru sapların yumuşak, kısa bir "hışır hışır"ı |
 | `assets/audio/sfx/milk_squirt.ogg` | Süt kovaya fışkırır: kısa, yumuşak bir "fış" ve metal kovanın hafif tınısı |
 | `assets/audio/sfx/cow_bell.ogg` | İneğin boynundaki çan: tok, yumuşak iki "dıng" |
+| `assets/audio/sfx/coin_clink.ogg` | Bozuk para kumbaraya düşer (pazar) ya da dükkânda ödenir: parlak bir "tın" ve küçük ikinci bir "tın" |
 
 ## Görseller
 
