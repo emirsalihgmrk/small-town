@@ -66,7 +66,7 @@ Minik Kasaba'yı Google Play'e hazırlarken yapılacaklar. Bitenler `[x]` ile i�
 	  `previews/`'teki eski geliştirme görüntüleri (14,6 MB) silindi, klasör `.gitignore`'da;
 	  `tools/screenshot.gd` oraya yazarken `.gdignore`'u kendisi koyuyor.
 - [x] **15. Yaş açıklaması** — `config/description` artık tasarımdaki gibi "5-6 yaş" diyor.
-- [ ] **16. Uzak inek sesi** — ana ekran, tarla, kümes ve fırında hâlâ çalıyor; kalsın mı?
+- [x] **16. Uzak inek sesi** — ana ekran, tarla, kümes ve fırında çalmaya devam ediyor; kalmasına karar verildi.
 
 ## 📋 Google Play
 
