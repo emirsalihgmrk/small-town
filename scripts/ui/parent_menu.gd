@@ -97,7 +97,7 @@ func _show_main() -> void:
 	_music_toggle.set_pressed_no_signal(AudioManager.is_music_enabled())
 	_sounds_toggle.set_pressed_no_signal(AudioManager.is_sfx_enabled())
 	_update_toggle_texts()
-	_title.text = "Ebeveyn Köşesi"
+	_title.text = tr("PARENT_CORNER")
 	_back_button.hide()
 	_licenses_page.hide()
 	_privacy_page.hide()
@@ -106,7 +106,7 @@ func _show_main() -> void:
 
 func _show_licenses() -> void:
 	_fill_licenses()
-	_title.text = "Lisanslar"
+	_title.text = tr("LICENSES_TITLE")
 	_back_button.show()
 	_main_page.hide()
 	_licenses_page.show()
@@ -142,13 +142,13 @@ func _fill_licenses() -> void:
 	_licenses_filled = true
 	var text: RichTextLabel = _licenses_text
 	text.clear()
-	_heading(text, String(ProjectSettings.get_setting("application/config/name")), HEADING_SIZE)
-	_paragraph(text, "Oyundaki bütün çizimler ve sesler bu oyun için yapıldı.")
+	_heading(text, tr("GAME_NAME"), HEADING_SIZE)
+	_paragraph(text, tr("CREDITS_ART"))
 	_heading(text, "Godot Engine", HEADING_SIZE)
-	_paragraph(text, "Bu oyun Godot Engine ile yapıldı (godotengine.org).")
+	_paragraph(text, tr("CREDITS_ENGINE"))
 	_paragraph(text, Engine.get_license_text())
-	_heading(text, "Üçüncü taraf bileşenler", HEADING_SIZE)
-	_paragraph(text, "Godot Engine aşağıdaki bileşenleri içerir.")
+	_heading(text, tr("THIRD_PARTY"), HEADING_SIZE)
+	_paragraph(text, tr("THIRD_PARTY_NOTE"))
 	for component: Dictionary in Engine.get_copyright_info():
 		if component["name"] == "Godot Engine":
 			continue
@@ -157,9 +157,9 @@ func _fill_licenses() -> void:
 		for part: Dictionary in component["parts"]:
 			for holder: String in part["copyright"]:
 				lines.append("© " + holder)
-			lines.append("Lisans: " + part["license"])
+			lines.append(tr("LICENSE_LINE") % part["license"])
 		_paragraph(text, "\n".join(lines))
-	_heading(text, "Lisans metinleri", HEADING_SIZE)
+	_heading(text, tr("LICENSE_TEXTS"), HEADING_SIZE)
 	var licenses: Dictionary = Engine.get_license_info()
 	for license_name: String in licenses:
 		_heading(text, license_name, SUBHEADING_SIZE)
@@ -191,8 +191,8 @@ func _on_sounds_toggled(on: bool) -> void:
 
 
 func _update_toggle_texts() -> void:
-	_music_toggle.text = "Müzik ve doğa sesleri: " + ("Açık" if _music_toggle.button_pressed else "Kapalı")
-	_sounds_toggle.text = "Oyun sesleri: " + ("Açık" if _sounds_toggle.button_pressed else "Kapalı")
+	_music_toggle.text = tr("MUSIC_TOGGLE") % tr("ON" if _music_toggle.button_pressed else "OFF")
+	_sounds_toggle.text = tr("SOUNDS_TOGGLE") % tr("ON" if _sounds_toggle.button_pressed else "OFF")
 
 
 func _restart_tween() -> void:

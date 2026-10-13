@@ -181,7 +181,7 @@ theme_override_styles/focus = SubResource("button_focus")
 theme_override_styles/hover = SubResource("button_hover")
 theme_override_styles/pressed = SubResource("button_pressed")
 theme_override_styles/normal = SubResource("button_normal")
-text = "‹ Geri"
+text = "BACK"
 
 [node name="Title" type="Label" parent="Root/Panel/VBox/Header"]
 unique_name_in_owner = true
@@ -192,7 +192,7 @@ theme_override_colors/font_color = Color(0.36, 0.24, 0.13, 1)
 theme_override_colors/font_outline_color = Color(1, 1, 1, 1)
 theme_override_constants/outline_size = 12
 theme_override_font_sizes/font_size = 56
-text = "Ebeveyn Köşesi"
+text = "PARENT_CORNER"
 vertical_alignment = 1
 
 [node name="CloseButton" type="Button" parent="Root/Panel/VBox/Header"]
@@ -223,7 +223,7 @@ alignment = 1
 layout_mode = 2
 theme_override_colors/font_color = Color(0.36, 0.24, 0.13, 1)
 theme_override_font_sizes/font_size = 32
-text = "Bu bölüm yetişkinler içindir."
+text = "PARENT_NOTE"
 horizontal_alignment = 1
 
 [node name="MusicToggle" type="Button" parent="Root/Panel/VBox/MainPage"]
@@ -243,7 +243,7 @@ theme_override_styles/hover = SubResource("toggle_off")
 theme_override_styles/pressed = SubResource("toggle_on")
 theme_override_styles/normal = SubResource("toggle_off")
 toggle_mode = true
-text = "Müzik ve doğa sesleri: Açık"
+text = "MUSIC_TOGGLE"
 
 [node name="SoundsToggle" type="Button" parent="Root/Panel/VBox/MainPage"]
 unique_name_in_owner = true
@@ -262,7 +262,7 @@ theme_override_styles/hover = SubResource("toggle_off")
 theme_override_styles/pressed = SubResource("toggle_on")
 theme_override_styles/normal = SubResource("toggle_off")
 toggle_mode = true
-text = "Oyun sesleri: Açık"
+text = "SOUNDS_TOGGLE"
 
 [node name="Spacer" type="Control" parent="Root/Panel/VBox/MainPage"]
 custom_minimum_size = Vector2(0, 20)
@@ -287,7 +287,7 @@ theme_override_styles/focus = SubResource("button_focus")
 theme_override_styles/hover = SubResource("button_hover")
 theme_override_styles/pressed = SubResource("button_pressed")
 theme_override_styles/normal = SubResource("button_normal")
-text = "Lisanslar ve emeği geçenler"
+text = "LICENSES_BUTTON"
 
 [node name="PrivacyButton" type="Button" parent="Root/Panel/VBox/MainPage/InfoButtons"]
 unique_name_in_owner = true
@@ -301,7 +301,7 @@ theme_override_styles/focus = SubResource("button_focus")
 theme_override_styles/hover = SubResource("button_hover")
 theme_override_styles/pressed = SubResource("button_pressed")
 theme_override_styles/normal = SubResource("button_normal")
-text = "Gizlilik politikası"
+text = "PRIVACY_BUTTON"
 
 [node name="LicensesPage" type="ScrollContainer" parent="Root/Panel/VBox"]
 unique_name_in_owner = true

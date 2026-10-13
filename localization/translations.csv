@@ -1,0 +1,26 @@
+keys,en,tr
+GAME_NAME,Lina's Farm,Lina'nın Çiftliği
+SECTION_FIELD,Field,Tarla
+SECTION_BARN,Barn,Ahır
+SECTION_COOP,Hen House,Kümes
+SECTION_SHOP,Shop,Dükkân
+SECTION_MARKET,Market,Pazar
+SECTION_BAKERY,Bakery,Fırın
+BASKET_TITLE,My Basket,Sepetim
+PARENT_GATE_HINT,For parents: press and hold for 2 seconds,Ebeveynler için: 2 saniye basılı tutun
+PARENT_CORNER,Parents' Corner,Ebeveyn Köşesi
+PARENT_NOTE,This section is for adults.,Bu bölüm yetişkinler içindir.
+BACK,‹ Back,‹ Geri
+MUSIC_TOGGLE,Music and nature sounds: %s,Müzik ve doğa sesleri: %s
+SOUNDS_TOGGLE,Game sounds: %s,Oyun sesleri: %s
+ON,On,Açık
+OFF,Off,Kapalı
+LICENSES_BUTTON,Licenses and credits,Lisanslar ve emeği geçenler
+PRIVACY_BUTTON,Privacy policy,Gizlilik politikası
+LICENSES_TITLE,Licenses,Lisanslar
+CREDITS_ART,All drawings and sounds in the game were made for this game.,Oyundaki bütün çizimler ve sesler bu oyun için yapıldı.
+CREDITS_ENGINE,This game was made with Godot Engine (godotengine.org).,Bu oyun Godot Engine ile yapıldı (godotengine.org).
+THIRD_PARTY,Third-party components,Üçüncü taraf bileşenler
+THIRD_PARTY_NOTE,Godot Engine includes the following components.,Godot Engine aşağıdaki bileşenleri içerir.
+LICENSE_LINE,License: %s,Lisans: %s
+LICENSE_TEXTS,License texts,Lisans metinleri

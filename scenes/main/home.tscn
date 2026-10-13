@@ -536,21 +536,21 @@ alignment = 1
 [node name="FieldCard" parent="UI/Root/LeftCards" unique_id=5801804 instance=ExtResource("20_section_card")]
 layout_mode = 2
 section_id = &"field"
-title = "Tarla"
+title = "SECTION_FIELD"
 icon_scene = ExtResource("21_field_icon")
 card_color = Color(1, 0.886, 0.659, 1)
 
 [node name="BarnCard" parent="UI/Root/LeftCards" unique_id=1010153629 instance=ExtResource("20_section_card")]
 layout_mode = 2
 section_id = &"barn"
-title = "Ahır"
+title = "SECTION_BARN"
 icon_scene = ExtResource("22_barn_icon")
 card_color = Color(1, 0.816, 0.78, 1)
 
 [node name="CoopCard" parent="UI/Root/LeftCards" unique_id=624086016 instance=ExtResource("20_section_card")]
 layout_mode = 2
 section_id = &"coop"
-title = "Kümes"
+title = "SECTION_COOP"
 icon_scene = ExtResource("23_coop_icon")
 card_color = Color(1, 0.945, 0.722, 1)
 
@@ -574,21 +574,21 @@ alignment = 1
 [node name="ShopCard" parent="UI/Root/RightCards" unique_id=367629916 instance=ExtResource("20_section_card")]
 layout_mode = 2
 section_id = &"shop"
-title = "Dükkân"
+title = "SECTION_SHOP"
 icon_scene = ExtResource("24_shop_icon")
 card_color = Color(0.894, 0.851, 1, 1)
 
 [node name="MarketCard" parent="UI/Root/RightCards" unique_id=684900629 instance=ExtResource("20_section_card")]
 layout_mode = 2
 section_id = &"market"
-title = "Pazar"
+title = "SECTION_MARKET"
 icon_scene = ExtResource("25_market_icon")
 card_color = Color(0.851, 0.961, 0.78, 1)
 
 [node name="BakeryCard" parent="UI/Root/RightCards" unique_id=533088907 instance=ExtResource("20_section_card")]
 layout_mode = 2
 section_id = &"bakery"
-title = "Fırın"
+title = "SECTION_BAKERY"
 icon_scene = ExtResource("26_bakery_icon")
 card_color = Color(0.965, 0.863, 0.761, 1)
 
@@ -613,7 +613,7 @@ mouse_filter = 2
 theme_override_colors/font_color = Color(0.36, 0.24, 0.13, 1)
 theme_override_font_sizes/font_size = 40
 theme_override_styles/normal = SubResource("parent_hint_box")
-text = "Ebeveynler için: 2 saniye basılı tutun"
+text = "PARENT_GATE_HINT"
 vertical_alignment = 1
 
 [node name="ParentMenu" parent="." unique_id=2123840122 instance=ExtResource("parent_menu")]
