@@ -132,6 +132,10 @@ script = ExtResource("field_script")
 position = Vector2(0, -110)
 texture = ExtResource("1_backdrop")
 centered = false
+texture_repeat = 3
+region_enabled = true
+region_rect = Rect2(-320, -180, 2560, 1440)
+offset = Vector2(-320, -180)
 
 [node name="Sun" type="Node2D" parent="World"]
 position = Vector2(1560, 150)
@@ -213,11 +217,19 @@ position = Vector2(0, 490)
 scale = Vector2(1, 1.23)
 texture = ExtResource("7_ground")
 centered = false
+texture_repeat = 3
+region_enabled = true
+region_rect = Rect2(-320, 0, 2560, 660)
+offset = Vector2(-320, 0)
 
 [node name="Fence" type="Sprite2D" parent="World"]
 position = Vector2(0, 442)
 texture = ExtResource("8_fence")
 centered = false
+texture_repeat = 3
+region_enabled = true
+region_rect = Rect2(-320, 0, 2560, 100)
+offset = Vector2(-320, 0)
 
 [node name="Bushes" type="Node2D" parent="World"]
 

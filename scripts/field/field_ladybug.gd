@@ -120,7 +120,7 @@ func _arrive(plant: Node2D) -> void:
 	_perch = PERCH + Vector2(randf_range(-PERCH_SPREAD, PERCH_SPREAD), 0.0)
 	_walk_x = 0.0
 	var side: float = 1.0 if randf() < 0.5 else -1.0
-	var start: Vector2 = Vector2(SCREEN_WIDTH * 0.5 + side * (SCREEN_WIDTH * 0.5 + OFFSCREEN_MARGIN),
+	var start: Vector2 = Vector2(_offscreen_x(side),
 			randf_range(ENTRY_Y_MIN, ENTRY_Y_MAX))
 	global_position = start
 	rotation = 0.0
@@ -137,7 +137,7 @@ func _leave() -> void:
 		return
 	_mode = Mode.LEAVING
 	var side: float = 1.0 if randf() < 0.5 else -1.0
-	var end: Vector2 = Vector2(SCREEN_WIDTH * 0.5 + side * (SCREEN_WIDTH * 0.5 + OFFSCREEN_MARGIN),
+	var end: Vector2 = Vector2(_offscreen_x(side),
 			randf_range(ENTRY_Y_MIN, ENTRY_Y_MAX))
 	rotation = 0.0
 	_take_off()
@@ -212,3 +212,9 @@ func _flap(flapping: bool) -> void:
 	if flapping:
 		_flap_tween = Oscillation.ping_pong(self, _wings, ^"rotation", 0.0, deg_to_rad(-WING_FLAP_DEGREES),
 				WING_FLAP_TIME * 2.0)
+
+
+## Görünen alanın (geniş ekranda yanlar dahil) sağ (side 1) ya da sol (side -1) kenarının dışı.
+func _offscreen_x(side: float) -> float:
+	var view: Rect2 = ScreenFit.visible_world_rect()
+	return view.end.x + OFFSCREEN_MARGIN if side > 0.0 else view.position.x - OFFSCREEN_MARGIN

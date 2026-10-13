@@ -75,7 +75,8 @@ func visit() -> void:
 		return
 	var target: Vector2 = _pick_perch()
 	var from_left: bool = randf() < 0.5
-	var start: Vector2 = Vector2(-OFFSCREEN_MARGIN if from_left else SCREEN_WIDTH + OFFSCREEN_MARGIN,
+	var view: Rect2 = ScreenFit.visible_world_rect()
+	var start: Vector2 = Vector2(view.position.x - OFFSCREEN_MARGIN if from_left else view.end.x + OFFSCREEN_MARGIN,
 			randf_range(ENTRY_Y_MIN, ENTRY_Y_MAX))
 	mode = Mode.ARRIVING
 	position = start
@@ -96,7 +97,8 @@ func leave() -> void:
 		var pan: float = clampf((global_position.x / SCREEN_WIDTH) * 2.0 - 1.0, -1.0, 1.0) * MAX_SOUND_PAN
 		AudioManager.play_sfx(_chirps.pick_random(), AudioManager.BUS_SFX, 0.0, randf_range(0.95, 1.1), pan)
 	var heading: float = signf(scale.x)
-	var end: Vector2 = Vector2(SCREEN_WIDTH + OFFSCREEN_MARGIN if heading > 0.0 else -OFFSCREEN_MARGIN,
+	var view: Rect2 = ScreenFit.visible_world_rect()
+	var end: Vector2 = Vector2(view.end.x + OFFSCREEN_MARGIN if heading > 0.0 else view.position.x - OFFSCREEN_MARGIN,
 			randf_range(ENTRY_Y_MIN, ENTRY_Y_MAX))
 	_fly(position, end, _gone)
 

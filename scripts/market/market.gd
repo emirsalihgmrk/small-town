@@ -29,8 +29,9 @@ const YAWN_RETRY_TIME: float = 2.0
 const FIELD_SECTION: StringName = &"field"
 ## Kızın tezgâha (sağa) bakan kolu.
 const GIRL_STALL_ARM: int = 1
-## Müşteri ekranın sağ kenarının bu kadar dışından yürümeye başlar ve oraya yürüyüp gider.
-const ENTRY_X: float = 2120.0
+## Müşteri ekranın (geniş ekranda görünen alanın) sağ kenarının bu kadar dışından yürümeye başlar ve oraya
+## yürüyüp gider.
+const ENTRY_MARGIN: float = 200.0
 const BUBBLE_POP_TIME: float = 0.25
 const BUBBLE_BOB: float = 8.0
 const BUBBLE_BOB_PERIOD: float = 1.8
@@ -200,7 +201,7 @@ func _pay() -> void:
 		tween.tween_callback(func() -> void: _coin_jar.receive(_customer.hand_point()))
 	tween.tween_interval(LEAVE_DELAY)
 	tween.tween_callback(func() -> void:
-		_customer.leave(Vector2(ENTRY_X, _customer.global_position.y))
+		_customer.leave(Vector2(_entry_x(), _customer.global_position.y))
 		_girl.wave(GIRL_STALL_ARM))
 
 
@@ -210,7 +211,7 @@ func _send_customer() -> void:
 		_refresh()
 		return
 	var spot: Vector2 = _customer_spot.global_position
-	_customer.arrive(_next_kind, order, Vector2(ENTRY_X, spot.y), spot)
+	_customer.arrive(_next_kind, order, Vector2(_entry_x(), spot.y), spot)
 	_next_kind = (_next_kind + 1) % _customer.look_count()
 
 
@@ -230,3 +231,7 @@ func _set_empty_bubble_visible(shown: bool) -> void:
 		_empty_bubble_tween.tween_property(_empty_bubble, ^"scale", Vector2.ZERO, BUBBLE_POP_TIME) \
 				.set_ease(Tween.EASE_IN)
 		_empty_bubble_tween.tween_callback(_empty_bubble.hide)
+
+
+func _entry_x() -> float:
+	return ScreenFit.visible_world_rect().end.x + ENTRY_MARGIN

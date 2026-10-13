@@ -27,6 +27,7 @@ config/icon="res://assets/branding/icon_512.png"
 SaveGame="*res://autoload/save_game.gd"
 AudioManager="*res://autoload/audio_manager.gd"
 SceneRouter="*res://autoload/scene_router.gd"
+ScreenFit="*res://autoload/screen_fit.gd"
 Basket="*res://autoload/basket.gd"
 Wallet="*res://autoload/wallet.gd"
 Owned="*res://autoload/owned.gd"
@@ -39,6 +40,7 @@ window/size/viewport_height=1080
 window/size/window_width_override=1280
 window/size/window_height_override=720
 window/stretch/mode="canvas_items"
+window/stretch/aspect="expand"
 window/handheld/orientation=4
 
 [input_devices]

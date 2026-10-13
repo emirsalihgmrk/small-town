@@ -61,6 +61,10 @@ decorations = [NodePath("World/Kite"), NodePath("World/Decorations/Birdhouse"), 
 [node name="Backdrop" type="Sprite2D" parent="World" unique_id=574868827]
 texture = ExtResource("1_backdrop")
 centered = false
+texture_repeat = 3
+region_enabled = true
+region_rect = Rect2(-320, -180, 2560, 1440)
+offset = Vector2(-320, -180)
 
 [node name="Sun" type="Node2D" parent="World" unique_id=436639284]
 position = Vector2(1400, 160)
@@ -155,6 +159,10 @@ offset = Vector2(-160, -400)
 position = Vector2(0, 690)
 texture = ExtResource("7_ground")
 centered = false
+texture_repeat = 3
+region_enabled = true
+region_rect = Rect2(-320, 0, 2560, 570)
+offset = Vector2(-320, 0)
 
 [node name="Garden" type="Node2D" parent="World" unique_id=1083163813]
 

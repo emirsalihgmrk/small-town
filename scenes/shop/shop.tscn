@@ -1,6 +1,7 @@
 [gd_scene format=3]
 
 [ext_resource type="Texture2D" path="res://assets/art/shop/shop_room.svg" id="1_room"]
+[ext_resource type="Texture2D" path="res://assets/art/shop/shop_room_details.svg" id="room_details"]
 [ext_resource type="Texture2D" path="res://assets/art/shop/shop_sign.svg" id="2_sign"]
 [ext_resource type="Texture2D" path="res://assets/art/shop/shop_bell.svg" id="3_bell"]
 [ext_resource type="Texture2D" path="res://assets/art/shop/shop_shelf.svg" id="4_shelf"]
@@ -103,6 +104,14 @@ gift_texture = ExtResource("gift")
 
 [node name="Room" type="Sprite2D" parent="World"]
 texture = ExtResource("1_room")
+centered = false
+texture_repeat = 3
+region_enabled = true
+region_rect = Rect2(-320, -180, 2560, 1440)
+offset = Vector2(-320, -180)
+
+[node name="RoomDetails" type="Sprite2D" parent="World"]
+texture = ExtResource("room_details")
 centered = false
 
 [node name="Sign" type="Sprite2D" parent="World"]

@@ -90,6 +90,10 @@ script = ExtResource("bakery_script")
 [node name="Room" type="Sprite2D" parent="World"]
 texture = ExtResource("1_room")
 centered = false
+texture_repeat = 3
+region_enabled = true
+region_rect = Rect2(-320, -180, 2560, 1440)
+offset = Vector2(-320, -180)
 
 [node name="Window" parent="World" instance=ExtResource("2_window")]
 position = Vector2(370, 300)

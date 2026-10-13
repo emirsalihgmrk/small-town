@@ -86,6 +86,10 @@ script = ExtResource("barn_script")
 [node name="Room" type="Sprite2D" parent="World"]
 texture = ExtResource("1_room")
 centered = false
+texture_repeat = 3
+region_enabled = true
+region_rect = Rect2(-320, -180, 2560, 1440)
+offset = Vector2(-320, -180)
 
 [node name="Motes" type="CPUParticles2D" parent="World"]
 position = Vector2(830, 560)
