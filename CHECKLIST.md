@@ -86,8 +86,8 @@ Lina'nın Çiftliği'ni (Lina's Farm) Google Play'e hazırlarken yapılacaklar. 
 ## 📋 Google Play
 
 - [x] Google Play geliştirici hesabı
-- [x] Gizlilik politikası adresi — https://kidolab-studio.github.io/linasfarm-privacy-policy/ (GitHub Pages,
-	  repo `kidolab-studio/linasfarm-privacy-policy`; Türkçe + İngilizce). Aynı metin oyunda Ebeveyn Köşesi →
+- [x] Gizlilik politikası adresi — https://kidolab-studio.github.io/linasfarm-legal/privacy-policy (GitHub Pages,
+	  repo `kidolab-studio/linasfarm-legal`; Türkçe + İngilizce). Aynı metin oyunda Ebeveyn Köşesi →
 	  "Gizlilik politikası" (`scripts/ui/privacy_policy.gd`); biri değişirse öteki de, yürürlük tarihiyle güncellenmeli.
 - [ ] Hedef kitle ve içerik (Aileler politikası), içerik derecelendirme anketi, Veri Güvenliği formu
 - [ ] Mağaza görselleri: 512×512 simge (hazır: `assets/branding/icon_512.png`), 1024×500 öne çıkan görsel, ekran görüntüleri

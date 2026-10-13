@@ -1,11 +1,11 @@
 class_name PrivacyPolicy
 extends RefCounted
 ## Gizlilik politikasının oyun içindeki metni (Ebeveyn Köşesi). Yayındaki sayfanın aynısıdır:
-## https://kidolab-studio.github.io/linasfarm-privacy-policy/ (repo: kidolab-studio/linasfarm-privacy-policy).
+## https://kidolab-studio.github.io/linasfarm-legal/privacy-policy (repo: kidolab-studio/linasfarm-legal).
 ## Biri değişince öteki de, iki dildeki yürürlük tarihiyle birlikte güncellenmeli.
 ## Telefonun dili Türkçeyse Türkçe, değilse İngilizce gösterilir.
 
-const URL: String = "https://kidolab-studio.github.io/linasfarm-privacy-policy/"
+const URL: String = "https://kidolab-studio.github.io/linasfarm-legal/privacy-policy"
 const EMAIL: String = "emirsalihgumruk@gmail.com"
 
 const TR: Dictionary = {
