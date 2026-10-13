@@ -65,7 +65,7 @@ Minik Kasaba'yı Google Play'e hazırlarken yapılacaklar. Bitenler `[x]` ile i�
 - [x] **14. Export filtresi** — `tools/` artık `.gdignore` içeriyor, oyuna girmiyor (preset'ten bağımsız).
 	  `previews/`'teki eski geliştirme görüntüleri (14,6 MB) silindi, klasör `.gitignore`'da;
 	  `tools/screenshot.gd` oraya yazarken `.gdignore`'u kendisi koyuyor.
-- [ ] **15. Yaş açıklaması** — `config/description` "5-7 yaş" diyor, tasarım 5-6.
+- [x] **15. Yaş açıklaması** — `config/description` artık tasarımdaki gibi "5-6 yaş" diyor.
 - [ ] **16. Uzak inek sesi** — ana ekran, tarla, kümes ve fırında hâlâ çalıyor; kalsın mı?
 
 ## 📋 Google Play
