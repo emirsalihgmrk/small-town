@@ -15,6 +15,8 @@ signal tapped(item: ShelfItem)
 ## Minderin üstü (aksesuarlar bunun üstüne oturur).
 const CUSHION_TOP: float = 30.0
 const TAP_MARGIN: float = 12.0
+## Küçük ürünlerde (tohum paketi, tarif kartı) dokunma alanı en az bu genişlikte; komşular 140 px aralıklı.
+const MIN_TAP_WIDTH: float = 136.0
 const HOP_HEIGHT: float = 16.0
 const HOP_TIME: float = 0.14
 const SQUASH: Vector2 = Vector2(1.08, 0.92)
@@ -52,7 +54,7 @@ func _ready() -> void:
 		_tag.set_owned(false)
 	set_worn(Owned.worn() == item, false)
 	var top: float = -lift - size.y - TAP_MARGIN
-	var width: float = maxf(size.x, _cushion.texture.get_width() if on_cushion else 0.0) + TAP_MARGIN * 2.0
+	var width: float = maxf(maxf(size.x, _cushion.texture.get_width() if on_cushion else 0.0) + TAP_MARGIN * 2.0, MIN_TAP_WIDTH)
 	_tap_area.area = Rect2(-width * 0.5, top, width, tag_offset.y + PriceTag.SLOT_SIZE - top)
 	_tap_area.tapped.connect(func(_point: Vector2) -> void: tapped.emit(self))
 	visible = Owned.is_offered(item)

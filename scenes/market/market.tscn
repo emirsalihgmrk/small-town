@@ -282,6 +282,7 @@ offset = Vector2(-400, -32)
 
 [node name="Carrot" type="Node2D" parent="World/Stall/Crates"]
 position = Vector2(-85, -22)
+grab_area = Rect2(-70, -150, 140, 152)
 script = ExtResource("stock_bin_script")
 item = &"carrot"
 texture = ExtResource("item_carrot")
@@ -321,6 +322,7 @@ offset = Vector2(-68, -48)
 
 [node name="Wheat" type="Node2D" parent="World/Stall/Crates"]
 position = Vector2(55, -22)
+grab_area = Rect2(-70, -150, 140, 152)
 script = ExtResource("stock_bin_script")
 item = &"wheat"
 texture = ExtResource("item_wheat")
@@ -360,6 +362,7 @@ offset = Vector2(-68, -48)
 
 [node name="Egg" type="Node2D" parent="World/Stall/Crates"]
 position = Vector2(0, 116)
+grab_area = Rect2(-75, -122, 150, 142)
 script = ExtResource("stock_bin_script")
 item = &"egg"
 texture = ExtResource("item_egg")
@@ -399,6 +402,7 @@ offset = Vector2(-68, -48)
 
 [node name="Milk" type="Node2D" parent="World/Stall/Crates"]
 position = Vector2(150, 116)
+grab_area = Rect2(-75, -122, 150, 142)
 script = ExtResource("stock_bin_script")
 item = &"milk"
 texture = ExtResource("item_milk")
@@ -430,6 +434,7 @@ offset = Vector2(-68, -48)
 
 [node name="Strawberry" type="Node2D" parent="World/Stall/Crates"]
 position = Vector2(195, -22)
+grab_area = Rect2(-70, -150, 140, 152)
 script = ExtResource("stock_bin_script")
 item = &"strawberry"
 texture = ExtResource("item_strawberry")
@@ -469,6 +474,7 @@ offset = Vector2(-68, -48)
 
 [node name="Pumpkin" type="Node2D" parent="World/Stall/Crates"]
 position = Vector2(-150, 116)
+grab_area = Rect2(-75, -122, 150, 142)
 script = ExtResource("stock_bin_script")
 item = &"pumpkin"
 texture = ExtResource("item_pumpkin")
@@ -539,7 +545,8 @@ priority = 5
 enabled = false
 
 [node name="PastryStand" type="Node2D" parent="World"]
-position = Vector2(1450, 945)
+position = Vector2(1485, 945)
+scale = Vector2(1.15, 1.15)
 
 [node name="Body" type="Sprite2D" parent="World/PastryStand"]
 texture = ExtResource("pastry_stand")
@@ -571,7 +578,7 @@ script = ExtResource("stock_bin_script")
 item = &"bread"
 texture = ExtResource("item_bread")
 item_size = 84.0
-grab_area = Rect2(-44, -118, 88, 120)
+grab_area = Rect2(-43, -120, 86, 125)
 
 [node name="Items" type="Node2D" parent="World/PastryStand/Bins/Bread"]
 y_sort_enabled = true
@@ -588,7 +595,7 @@ script = ExtResource("stock_bin_script")
 item = &"cookie"
 texture = ExtResource("item_cookie")
 item_size = 62.0
-grab_area = Rect2(-42, -118, 84, 120)
+grab_area = Rect2(-43, -120, 86, 125)
 
 [node name="Items" type="Node2D" parent="World/PastryStand/Bins/Cookie"]
 y_sort_enabled = true
@@ -611,7 +618,7 @@ script = ExtResource("stock_bin_script")
 item = &"simit"
 texture = ExtResource("item_simit")
 item_size = 80.0
-grab_area = Rect2(-44, -118, 88, 120)
+grab_area = Rect2(-43, -120, 86, 125)
 
 [node name="Items" type="Node2D" parent="World/PastryStand/Bins/Simit"]
 y_sort_enabled = true
@@ -627,6 +634,7 @@ position = Vector2(-2, -36)
 
 [node name="CarrotCake" type="Node2D" parent="World/PastryStand/Bins"]
 position = Vector2(-66, -136)
+grab_area = Rect2(-66, -118, 132, 120)
 script = ExtResource("stock_bin_script")
 item = &"carrot_cake"
 texture = ExtResource("item_carrot_cake")
@@ -643,6 +651,7 @@ position = Vector2(-12, -16)
 
 [node name="BirthdayCake" type="Node2D" parent="World/PastryStand/Bins"]
 position = Vector2(66, -136)
+grab_area = Rect2(-66, -118, 132, 120)
 script = ExtResource("stock_bin_script")
 item = &"birthday_cake"
 texture = ExtResource("item_birthday_cake")
@@ -663,7 +672,7 @@ script = ExtResource("stock_bin_script")
 item = &"strawberry_cake"
 texture = ExtResource("item_strawberry_cake")
 item_size = 96.0
-grab_area = Rect2(-66, -96, 132, 98)
+grab_area = Rect2(-66, -114, 132, 118)
 
 [node name="Items" type="Node2D" parent="World/PastryStand/Bins/StrawberryCake"]
 y_sort_enabled = true
@@ -680,7 +689,7 @@ script = ExtResource("stock_bin_script")
 item = &"pumpkin_pie"
 texture = ExtResource("item_pumpkin_pie")
 item_size = 100.0
-grab_area = Rect2(-66, -96, 132, 98)
+grab_area = Rect2(-66, -114, 132, 118)
 
 [node name="Items" type="Node2D" parent="World/PastryStand/Bins/PumpkinPie"]
 y_sort_enabled = true
@@ -692,7 +701,7 @@ position = Vector2(-4, 0)
 position = Vector2(12, -8)
 
 [node name="CustomerSpot" type="Marker2D" parent="World"]
-position = Vector2(1740, 1000)
+position = Vector2(1755, 1000)
 
 [node name="Customer" parent="World" instance=ExtResource("customer_scene")]
 position = Vector2(2120, 1000)
