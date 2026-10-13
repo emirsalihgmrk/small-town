@@ -105,7 +105,7 @@ func _current_hint() -> Dictionary:
 	if _waterer.needs_water():
 		return {"id": HINT_WATER, "carry": _bucket, "hold": HINT_WATER_HOLD, "points": PackedVector2Array([
 				_to_screen(_bucket.global_position),
-				_to_screen(_waterer.to_global(_waterer.pour_area.get_center())) - Finger.lift(get_viewport())])}
+				_to_screen(_waterer.to_global(_waterer.pour_area.get_center()))])}
 	return {}
 
 

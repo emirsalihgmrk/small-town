@@ -23,7 +23,7 @@ const HAND_SCENE: PackedScene = preload("res://scenes/ui/hint_hand.tscn")
 
 ## O an gösterilecek iş: {"id": StringName, "points": PackedVector2Array (ekran), "hold": float (isteğe bağlı),
 ## "carry": Node2D (isteğe bağlı; elin taşıdığı görünen şeyin örneği), "carry_offset": Vector2 (isteğe bağlı;
-## taşınanın parmağa göre yeri, varsayılan oyundaki gibi Finger.lift)}; gösterilecek iş yoksa boş sözlük.
+## taşınanın parmağa göre yeri; verilmezse oyundaki gibi Finger.lift ve noktalar taşınanın varacağı yerlerdir)}; gösterilecek iş yoksa boş sözlük.
 var provider: Callable
 
 var _hand: HintHand
@@ -52,8 +52,15 @@ func _process(delta: float) -> void:
 		return
 	if _idle < (learned_delay if is_learned(hint["id"]) else first_delay) * _backoff:
 		return
-	_hand.play(hint["points"], hint.get("hold", HintHand.DEFAULT_HOLD), hint.get("carry"),
-			hint.get("carry_offset", Finger.lift(get_viewport())))
+	var points: PackedVector2Array = hint["points"]
+	var carry_offset: Vector2 = hint.get("carry_offset", Vector2.INF)
+	if hint.has("carry") and carry_offset == Vector2.INF:
+		# Oyundaki gibi taşınan parmağın üstünde durur; bırakma noktalarında parmak o kadar aşağıdan geçer ki
+		# taşınan tam hedefe otursun. İlk nokta alınan yerdir, parmak oraya basar.
+		carry_offset = Finger.lift(get_viewport())
+		for i: int in range(1, points.size()):
+			points[i] -= carry_offset
+	_hand.play(points, hint.get("hold", HintHand.DEFAULT_HOLD), hint.get("carry"), carry_offset)
 	shown.emit(hint["id"])
 
 
