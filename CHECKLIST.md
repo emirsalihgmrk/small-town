@@ -7,18 +7,20 @@ Lina'nın Çiftliği'ni (Lina's Farm) Google Play'e hazırlarken yapılacaklar. 
 - [x] **1. Debug paneli** — release export'ta görünmesin. `DebugPanel` artık yalnız editörde ve debug
 	  export'ta çalışıyor (`OS.is_debug_build()`), release'te kendini siliyor.
 	  _Release APK'da gerçekten kaybolduğu 2. maddeden sonra cihazda doğrulanacak._
-- [ ] **2. Android export ayarı** — ayarlar hazır, debug AAB derlendi; kalan yalnız release imzası.
+- [x] **2. Android export ayarı** — release AAB (`build/LinasFarm.aab`, ~30 MB) ve release APK
+	  (`build/LinasFarm.apk`) derlendi, ikisi de release keystore'la imzalı (jarsigner/apksigner ile doğrulandı).
+	  Komut satırından: `godot --headless --path . --export-release "Android" build/LinasFarm.aab`.
 	  - Ad: `config/name` = "Lina's Farm", `config/name_localized` tr = "Lina'nın Çiftliği" (bilgisayardaki
 		kayıt `app_userdata/Lina's Farm/`'a kopyalandı, eski `Minik Kasaba/` yedek). Paket: `com.kidolab.linasfarm`.
 	  - `export_presets.cfg`: "Android" (Gradle, AAB → `build/LinasFarm.aab`) ve "Android APK (cihaz testi)"
 		(aynı ayarlar, APK → `build/LinasFarm.apk`). İkisi de yalnız `arm64-v8a`, hiçbir izin yok, simgeler
 		`assets/branding/`'den. Android şablonu kuruldu (`android/`, `.gitignore`'da); `import_etc2_astc` açıldı.
 	  - Release keystore: `C:\Users\emirs\Desktop\kidolab-release.keystore` (repo dışında, yedekli), alias `kidolab`.
-		Yolu ve alias `.godot/export_credentials.cfg`'de (repoya girmez); **şifre her iki preset için editörde
-		Proje → Dışa Aktar → Keystore → Release Password alanına girilecek.**
-	  - Kalan: şifre girildikten sonra release AAB ve release APK; 1. maddeyi release APK'da cihazda doğrula.
+		Yolu ve alias `.godot/export_credentials.cfg`'de (repoya girmez); şifre iki preset için editörde
+		Proje → Dışa Aktar → Keystore → Release Password alanında (girildi).
+	  - Kalan (9. madde): 1. maddeyi release APK'da cihazda doğrula.
 - [x] **3. Uygulama simgesi ve açılış ekranı** — simge: hasır şapkalı kız (`config/icon` = `icon_512.png`, Android
-	  adaptif katmanları ve tek renkli sürümü hazır, preset'e 2. maddede girilecek); açılış: krem zeminde
+	  adaptif katmanları ve tek renkli sürümü preset'lerde); açılış: krem zeminde
 	  "kidolab" logosu, yalnız yükleme süresince. Kaynaklar `assets/branding/` (`icon_background.svg`,
 	  `kidolab_logo.svg`; kız oyundaki parça çizimlerinden birleştirilir), PNG'leri
 	  `tools/branding/render_branding.gd` üretir. _Android 12+ sistem açılışı ve gerçek görünüm 9. maddede bakılacak._
