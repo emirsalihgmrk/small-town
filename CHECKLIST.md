@@ -18,9 +18,15 @@ Minik Kasaba'yı Google Play'e hazırlarken yapılacaklar. Bitenler `[x]` ile i�
 	  - Keystore şifreleri `export_presets.cfg`'ye değil `.godot/export_credentials.cfg`'ye yazılır (repoya girmez).
 	  - Sürüm (8. madde buraya taşındı): preset'te `version/name` (ör. `1.0.0`, görünen sürüm) ve
 		`version/code` (`1`'den başlar, Play'e her yüklemede bir artmalı).
+	  - Simgeler (3. madde): preset'te `launcher_icons/main_192x192` → `assets/branding/icon_192.png`,
+		`adaptive_foreground_432x432` / `adaptive_background_432x432` / `adaptive_monochrome_432x432` →
+		`assets/branding/icon_foreground_432.png` / `icon_background_432.png` / `icon_monochrome_432.png`.
 	  - Bittiğinde 1. maddeyi release APK'da cihazda doğrula.
-- [ ] **3. Uygulama simgesi ve açılış ekranı** — `config/icon`, Android adaptif simge (ön + arka plan katmanı),
-	  Godot logosu yerine kendi boot splash'ı.
+- [x] **3. Uygulama simgesi ve açılış ekranı** — simge: hasır şapkalı kız (`config/icon` = `icon_512.png`, Android
+	  adaptif katmanları ve tek renkli sürümü hazır, preset'e 2. maddede girilecek); açılış: krem zeminde
+	  "kidolab" logosu, yalnız yükleme süresince. Kaynaklar `assets/branding/` (`icon_background.svg`,
+	  `kidolab_logo.svg`; kız oyundaki parça çizimlerinden birleştirilir), PNG'leri
+	  `tools/branding/render_branding.gd` üretir. _Android 12+ sistem açılışı ve gerçek görünüm 9. maddede bakılacak._
 - [x] **4. Android geri tuşu** — açık sepet menüsünü kapatır; menü kapalıysa bölümden ana ekrana döner;
 	  ana ekranda hiçbir şey yapmaz (`quit_on_go_back=false`, `SceneRouter.go_back`, `back_handlers` grubu).
 	  _Benzetimle denendi; gerçek cihazda 9. maddede bakılacak._
@@ -70,14 +76,14 @@ Minik Kasaba'yı Google Play'e hazırlarken yapılacaklar. Bitenler `[x]` ile i�
 
 ## 📋 Google Play
 
-- [ ] Google Play geliştirici hesabı
+- [x] Google Play geliştirici hesabı
 - [ ] Gizlilik politikası adresi (veri toplanmasa da zorunlu)
 - [ ] Hedef kitle ve içerik (Aileler politikası), içerik derecelendirme anketi, Veri Güvenliği formu
-- [ ] Mağaza görselleri: 512×512 simge, 1024×500 öne çıkan görsel, ekran görüntüleri
+- [ ] Mağaza görselleri: 512×512 simge (hazır: `assets/branding/icon_512.png`), 1024×500 öne çıkan görsel, ekran görüntüleri
 - [ ] Mağaza metni (kısa ve uzun açıklama)
 - [ ] Önce dahili test kanalında yayın
 
 ## Son kararlar
 
-- [ ] Oyun alanı denemesi (salıncak, havuz, uçurtma, kuş evi) kalıyor mu?
-- [ ] Dinlenmemiş sesler: dükkân zili, salıncak itme, havuz damlası
+- [x] Oyun alanı denemesi (salıncak, havuz, uçurtma, kuş evi) kalıyor mu?
+- [x] Dinlenmemiş sesler: dükkân zili, salıncak itme, havuz damlası

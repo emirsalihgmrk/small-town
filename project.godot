@@ -15,6 +15,9 @@ config/description="5-6 yaş için sakin, ödüllendirici bir kasaba/çiftlik oy
 run/main_scene="res://scenes/main/home.tscn"
 config/quit_on_go_back=false
 config/features=PackedStringArray("4.7", "GL Compatibility")
+boot_splash/bg_color=Color(1, 0.9647059, 0.9019608, 1)
+boot_splash/image="res://assets/branding/splash.png"
+config/icon="res://assets/branding/icon_512.png"
 
 [autoload]
 
